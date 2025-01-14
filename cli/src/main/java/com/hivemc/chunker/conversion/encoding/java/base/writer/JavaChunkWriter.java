@@ -15,6 +15,7 @@ import com.hivemc.chunker.util.ByteUtil;
 import com.hivemc.chunker.util.LegacyIdentifier;
 import org.jetbrains.annotations.Nullable;
 
+import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -117,6 +118,7 @@ public class JavaChunkWriter {
         byte[] blockArray = new byte[4096];
         byte[] addArray = new byte[2048];
         byte[] dataArray = new byte[2048];
+        short[] block16Array = new short[4096];
 
         if (!chunk.isEmpty()) {
             for (int i = 0; i < 4096; i++) {
@@ -140,6 +142,9 @@ public class JavaChunkWriter {
 
                 // Set block data
                 dataArray[nibbleIndex] = ByteUtil.updateNibble(dataArray[nibbleIndex], legacyIdentifier.data(), lowestBits);
+
+                // Set Block16 Array for NotEnoughIDs
+                block16Array[i] = (short) legacyIdentifier.id();
             }
         }
 
@@ -147,6 +152,14 @@ public class JavaChunkWriter {
         output.add(new TagWithName<>("Blocks", new ByteArrayTag(blockArray)));
         output.add(new TagWithName<>("Add", new ByteArrayTag(addArray)));
         output.add(new TagWithName<>("Data", new ByteArrayTag(dataArray)));
+        output.add(new TagWithName<>("Blocks16", new ByteArrayTag(getBlockData16(block16Array))));
+    }
+
+    // Convert Short[] to Byte
+    public byte[] getBlockData16(short[] block16BArray) {
+        final byte[] ret = new byte[block16BArray.length * 2];
+        ByteBuffer.wrap(ret).asShortBuffer().put(block16BArray);
+        return ret;
     }
 
     /**

@@ -155,7 +155,7 @@ public class JavaChunkWriter {
         output.add(new TagWithName<>("Blocks16", new ByteArrayTag(getBlockData16(block16Array))));
     }
 
-    // Convert Short[] to Byte
+    // Convert Short[] to Byte[]
     public byte[] getBlockData16(short[] block16BArray) {
         final byte[] ret = new byte[block16BArray.length * 2];
         ByteBuffer.wrap(ret).asShortBuffer().put(block16BArray);

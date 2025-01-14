@@ -144,7 +144,7 @@ public class JavaChunkWriter {
                 dataArray[nibbleIndex] = ByteUtil.updateNibble(dataArray[nibbleIndex], legacyIdentifier.data(), lowestBits);
 
                 // Set Block16 Array for NotEnoughIDs
-                block16Array[i] = (short) legacyIdentifier.id();
+                // block16Array[i] = (short) legacyIdentifier.id();
             }
         }
 
@@ -152,7 +152,7 @@ public class JavaChunkWriter {
         output.add(new TagWithName<>("Blocks", new ByteArrayTag(blockArray)));
         output.add(new TagWithName<>("Add", new ByteArrayTag(addArray)));
         output.add(new TagWithName<>("Data", new ByteArrayTag(dataArray)));
-        output.add(new TagWithName<>("Blocks16", new ByteArrayTag(getBlockData16(block16Array))));
+        // output.add(new TagWithName<>("Blocks16", new ByteArrayTag(getBlockData16(block16Array))));
     }
 
     // Convert Short[] to Byte[]

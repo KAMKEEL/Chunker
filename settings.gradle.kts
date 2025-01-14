@@ -1,3 +1,3 @@
-rootProject.name = "chunker"
+rootProject.name = "Chunker"
 
 include("cli", "app")

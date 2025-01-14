@@ -287,6 +287,93 @@ public class JavaLegacyBlockIDResolver implements Resolver<Integer, String> {
             mapping.put("minecraft:black_glazed_terracotta", 250);
             mapping.put("minecraft:concrete", 251);
             mapping.put("minecraft:concrete_powder", 252);
+
+            // Modded Minecraft Support
+
+            // These are fake IDs, they are not real block IDs. Used by Midas Silver Converter
+            // 1.14
+            mapping.put("minecraft:acacia_sign", 253);
+            mapping.put("minecraft:birch_sign", 254);
+            mapping.put("minecraft:dark_oak_sign", 255);
+            mapping.put("minecraft:jungle_sign", 256);
+            mapping.put("minecraft:spruce_sign", 257);
+
+            mapping.put("minecraft:acacia_wall_sign", 258);
+            mapping.put("minecraft:birch_wall_sign", 259);
+            mapping.put("minecraft:dark_oak_wall_sign", 260);
+            mapping.put("minecraft:jungle_wall_sign", 261);
+            mapping.put("minecraft:spruce_wall_sign", 262);
+
+            mapping.put("minecraft:acacia_sign", 253);
+            mapping.put("minecraft:birch_sign", 254);
+            mapping.put("minecraft:dark_oak_sign", 255);
+            mapping.put("minecraft:jungle_sign", 256);
+            mapping.put("minecraft:spruce_sign", 257);
+
+            mapping.put("minecraft:acacia_wall_sign", 258);
+            mapping.put("minecraft:birch_wall_sign", 259);
+            mapping.put("minecraft:dark_oak_wall_sign", 260);
+            mapping.put("minecraft:jungle_wall_sign", 261);
+            mapping.put("minecraft:spruce_wall_sign", 262);
+
+            mapping.put("minecraft:barrel", 263);
+            mapping.put("minecraft:cartography_table", 264);
+            mapping.put("minecraft:composter", 265);
+            mapping.put("minecraft:fletching_table", 266);
+            mapping.put("minecraft:smithing_table", 267);
+            mapping.put("minecraft:campfire", 268);
+            mapping.put("minecraft:campfire_base", 269);
+            mapping.put("minecraft:lantern", 270);
+            mapping.put("minecraft:lily_of_the_valley", 271);
+            mapping.put("minecraft:cornflower", 272);
+            mapping.put("minecraft:wither_rose", 273);
+            mapping.put("minecraft:sweet_berry_bush", 274);
+            mapping.put("minecraft:loom", 275);
+            mapping.put("minecraft:stonecutter", 276);
+            mapping.put("minecraft:blast_furnace", 277);
+            mapping.put("minecraft:smoker", 278);
+            mapping.put("minecraft:andesite_stairs", 279);
+            mapping.put("minecraft:diorite_stairs", 280);
+            mapping.put("minecraft:end_stone_brick_stairs", 281);
+            mapping.put("minecraft:granite_stairs", 282);
+            mapping.put("minecraft:mossy_cobblestone_stairs", 283);
+            mapping.put("minecraft:mossy_stone_brick_stairs", 284);
+            mapping.put("minecraft:polished_andesite_stairs", 285);
+            mapping.put("minecraft:polished_diorite_stairs", 286);
+            mapping.put("minecraft:polished_granite_stairs", 287);
+            mapping.put("minecraft:red_nether_brick_stairs", 288);
+            mapping.put("minecraft:smooth_quartz_stairs", 289);
+            mapping.put("minecraft:smooth_red_sandstone_stairs", 290);
+            mapping.put("minecraft:smooth_sandstone_stairs", 291);
+            mapping.put("minecraft:stone_stairs", 292);
+            mapping.put("minecraft:andesite_wall", 293);
+            mapping.put("minecraft:brick_wall", 294);
+            mapping.put("minecraft:diorite_wall", 295);
+            mapping.put("minecraft:end_stone_brick_wall", 296);
+            mapping.put("minecraft:granite_wall", 297);
+            mapping.put("minecraft:mossy_stone_brick_wall", 298);
+            mapping.put("minecraft:nether_brick_wall", 299);
+            mapping.put("minecraft:prismarine_wall", 300);
+            mapping.put("minecraft:red_nether_brick_wall", 301);
+            mapping.put("minecraft:red_sandstone_wall", 302);
+            mapping.put("minecraft:sandstone_wall", 303);
+            mapping.put("minecraft:stone_brick_wall", 304);
+            mapping.put("minecraft:andesite_slab", 305);
+            mapping.put("minecraft:cut_red_sandstone_slab", 306);
+            mapping.put("minecraft:cut_sandstone_slab", 307);
+            mapping.put("minecraft:diorite_slab", 308);
+            mapping.put("minecraft:end_stone_brick_slab", 309);
+            mapping.put("minecraft:granite_slab", 310);
+            mapping.put("minecraft:mossy_cobblestone_slab", 311);
+            mapping.put("minecraft:mossy_stone_brick_slab", 312);
+            mapping.put("minecraft:polished_andesite_slab", 313);
+            mapping.put("minecraft:polished_diorite_slab", 314);
+            mapping.put("minecraft:polished_granite_slab", 315);
+            mapping.put("minecraft:red_nether_brick_slab", 316);
+            mapping.put("minecraft:smooth_quartz_slab", 317);
+            mapping.put("minecraft:smooth_red_sandstone_slab", 318);
+            mapping.put("minecraft:smooth_sandstone_slab", 319);
+            mapping.put("minecraft:smooth_stone_slab", 320);
         }
     }
 

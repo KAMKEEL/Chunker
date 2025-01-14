@@ -6,6 +6,7 @@ import com.hivemc.chunker.conversion.encoding.base.Version;
 import com.hivemc.chunker.conversion.encoding.base.resolver.identifier.BlockMapping;
 import com.hivemc.chunker.conversion.encoding.base.resolver.identifier.ChunkerBlockIdentifierResolver;
 import com.hivemc.chunker.conversion.encoding.base.resolver.identifier.state.StateMappingGroup;
+import com.hivemc.chunker.conversion.encoding.java.base.resolver.identifier.JavaStateGroups;
 import com.hivemc.chunker.conversion.intermediate.column.chunk.identifier.type.block.ChunkerBlockType;
 import com.hivemc.chunker.conversion.intermediate.column.chunk.identifier.type.block.ChunkerVanillaBlockType;
 import com.hivemc.chunker.conversion.intermediate.column.chunk.identifier.type.block.states.BlockStateValue;
@@ -1113,6 +1114,422 @@ public class JavaLegacyBlockIdentifierResolver extends ChunkerBlockIdentifierRes
                             .put("minecraft:yellow_glazed_terracotta", ChunkerVanillaBlockType.YELLOW_GLAZED_TERRACOTTA)
                             .build(),
                     JavaLegacyStateGroups.FACING_HORIZONTAL_SWNE));
+
+            // Does all the Modded MC Blocks -->
+            // Modded MC Support
+
+            // 1.14 Blocks
+            register(BlockMapping.of("minecraft:standing_sign", ChunkerVanillaBlockType.OAK_SIGN, JavaLegacyStateGroups.ROTATION));
+            register(BlockMapping.of("minecraft:wall_sign", ChunkerVanillaBlockType.OAK_WALL_SIGN, JavaLegacyStateGroups.FACING_HORIZONTAL_UNUSUAL));
+
+            register(BlockMapping.of("minecraft:acacia_sign", ChunkerVanillaBlockType.ACACIA_SIGN, JavaLegacyStateGroups.ROTATION));
+            register(BlockMapping.of("minecraft:birch_sign", ChunkerVanillaBlockType.BIRCH_SIGN, JavaLegacyStateGroups.ROTATION));
+            register(BlockMapping.of("minecraft:dark_oak_sign", ChunkerVanillaBlockType.DARK_OAK_SIGN, JavaLegacyStateGroups.ROTATION));
+            register(BlockMapping.of("minecraft:jungle_sign", ChunkerVanillaBlockType.JUNGLE_SIGN, JavaLegacyStateGroups.ROTATION));
+            register(BlockMapping.of("minecraft:spruce_sign", ChunkerVanillaBlockType.SPRUCE_SIGN, JavaLegacyStateGroups.ROTATION));
+
+            register(BlockMapping.of("minecraft:acacia_wall_sign", ChunkerVanillaBlockType.ACACIA_WALL_SIGN, JavaLegacyStateGroups.FACING_HORIZONTAL_UNUSUAL));
+            register(BlockMapping.of("minecraft:birch_wall_sign", ChunkerVanillaBlockType.BIRCH_WALL_SIGN, JavaLegacyStateGroups.FACING_HORIZONTAL_UNUSUAL));
+            register(BlockMapping.of("minecraft:dark_oak_wall_sign", ChunkerVanillaBlockType.DARK_OAK_WALL_SIGN, JavaLegacyStateGroups.FACING_HORIZONTAL_UNUSUAL));
+            register(BlockMapping.of("minecraft:jungle_wall_sign", ChunkerVanillaBlockType.JUNGLE_WALL_SIGN, JavaLegacyStateGroups.FACING_HORIZONTAL_UNUSUAL));
+            register(BlockMapping.of("minecraft:spruce_wall_sign", ChunkerVanillaBlockType.SPRUCE_WALL_SIGN, JavaLegacyStateGroups.FACING_HORIZONTAL_UNUSUAL));
+
+            // register(BlockMapping.of("minecraft:bamboo", ChunkerVanillaBlockType.BAMBOO, JavaStateGroups.BAMBOO));
+            // register(BlockMapping.of("minecraft:bamboo_sapling", ChunkerVanillaBlockType.BAMBOO_SAPLING, JavaStateGroups.BAMBOO_SAPLING));
+
+            register(BlockMapping.of("minecraft:barrel", ChunkerVanillaBlockType.BARREL, JavaLegacyStateGroups.FACING_TRIGGERED));
+
+            // register(BlockMapping.of("minecraft:bell", ChunkerVanillaBlockType.BELL, JavaStateGroups.BELL));
+
+            register(BlockMapping.of("minecraft:cartography_table", ChunkerVanillaBlockType.CARTOGRAPHY_TABLE));
+            register(BlockMapping.of("minecraft:composter", ChunkerVanillaBlockType.COMPOSTER));
+            register(BlockMapping.of("minecraft:fletching_table", ChunkerVanillaBlockType.FLETCHING_TABLE));
+            register(BlockMapping.of("minecraft:smithing_table", ChunkerVanillaBlockType.SMITHING_TABLE));
+
+            register(BlockMapping.of("minecraft:campfire", ChunkerVanillaBlockType.CAMPFIRE, JavaLegacyStateGroups.FACING_HORIZONTAL_UNUSUAL, VanillaBlockStates.LIT, Bool.TRUE));
+            register(BlockMapping.of("minecraft:campfire_base", ChunkerVanillaBlockType.CAMPFIRE, JavaLegacyStateGroups.FACING_HORIZONTAL_UNUSUAL, VanillaBlockStates.LIT, Bool.FALSE));
+
+            // register(BlockMapping.of("minecraft:grindstone", ChunkerVanillaBlockType.GRINDSTONE, JavaStateGroups.GRINDSTONE));
+            //register(BlockMapping.of("minecraft:jigsaw", ChunkerVanillaBlockType.JIGSAW, JavaStateGroups.JIGSAW));
+
+            register(BlockMapping.of("minecraft:lantern", ChunkerVanillaBlockType.LANTERN));
+
+            // register(BlockMapping.of("minecraft:lectern", ChunkerVanillaBlockType.LECTERN, JavaStateGroups.LECTERN));
+
+            // Flowers
+            register(BlockMapping.of("minecraft:lily_of_the_valley", ChunkerVanillaBlockType.LILY_OF_THE_VALLEY));
+            register(BlockMapping.of("minecraft:cornflower", ChunkerVanillaBlockType.CORNFLOWER));
+            register(BlockMapping.of("minecraft:wither_rose", ChunkerVanillaBlockType.WITHER_ROSE));
+
+            // register(BlockMapping.of("minecraft:potted_bamboo", ChunkerVanillaBlockType.POTTED_BAMBOO));
+            // register(BlockMapping.of("minecraft:potted_cornflower", ChunkerVanillaBlockType.POTTED_CORNFLOWER));
+            // register(BlockMapping.of("minecraft:potted_lily_of_the_valley", ChunkerVanillaBlockType.POTTED_LILY_OF_THE_VALLEY));
+            // register(BlockMapping.of("minecraft:potted_wither_rose", ChunkerVanillaBlockType.POTTED_WITHER_ROSE));
+            // register(BlockMapping.of("minecraft:scaffolding", ChunkerVanillaBlockType.SCAFFOLDING, JavaStateGroups.SCAFFOLDING));
+
+            register(BlockMapping.of("minecraft:sweet_berry_bush", ChunkerVanillaBlockType.SWEET_BERRY_BUSH, JavaLegacyStateGroups.AGE_3_TO_7));
+
+            register(BlockMapping.group(ImmutableMultimap.<String, ChunkerVanillaBlockType>builder()
+                            .put("minecraft:loom", ChunkerVanillaBlockType.LOOM)
+                            .put("minecraft:stonecutter", ChunkerVanillaBlockType.STONECUTTER)
+                            .build(),
+                    JavaLegacyStateGroups.FACING_HORIZONTAL_UNUSUAL));
+
+            register(BlockMapping.group(ImmutableMultimap.<String, ChunkerVanillaBlockType>builder()
+                            .put("minecraft:blast_furnace", ChunkerVanillaBlockType.BLAST_FURNACE)
+                            .put("minecraft:smoker", ChunkerVanillaBlockType.SMOKER)
+                            .build(),
+                    JavaLegacyStateGroups.FACING_HORIZONTAL_UNUSUAL));
+
+            register(BlockMapping.group(ImmutableMultimap.<String, ChunkerVanillaBlockType>builder()
+                            .put("minecraft:andesite_stairs", ChunkerVanillaBlockType.ANDESITE_STAIRS)
+                            .put("minecraft:diorite_stairs", ChunkerVanillaBlockType.DIORITE_STAIRS)
+                            .put("minecraft:end_stone_brick_stairs", ChunkerVanillaBlockType.END_STONE_BRICK_STAIRS)
+                            .put("minecraft:granite_stairs", ChunkerVanillaBlockType.GRANITE_STAIRS)
+                            .put("minecraft:mossy_cobblestone_stairs", ChunkerVanillaBlockType.MOSSY_COBBLESTONE_STAIRS)
+                            .put("minecraft:mossy_stone_brick_stairs", ChunkerVanillaBlockType.MOSSY_STONE_BRICK_STAIRS)
+                            .put("minecraft:polished_andesite_stairs", ChunkerVanillaBlockType.POLISHED_ANDESITE_STAIRS)
+                            .put("minecraft:polished_diorite_stairs", ChunkerVanillaBlockType.POLISHED_DIORITE_STAIRS)
+                            .put("minecraft:polished_granite_stairs", ChunkerVanillaBlockType.POLISHED_GRANITE_STAIRS)
+                            .put("minecraft:red_nether_brick_stairs", ChunkerVanillaBlockType.RED_NETHER_BRICK_STAIRS)
+                            .put("minecraft:smooth_quartz_stairs", ChunkerVanillaBlockType.SMOOTH_QUARTZ_STAIRS)
+                            .put("minecraft:smooth_red_sandstone_stairs", ChunkerVanillaBlockType.SMOOTH_RED_SANDSTONE_STAIRS)
+                            .put("minecraft:smooth_sandstone_stairs", ChunkerVanillaBlockType.SMOOTH_SANDSTONE_STAIRS)
+                            .put("minecraft:stone_stairs", ChunkerVanillaBlockType.STONE_STAIRS)
+                            .build(),
+                    JavaLegacyStateGroups.STAIRS));
+
+
+            register(BlockMapping.group(ImmutableMultimap.<String, ChunkerVanillaBlockType>builder()
+                            .put("minecraft:andesite_wall", ChunkerVanillaBlockType.ANDESITE_WALL)
+                            .put("minecraft:brick_wall", ChunkerVanillaBlockType.BRICK_WALL)
+                            .put("minecraft:diorite_wall", ChunkerVanillaBlockType.DIORITE_WALL)
+                            .put("minecraft:end_stone_brick_wall", ChunkerVanillaBlockType.END_STONE_BRICK_WALL)
+                            .put("minecraft:granite_wall", ChunkerVanillaBlockType.GRANITE_WALL)
+                            .put("minecraft:mossy_stone_brick_wall", ChunkerVanillaBlockType.MOSSY_STONE_BRICK_WALL)
+                            .put("minecraft:nether_brick_wall", ChunkerVanillaBlockType.NETHER_BRICK_WALL)
+                            .put("minecraft:prismarine_wall", ChunkerVanillaBlockType.PRISMARINE_WALL)
+                            .put("minecraft:red_nether_brick_wall", ChunkerVanillaBlockType.RED_NETHER_BRICK_WALL)
+                            .put("minecraft:red_sandstone_wall", ChunkerVanillaBlockType.RED_SANDSTONE_WALL)
+                            .put("minecraft:sandstone_wall", ChunkerVanillaBlockType.SANDSTONE_WALL)
+                            .put("minecraft:stone_brick_wall", ChunkerVanillaBlockType.STONE_BRICK_WALL)
+                            .build(),
+                    JavaLegacyStateGroups.WALL));
+
+            register(BlockMapping.group(ImmutableMultimap.<String, ChunkerVanillaBlockType>builder()
+                            .put("minecraft:andesite_slab", ChunkerVanillaBlockType.ANDESITE_SLAB)
+                            .put("minecraft:cut_red_sandstone_slab", ChunkerVanillaBlockType.CUT_RED_SANDSTONE_SLAB)
+                            .put("minecraft:cut_sandstone_slab", ChunkerVanillaBlockType.CUT_SANDSTONE_SLAB)
+                            .put("minecraft:diorite_slab", ChunkerVanillaBlockType.DIORITE_SLAB)
+                            .put("minecraft:end_stone_brick_slab", ChunkerVanillaBlockType.END_STONE_BRICK_SLAB)
+                            .put("minecraft:granite_slab", ChunkerVanillaBlockType.GRANITE_SLAB)
+                            .put("minecraft:mossy_cobblestone_slab", ChunkerVanillaBlockType.MOSSY_COBBLESTONE_SLAB)
+                            .put("minecraft:mossy_stone_brick_slab", ChunkerVanillaBlockType.MOSSY_STONE_BRICK_SLAB)
+                            .put("minecraft:polished_andesite_slab", ChunkerVanillaBlockType.POLISHED_ANDESITE_SLAB)
+                            .put("minecraft:polished_diorite_slab", ChunkerVanillaBlockType.POLISHED_DIORITE_SLAB)
+                            .put("minecraft:polished_granite_slab", ChunkerVanillaBlockType.POLISHED_GRANITE_SLAB)
+                            .put("minecraft:red_nether_brick_slab", ChunkerVanillaBlockType.RED_NETHER_BRICK_SLAB)
+                            .put("minecraft:smooth_quartz_slab", ChunkerVanillaBlockType.SMOOTH_QUARTZ_SLAB)
+                            .put("minecraft:smooth_red_sandstone_slab", ChunkerVanillaBlockType.SMOOTH_RED_SANDSTONE_SLAB)
+                            .put("minecraft:smooth_sandstone_slab", ChunkerVanillaBlockType.SMOOTH_SANDSTONE_SLAB)
+                            .put("minecraft:smooth_stone_slab", ChunkerVanillaBlockType.SMOOTH_STONE_SLAB)
+                            .build(),
+                    JavaLegacyStateGroups.SLAB_HALF));
+
+            // 1.15
+//            register(BlockMapping.of("minecraft:honey_block", ChunkerVanillaBlockType.HONEY_BLOCK));
+//            register(BlockMapping.of("minecraft:honeycomb_block", ChunkerVanillaBlockType.HONEYCOMB_BLOCK));
+//            register(BlockMapping.group(ImmutableMultimap.<String, ChunkerVanillaBlockType>builder()
+//                            .put("minecraft:bee_nest", ChunkerVanillaBlockType.BEE_NEST)
+//                            .put("minecraft:beehive", ChunkerVanillaBlockType.BEEHIVE)
+//                            .build(),
+//                    JavaStateGroups.BEE_NEST));
+//
+//            // 1.16
+//            register(BlockMapping.of("minecraft:ancient_debris", ChunkerVanillaBlockType.ANCIENT_DEBRIS));
+//            register(BlockMapping.of("minecraft:blackstone", ChunkerVanillaBlockType.BLACKSTONE));
+//            register(BlockMapping.of("minecraft:chain", ChunkerVanillaBlockType.CHAIN, JavaStateGroups.CHAIN));
+//            register(BlockMapping.of("minecraft:chiseled_nether_bricks", ChunkerVanillaBlockType.CHISELED_NETHER_BRICKS));
+//            register(BlockMapping.of("minecraft:chiseled_polished_blackstone", ChunkerVanillaBlockType.CHISELED_POLISHED_BLACKSTONE));
+//            register(BlockMapping.of("minecraft:cracked_nether_bricks", ChunkerVanillaBlockType.CRACKED_NETHER_BRICKS));
+//            register(BlockMapping.of("minecraft:cracked_polished_blackstone_bricks", ChunkerVanillaBlockType.CRACKED_POLISHED_BLACKSTONE_BRICKS));
+//            register(BlockMapping.of("minecraft:crimson_fungus", ChunkerVanillaBlockType.CRIMSON_FUNGUS));
+//            register(BlockMapping.of("minecraft:crimson_nylium", ChunkerVanillaBlockType.CRIMSON_NYLIUM));
+//            register(BlockMapping.of("minecraft:crimson_planks", ChunkerVanillaBlockType.CRIMSON_PLANKS));
+//            register(BlockMapping.of("minecraft:crimson_roots", ChunkerVanillaBlockType.CRIMSON_ROOTS));
+//            register(BlockMapping.of("minecraft:crying_obsidian", ChunkerVanillaBlockType.CRYING_OBSIDIAN));
+//            register(BlockMapping.of("minecraft:gilded_blackstone", ChunkerVanillaBlockType.GILDED_BLACKSTONE));
+//            register(BlockMapping.of("minecraft:lodestone", ChunkerVanillaBlockType.LODESTONE));
+//            register(BlockMapping.of("minecraft:nether_gold_ore", ChunkerVanillaBlockType.NETHER_GOLD_ORE));
+//            register(BlockMapping.of("minecraft:nether_sprouts", ChunkerVanillaBlockType.NETHER_SPROUTS));
+//            register(BlockMapping.of("minecraft:netherite_block", ChunkerVanillaBlockType.NETHERITE_BLOCK));
+//            register(BlockMapping.of("minecraft:polished_blackstone", ChunkerVanillaBlockType.POLISHED_BLACKSTONE));
+//            register(BlockMapping.of("minecraft:polished_blackstone_bricks", ChunkerVanillaBlockType.POLISHED_BLACKSTONE_BRICKS));
+//            register(BlockMapping.of("minecraft:potted_crimson_fungus", ChunkerVanillaBlockType.POTTED_CRIMSON_FUNGUS));
+//            register(BlockMapping.of("minecraft:potted_crimson_roots", ChunkerVanillaBlockType.POTTED_CRIMSON_ROOTS));
+//            register(BlockMapping.of("minecraft:potted_warped_fungus", ChunkerVanillaBlockType.POTTED_WARPED_FUNGUS));
+//            register(BlockMapping.of("minecraft:potted_warped_roots", ChunkerVanillaBlockType.POTTED_WARPED_ROOTS));
+//            register(BlockMapping.of("minecraft:quartz_bricks", ChunkerVanillaBlockType.QUARTZ_BRICKS));
+//            register(BlockMapping.of("minecraft:respawn_anchor", ChunkerVanillaBlockType.RESPAWN_ANCHOR, JavaStateGroups.RESPAWN_ANCHOR));
+//            register(BlockMapping.of("minecraft:shroomlight", ChunkerVanillaBlockType.SHROOMLIGHT));
+//            register(BlockMapping.of("minecraft:soul_campfire", ChunkerVanillaBlockType.SOUL_CAMPFIRE, JavaStateGroups.CAMPFIRE));
+//            register(BlockMapping.of("minecraft:soul_fire", ChunkerVanillaBlockType.SOUL_FIRE, JavaStateGroups.SOUL_FIRE));
+//            register(BlockMapping.of("minecraft:soul_lantern", ChunkerVanillaBlockType.SOUL_LANTERN, JavaStateGroups.LANTERN));
+//            register(BlockMapping.of("minecraft:soul_soil", ChunkerVanillaBlockType.SOUL_SOIL));
+//            register(BlockMapping.of("minecraft:soul_torch", ChunkerVanillaBlockType.SOUL_TORCH));
+//            register(BlockMapping.of("minecraft:soul_wall_torch", ChunkerVanillaBlockType.SOUL_WALL_TORCH, JavaStateGroups.FACING_HORIZONTAL));
+//            register(BlockMapping.of("minecraft:target", ChunkerVanillaBlockType.TARGET, JavaStateGroups.POWER));
+//            register(BlockMapping.of("minecraft:twisting_vines_plant", ChunkerVanillaBlockType.TWISTING_VINES_PLANT));
+//            register(BlockMapping.of("minecraft:warped_fungus", ChunkerVanillaBlockType.WARPED_FUNGUS));
+//            register(BlockMapping.of("minecraft:warped_nylium", ChunkerVanillaBlockType.WARPED_NYLIUM));
+//            register(BlockMapping.of("minecraft:warped_planks", ChunkerVanillaBlockType.WARPED_PLANKS));
+//            register(BlockMapping.of("minecraft:warped_roots", ChunkerVanillaBlockType.WARPED_ROOTS));
+//            register(BlockMapping.of("minecraft:warped_wart_block", ChunkerVanillaBlockType.WARPED_WART_BLOCK));
+//            register(BlockMapping.of("minecraft:weeping_vines_plant", ChunkerVanillaBlockType.WEEPING_VINES_PLANT));
+//            register(BlockMapping.group(ImmutableMultimap.<String, ChunkerVanillaBlockType>builder()
+//                            .put("minecraft:crimson_sign", ChunkerVanillaBlockType.CRIMSON_SIGN)
+//                            .put("minecraft:warped_sign", ChunkerVanillaBlockType.WARPED_SIGN)
+//                            .build(),
+//                    JavaStateGroups.SIGN));
+//            register(BlockMapping.group(ImmutableMultimap.<String, ChunkerVanillaBlockType>builder()
+//                            .put("minecraft:crimson_fence_gate", ChunkerVanillaBlockType.CRIMSON_FENCE_GATE)
+//                            .put("minecraft:warped_fence_gate", ChunkerVanillaBlockType.WARPED_FENCE_GATE)
+//                            .build(),
+//                    JavaStateGroups.FENCE_GATE));
+//            register(BlockMapping.group(ImmutableMultimap.<String, ChunkerVanillaBlockType>builder()
+//                            .put("minecraft:basalt", ChunkerVanillaBlockType.BASALT)
+//                            .put("minecraft:crimson_hyphae", ChunkerVanillaBlockType.CRIMSON_HYPHAE)
+//                            .put("minecraft:crimson_stem", ChunkerVanillaBlockType.CRIMSON_STEM)
+//                            .put("minecraft:polished_basalt", ChunkerVanillaBlockType.POLISHED_BASALT)
+//                            .put("minecraft:stripped_crimson_hyphae", ChunkerVanillaBlockType.STRIPPED_CRIMSON_HYPHAE)
+//                            .put("minecraft:stripped_crimson_stem", ChunkerVanillaBlockType.STRIPPED_CRIMSON_STEM)
+//                            .put("minecraft:stripped_warped_hyphae", ChunkerVanillaBlockType.STRIPPED_WARPED_HYPHAE)
+//                            .put("minecraft:stripped_warped_stem", ChunkerVanillaBlockType.STRIPPED_WARPED_STEM)
+//                            .put("minecraft:warped_hyphae", ChunkerVanillaBlockType.WARPED_HYPHAE)
+//                            .put("minecraft:warped_stem", ChunkerVanillaBlockType.WARPED_STEM)
+//                            .build(),
+//                    JavaStateGroups.AXIS));
+//            register(BlockMapping.group(ImmutableMultimap.<String, ChunkerVanillaBlockType>builder()
+//                            .put("minecraft:crimson_button", ChunkerVanillaBlockType.CRIMSON_BUTTON)
+//                            .put("minecraft:polished_blackstone_button", ChunkerVanillaBlockType.POLISHED_BLACKSTONE_BUTTON)
+//                            .put("minecraft:warped_button", ChunkerVanillaBlockType.WARPED_BUTTON)
+//                            .build(),
+//                    JavaStateGroups.BUTTON));
+//            register(BlockMapping.group(ImmutableMultimap.<String, ChunkerVanillaBlockType>builder()
+//                            .put("minecraft:twisting_vines", ChunkerVanillaBlockType.TWISTING_VINES)
+//                            .put("minecraft:weeping_vines", ChunkerVanillaBlockType.WEEPING_VINES)
+//                            .build(),
+//                    JavaStateGroups.AGE_25));
+//            register(BlockMapping.group(ImmutableMultimap.<String, ChunkerVanillaBlockType>builder()
+//                            .put("minecraft:crimson_fence", ChunkerVanillaBlockType.CRIMSON_FENCE)
+//                            .put("minecraft:warped_fence", ChunkerVanillaBlockType.WARPED_FENCE)
+//                            .build(),
+//                    JavaStateGroups.CONNECTABLE_HORIZONTAL));
+//            register(BlockMapping.group(ImmutableMultimap.<String, ChunkerVanillaBlockType>builder()
+//                            .put("minecraft:crimson_wall_sign", ChunkerVanillaBlockType.CRIMSON_WALL_SIGN)
+//                            .put("minecraft:warped_wall_sign", ChunkerVanillaBlockType.WARPED_WALL_SIGN)
+//                            .build(),
+//                    JavaStateGroups.FACING_HORIZONTAL_WATERLOGGED));
+//            register(BlockMapping.group(ImmutableMultimap.<String, ChunkerVanillaBlockType>builder()
+//                            .put("minecraft:blackstone_stairs", ChunkerVanillaBlockType.BLACKSTONE_STAIRS)
+//                            .put("minecraft:crimson_stairs", ChunkerVanillaBlockType.CRIMSON_STAIRS)
+//                            .put("minecraft:polished_blackstone_brick_stairs", ChunkerVanillaBlockType.POLISHED_BLACKSTONE_BRICK_STAIRS)
+//                            .put("minecraft:polished_blackstone_stairs", ChunkerVanillaBlockType.POLISHED_BLACKSTONE_STAIRS)
+//                            .put("minecraft:warped_stairs", ChunkerVanillaBlockType.WARPED_STAIRS)
+//                            .build(),
+//                    JavaStateGroups.STAIRS));
+//            register(BlockMapping.group(ImmutableMultimap.<String, ChunkerVanillaBlockType>builder()
+//                            .put("minecraft:crimson_pressure_plate", ChunkerVanillaBlockType.CRIMSON_PRESSURE_PLATE)
+//                            .put("minecraft:polished_blackstone_pressure_plate", ChunkerVanillaBlockType.POLISHED_BLACKSTONE_PRESSURE_PLATE)
+//                            .put("minecraft:warped_pressure_plate", ChunkerVanillaBlockType.WARPED_PRESSURE_PLATE)
+//                            .build(),
+//                    JavaStateGroups.POWERED));
+//            register(BlockMapping.group(ImmutableMultimap.<String, ChunkerVanillaBlockType>builder()
+//                            .put("minecraft:blackstone_wall", ChunkerVanillaBlockType.BLACKSTONE_WALL)
+//                            .put("minecraft:polished_blackstone_brick_wall", ChunkerVanillaBlockType.POLISHED_BLACKSTONE_BRICK_WALL)
+//                            .put("minecraft:polished_blackstone_wall", ChunkerVanillaBlockType.POLISHED_BLACKSTONE_WALL)
+//                            .build(),
+//                    JavaStateGroups.WALL));
+//            register(BlockMapping.group(ImmutableMultimap.<String, ChunkerVanillaBlockType>builder()
+//                            .put("minecraft:crimson_door", ChunkerVanillaBlockType.CRIMSON_DOOR)
+//                            .put("minecraft:warped_door", ChunkerVanillaBlockType.WARPED_DOOR)
+//                            .build(),
+//                    JavaStateGroups.DOOR));
+//            register(BlockMapping.group(ImmutableMultimap.<String, ChunkerVanillaBlockType>builder()
+//                            .put("minecraft:crimson_trapdoor", ChunkerVanillaBlockType.CRIMSON_TRAPDOOR)
+//                            .put("minecraft:warped_trapdoor", ChunkerVanillaBlockType.WARPED_TRAPDOOR)
+//                            .build(),
+//                    JavaStateGroups.TRAPDOOR));
+//            register(BlockMapping.group(ImmutableMultimap.<String, ChunkerVanillaBlockType>builder()
+//                            .put("minecraft:blackstone_slab", ChunkerVanillaBlockType.BLACKSTONE_SLAB)
+//                            .put("minecraft:crimson_slab", ChunkerVanillaBlockType.CRIMSON_SLAB)
+//                            .put("minecraft:polished_blackstone_brick_slab", ChunkerVanillaBlockType.POLISHED_BLACKSTONE_BRICK_SLAB)
+//                            .put("minecraft:polished_blackstone_slab", ChunkerVanillaBlockType.POLISHED_BLACKSTONE_SLAB)
+//                            .put("minecraft:warped_slab", ChunkerVanillaBlockType.WARPED_SLAB)
+//                            .build(),
+//                    JavaStateGroups.SLAB));
+//
+//            // 1.17
+//            // New blocks
+//            register(BlockMapping.of("minecraft:amethyst_block", ChunkerVanillaBlockType.AMETHYST_BLOCK));
+//            register(BlockMapping.of("minecraft:azalea", ChunkerVanillaBlockType.AZALEA));
+//            register(BlockMapping.of("minecraft:big_dripleaf", ChunkerVanillaBlockType.BIG_DRIPLEAF, JavaStateGroups.BIG_DRIPLEAF));
+//            register(BlockMapping.of("minecraft:big_dripleaf_stem", ChunkerVanillaBlockType.BIG_DRIPLEAF_STEM, JavaStateGroups.FACING_HORIZONTAL_WATERLOGGED));
+//            register(BlockMapping.of("minecraft:budding_amethyst", ChunkerVanillaBlockType.BUDDING_AMETHYST));
+//            register(BlockMapping.of("minecraft:calcite", ChunkerVanillaBlockType.CALCITE));
+//            register(BlockMapping.of("minecraft:cave_vines", ChunkerVanillaBlockType.CAVE_VINES_HEAD, JavaStateGroups.CAVE_VINES_HEAD));
+//            register(BlockMapping.of("minecraft:cave_vines_plant", ChunkerVanillaBlockType.CAVE_VINES_BODY, JavaStateGroups.CAVE_VINES_BODY));
+//            register(BlockMapping.of("minecraft:chiseled_deepslate", ChunkerVanillaBlockType.CHISELED_DEEPSLATE));
+//            register(BlockMapping.of("minecraft:cobbled_deepslate", ChunkerVanillaBlockType.COBBLED_DEEPSLATE));
+//            register(BlockMapping.of("minecraft:copper_block", ChunkerVanillaBlockType.COPPER_BLOCK));
+//            register(BlockMapping.of("minecraft:copper_ore", ChunkerVanillaBlockType.COPPER_ORE));
+//            register(BlockMapping.of("minecraft:cracked_deepslate_bricks", ChunkerVanillaBlockType.CRACKED_DEEPSLATE_BRICKS));
+//            register(BlockMapping.of("minecraft:cracked_deepslate_tiles", ChunkerVanillaBlockType.CRACKED_DEEPSLATE_TILES));
+//            register(BlockMapping.of("minecraft:cut_copper", ChunkerVanillaBlockType.CUT_COPPER));
+//            register(BlockMapping.of("minecraft:deepslate_bricks", ChunkerVanillaBlockType.DEEPSLATE_BRICKS));
+//            register(BlockMapping.of("minecraft:deepslate_coal_ore", ChunkerVanillaBlockType.DEEPSLATE_COAL_ORE));
+//            register(BlockMapping.of("minecraft:deepslate_copper_ore", ChunkerVanillaBlockType.DEEPSLATE_COPPER_ORE));
+//            register(BlockMapping.of("minecraft:deepslate_diamond_ore", ChunkerVanillaBlockType.DEEPSLATE_DIAMOND_ORE));
+//            register(BlockMapping.of("minecraft:deepslate_emerald_ore", ChunkerVanillaBlockType.DEEPSLATE_EMERALD_ORE));
+//            register(BlockMapping.of("minecraft:deepslate_gold_ore", ChunkerVanillaBlockType.DEEPSLATE_GOLD_ORE));
+//            register(BlockMapping.of("minecraft:deepslate_iron_ore", ChunkerVanillaBlockType.DEEPSLATE_IRON_ORE));
+//            register(BlockMapping.of("minecraft:deepslate_lapis_ore", ChunkerVanillaBlockType.DEEPSLATE_LAPIS_ORE));
+//            register(BlockMapping.of("minecraft:deepslate_tiles", ChunkerVanillaBlockType.DEEPSLATE_TILES));
+//            registerOverrideOutput(BlockMapping.of("minecraft:dirt_path", ChunkerVanillaBlockType.DIRT_PATH));
+//            register(BlockMapping.of("minecraft:dripstone_block", ChunkerVanillaBlockType.DRIPSTONE_BLOCK));
+//            register(BlockMapping.of("minecraft:exposed_copper", ChunkerVanillaBlockType.EXPOSED_COPPER));
+//            register(BlockMapping.of("minecraft:exposed_cut_copper", ChunkerVanillaBlockType.EXPOSED_CUT_COPPER));
+//            register(BlockMapping.of("minecraft:flowering_azalea", ChunkerVanillaBlockType.FLOWERING_AZALEA));
+//            register(BlockMapping.of("minecraft:glow_lichen", ChunkerVanillaBlockType.GLOW_LICHEN, JavaStateGroups.CONNECTABLE_WATERLOGGED));
+//            register(BlockMapping.of("minecraft:hanging_roots", ChunkerVanillaBlockType.HANGING_ROOTS, JavaStateGroups.WATERLOGGED));
+//            register(BlockMapping.of("minecraft:lava_cauldron", ChunkerVanillaBlockType.LAVA_CAULDRON, JavaStateGroups.LAVA_CAULDRON));
+//            register(BlockMapping.of("minecraft:light", ChunkerVanillaBlockType.LIGHT, JavaStateGroups.LIGHT_BLOCK));
+//            register(BlockMapping.of("minecraft:lightning_rod", ChunkerVanillaBlockType.LIGHTNING_ROD, JavaStateGroups.LIGHTNING_ROD));
+//            register(BlockMapping.of("minecraft:moss_block", ChunkerVanillaBlockType.MOSS_BLOCK));
+//            register(BlockMapping.of("minecraft:moss_carpet", ChunkerVanillaBlockType.MOSS_CARPET));
+//            register(BlockMapping.of("minecraft:oxidized_copper", ChunkerVanillaBlockType.OXIDIZED_COPPER));
+//            register(BlockMapping.of("minecraft:oxidized_cut_copper", ChunkerVanillaBlockType.OXIDIZED_CUT_COPPER));
+//            register(BlockMapping.of("minecraft:pointed_dripstone", ChunkerVanillaBlockType.POINTED_DRIPSTONE, JavaStateGroups.POINTED_DRIPSTONE));
+//            register(BlockMapping.of("minecraft:polished_deepslate", ChunkerVanillaBlockType.POLISHED_DEEPSLATE));
+//            register(BlockMapping.of("minecraft:potted_azalea_bush", ChunkerVanillaBlockType.POTTED_AZALEA_BUSH));
+//            register(BlockMapping.of("minecraft:potted_flowering_azalea_bush", ChunkerVanillaBlockType.POTTED_FLOWERING_AZALEA_BUSH));
+//            register(BlockMapping.of("minecraft:powder_snow", ChunkerVanillaBlockType.POWDER_SNOW));
+//            register(BlockMapping.of("minecraft:powder_snow_cauldron", ChunkerVanillaBlockType.POWDER_SNOW_CAULDRON, JavaStateGroups.CAULDRON));
+//            register(BlockMapping.of("minecraft:raw_copper_block", ChunkerVanillaBlockType.RAW_COPPER_BLOCK));
+//            register(BlockMapping.of("minecraft:raw_gold_block", ChunkerVanillaBlockType.RAW_GOLD_BLOCK));
+//            register(BlockMapping.of("minecraft:raw_iron_block", ChunkerVanillaBlockType.RAW_IRON_BLOCK));
+//            register(BlockMapping.of("minecraft:rooted_dirt", ChunkerVanillaBlockType.ROOTED_DIRT));
+//            register(BlockMapping.of("minecraft:sculk_sensor", ChunkerVanillaBlockType.SCULK_SENSOR, JavaStateGroups.SCULK_SENSOR));
+//            register(BlockMapping.of("minecraft:small_dripleaf", ChunkerVanillaBlockType.SMALL_DRIPLEAF, JavaStateGroups.SMALL_DRIPLEAF));
+//            register(BlockMapping.of("minecraft:smooth_basalt", ChunkerVanillaBlockType.SMOOTH_BASALT));
+//            register(BlockMapping.of("minecraft:spore_blossom", ChunkerVanillaBlockType.SPORE_BLOSSOM));
+//            register(BlockMapping.of("minecraft:tinted_glass", ChunkerVanillaBlockType.TINTED_GLASS));
+//            register(BlockMapping.of("minecraft:tuff", ChunkerVanillaBlockType.TUFF));
+//            register(BlockMapping.of("minecraft:waxed_copper_block", ChunkerVanillaBlockType.WAXED_COPPER_BLOCK));
+//            register(BlockMapping.of("minecraft:waxed_cut_copper", ChunkerVanillaBlockType.WAXED_CUT_COPPER));
+//            register(BlockMapping.of("minecraft:waxed_exposed_copper", ChunkerVanillaBlockType.WAXED_EXPOSED_COPPER));
+//            register(BlockMapping.of("minecraft:waxed_exposed_cut_copper", ChunkerVanillaBlockType.WAXED_EXPOSED_CUT_COPPER));
+//            register(BlockMapping.of("minecraft:waxed_oxidized_copper", ChunkerVanillaBlockType.WAXED_OXIDIZED_COPPER));
+//            register(BlockMapping.of("minecraft:waxed_oxidized_cut_copper", ChunkerVanillaBlockType.WAXED_OXIDIZED_CUT_COPPER));
+//            register(BlockMapping.of("minecraft:waxed_weathered_copper", ChunkerVanillaBlockType.WAXED_WEATHERED_COPPER));
+//            register(BlockMapping.of("minecraft:waxed_weathered_cut_copper", ChunkerVanillaBlockType.WAXED_WEATHERED_CUT_COPPER));
+//            register(BlockMapping.of("minecraft:weathered_copper", ChunkerVanillaBlockType.WEATHERED_COPPER));
+//            register(BlockMapping.of("minecraft:weathered_cut_copper", ChunkerVanillaBlockType.WEATHERED_CUT_COPPER));
+//            register(BlockMapping.group(ImmutableMultimap.<String, ChunkerVanillaBlockType>builder()
+//                            .put("minecraft:black_candle_cake", ChunkerVanillaBlockType.BLACK_CANDLE_CAKE)
+//                            .put("minecraft:blue_candle_cake", ChunkerVanillaBlockType.BLUE_CANDLE_CAKE)
+//                            .put("minecraft:brown_candle_cake", ChunkerVanillaBlockType.BROWN_CANDLE_CAKE)
+//                            .put("minecraft:candle_cake", ChunkerVanillaBlockType.CANDLE_CAKE)
+//                            .put("minecraft:cyan_candle_cake", ChunkerVanillaBlockType.CYAN_CANDLE_CAKE)
+//                            .put("minecraft:deepslate_redstone_ore", ChunkerVanillaBlockType.DEEPSLATE_REDSTONE_ORE)
+//                            .put("minecraft:gray_candle_cake", ChunkerVanillaBlockType.GRAY_CANDLE_CAKE)
+//                            .put("minecraft:green_candle_cake", ChunkerVanillaBlockType.GREEN_CANDLE_CAKE)
+//                            .put("minecraft:light_blue_candle_cake", ChunkerVanillaBlockType.LIGHT_BLUE_CANDLE_CAKE)
+//                            .put("minecraft:light_gray_candle_cake", ChunkerVanillaBlockType.LIGHT_GRAY_CANDLE_CAKE)
+//                            .put("minecraft:lime_candle_cake", ChunkerVanillaBlockType.LIME_CANDLE_CAKE)
+//                            .put("minecraft:magenta_candle_cake", ChunkerVanillaBlockType.MAGENTA_CANDLE_CAKE)
+//                            .put("minecraft:orange_candle_cake", ChunkerVanillaBlockType.ORANGE_CANDLE_CAKE)
+//                            .put("minecraft:pink_candle_cake", ChunkerVanillaBlockType.PINK_CANDLE_CAKE)
+//                            .put("minecraft:purple_candle_cake", ChunkerVanillaBlockType.PURPLE_CANDLE_CAKE)
+//                            .put("minecraft:red_candle_cake", ChunkerVanillaBlockType.RED_CANDLE_CAKE)
+//                            .put("minecraft:white_candle_cake", ChunkerVanillaBlockType.WHITE_CANDLE_CAKE)
+//                            .put("minecraft:yellow_candle_cake", ChunkerVanillaBlockType.YELLOW_CANDLE_CAKE)
+//                            .build(),
+//                    JavaStateGroups.LIT_DEFAULT_FALSE));
+//            register(BlockMapping.group(ImmutableMultimap.<String, ChunkerVanillaBlockType>builder()
+//                            .put("minecraft:deepslate", ChunkerVanillaBlockType.DEEPSLATE)
+//                            .put("minecraft:infested_deepslate", ChunkerVanillaBlockType.INFESTED_DEEPSLATE)
+//                            .build(),
+//                    JavaStateGroups.AXIS));
+//            register(BlockMapping.group(ImmutableMultimap.<String, ChunkerVanillaBlockType>builder()
+//                            .put("minecraft:amethyst_cluster", ChunkerVanillaBlockType.AMETHYST_CLUSTER)
+//                            .put("minecraft:large_amethyst_bud", ChunkerVanillaBlockType.LARGE_AMETHYST_BUD)
+//                            .put("minecraft:medium_amethyst_bud", ChunkerVanillaBlockType.MEDIUM_AMETHYST_BUD)
+//                            .put("minecraft:small_amethyst_bud", ChunkerVanillaBlockType.SMALL_AMETHYST_BUD)
+//                            .build(),
+//                    JavaStateGroups.FACING_ALL_WATERLOGGED));
+//            register(BlockMapping.group(ImmutableMultimap.<String, ChunkerVanillaBlockType>builder()
+//                            .put("minecraft:azalea_leaves", ChunkerVanillaBlockType.AZALEA_LEAVES)
+//                            .put("minecraft:flowering_azalea_leaves", ChunkerVanillaBlockType.FLOWERING_AZALEA_LEAVES)
+//                            .build(),
+//                    JavaStateGroups.LEAVES));
+//            register(BlockMapping.group(ImmutableMultimap.<String, ChunkerVanillaBlockType>builder()
+//                            .put("minecraft:black_candle", ChunkerVanillaBlockType.BLACK_CANDLE)
+//                            .put("minecraft:blue_candle", ChunkerVanillaBlockType.BLUE_CANDLE)
+//                            .put("minecraft:brown_candle", ChunkerVanillaBlockType.BROWN_CANDLE)
+//                            .put("minecraft:candle", ChunkerVanillaBlockType.CANDLE)
+//                            .put("minecraft:cyan_candle", ChunkerVanillaBlockType.CYAN_CANDLE)
+//                            .put("minecraft:gray_candle", ChunkerVanillaBlockType.GRAY_CANDLE)
+//                            .put("minecraft:green_candle", ChunkerVanillaBlockType.GREEN_CANDLE)
+//                            .put("minecraft:light_blue_candle", ChunkerVanillaBlockType.LIGHT_BLUE_CANDLE)
+//                            .put("minecraft:light_gray_candle", ChunkerVanillaBlockType.LIGHT_GRAY_CANDLE)
+//                            .put("minecraft:lime_candle", ChunkerVanillaBlockType.LIME_CANDLE)
+//                            .put("minecraft:magenta_candle", ChunkerVanillaBlockType.MAGENTA_CANDLE)
+//                            .put("minecraft:orange_candle", ChunkerVanillaBlockType.ORANGE_CANDLE)
+//                            .put("minecraft:pink_candle", ChunkerVanillaBlockType.PINK_CANDLE)
+//                            .put("minecraft:purple_candle", ChunkerVanillaBlockType.PURPLE_CANDLE)
+//                            .put("minecraft:red_candle", ChunkerVanillaBlockType.RED_CANDLE)
+//                            .put("minecraft:white_candle", ChunkerVanillaBlockType.WHITE_CANDLE)
+//                            .put("minecraft:yellow_candle", ChunkerVanillaBlockType.YELLOW_CANDLE)
+//                            .build(),
+//                    JavaStateGroups.CANDLE));
+//            register(BlockMapping.group(ImmutableMultimap.<String, ChunkerVanillaBlockType>builder()
+//                            .put("minecraft:cobbled_deepslate_stairs", ChunkerVanillaBlockType.COBBLED_DEEPSLATE_STAIRS)
+//                            .put("minecraft:cut_copper_stairs", ChunkerVanillaBlockType.CUT_COPPER_STAIRS)
+//                            .put("minecraft:deepslate_brick_stairs", ChunkerVanillaBlockType.DEEPSLATE_BRICK_STAIRS)
+//                            .put("minecraft:deepslate_tile_stairs", ChunkerVanillaBlockType.DEEPSLATE_TILE_STAIRS)
+//                            .put("minecraft:exposed_cut_copper_stairs", ChunkerVanillaBlockType.EXPOSED_CUT_COPPER_STAIRS)
+//                            .put("minecraft:oxidized_cut_copper_stairs", ChunkerVanillaBlockType.OXIDIZED_CUT_COPPER_STAIRS)
+//                            .put("minecraft:polished_deepslate_stairs", ChunkerVanillaBlockType.POLISHED_DEEPSLATE_STAIRS)
+//                            .put("minecraft:waxed_cut_copper_stairs", ChunkerVanillaBlockType.WAXED_CUT_COPPER_STAIRS)
+//                            .put("minecraft:waxed_exposed_cut_copper_stairs", ChunkerVanillaBlockType.WAXED_EXPOSED_CUT_COPPER_STAIRS)
+//                            .put("minecraft:waxed_oxidized_cut_copper_stairs", ChunkerVanillaBlockType.WAXED_OXIDIZED_CUT_COPPER_STAIRS)
+//                            .put("minecraft:waxed_weathered_cut_copper_stairs", ChunkerVanillaBlockType.WAXED_WEATHERED_CUT_COPPER_STAIRS)
+//                            .put("minecraft:weathered_cut_copper_stairs", ChunkerVanillaBlockType.WEATHERED_CUT_COPPER_STAIRS)
+//                            .build(),
+//                    JavaStateGroups.STAIRS));
+//            register(BlockMapping.group(ImmutableMultimap.<String, ChunkerVanillaBlockType>builder()
+//                            .put("minecraft:cobbled_deepslate_wall", ChunkerVanillaBlockType.COBBLED_DEEPSLATE_WALL)
+//                            .put("minecraft:deepslate_brick_wall", ChunkerVanillaBlockType.DEEPSLATE_BRICK_WALL)
+//                            .put("minecraft:deepslate_tile_wall", ChunkerVanillaBlockType.DEEPSLATE_TILE_WALL)
+//                            .put("minecraft:polished_deepslate_wall", ChunkerVanillaBlockType.POLISHED_DEEPSLATE_WALL)
+//                            .build(),
+//                    JavaStateGroups.WALL));
+//            register(BlockMapping.group(ImmutableMultimap.<String, ChunkerVanillaBlockType>builder()
+//                            .put("minecraft:cobbled_deepslate_slab", ChunkerVanillaBlockType.COBBLED_DEEPSLATE_SLAB)
+//                            .put("minecraft:cut_copper_slab", ChunkerVanillaBlockType.CUT_COPPER_SLAB)
+//                            .put("minecraft:deepslate_brick_slab", ChunkerVanillaBlockType.DEEPSLATE_BRICK_SLAB)
+//                            .put("minecraft:deepslate_tile_slab", ChunkerVanillaBlockType.DEEPSLATE_TILE_SLAB)
+//                            .put("minecraft:exposed_cut_copper_slab", ChunkerVanillaBlockType.EXPOSED_CUT_COPPER_SLAB)
+//                            .put("minecraft:oxidized_cut_copper_slab", ChunkerVanillaBlockType.OXIDIZED_CUT_COPPER_SLAB)
+//                            .put("minecraft:polished_deepslate_slab", ChunkerVanillaBlockType.POLISHED_DEEPSLATE_SLAB)
+//                            .put("minecraft:waxed_cut_copper_slab", ChunkerVanillaBlockType.WAXED_CUT_COPPER_SLAB)
+//                            .put("minecraft:waxed_exposed_cut_copper_slab", ChunkerVanillaBlockType.WAXED_EXPOSED_CUT_COPPER_SLAB)
+//                            .put("minecraft:waxed_oxidized_cut_copper_slab", ChunkerVanillaBlockType.WAXED_OXIDIZED_CUT_COPPER_SLAB)
+//                            .put("minecraft:waxed_weathered_cut_copper_slab", ChunkerVanillaBlockType.WAXED_WEATHERED_CUT_COPPER_SLAB)
+//                            .put("minecraft:weathered_cut_copper_slab", ChunkerVanillaBlockType.WEATHERED_CUT_COPPER_SLAB)
+//                            .build(),
+//                    JavaStateGroups.SLAB));
         }
     }
 }

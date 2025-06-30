@@ -37,8 +37,12 @@ public interface JavaReaderWriter extends LevelReaderWriter {
      */
     default JavaResolversBuilder buildResolvers(Converter converter) {
         Version version = getVersion();
+        JavaLegacyBlockIDResolver idResolver = new JavaLegacyBlockIDResolver(version);
+        if (converter.getLegacyBlockIDTranslations() != null) {
+            converter.getLegacyBlockIDTranslations().forEach(idResolver.getMapping()::put);
+        }
         return new JavaResolversBuilder(converter, version, true)
-                .blockIDResolver(new JavaLegacyBlockIDResolver(version))
+                .blockIDResolver(idResolver)
                 .nbtBlockIdentifierResolver(new JavaNBTBlockIdentifierResolver(version))
                 .itemIdentifierResolver(new JavaLegacyItemIdentifierResolver(converter, version, isReader()))
                 .blockIdentifierResolver(new JavaLegacyBlockIdentifierResolver(converter, version, isReader(), converter.shouldAllowCustomIdentifiers()))

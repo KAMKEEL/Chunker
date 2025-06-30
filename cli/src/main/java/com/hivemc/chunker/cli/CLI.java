@@ -15,6 +15,7 @@ import com.hivemc.chunker.mapping.MappingsFile;
 import com.hivemc.chunker.mapping.resolver.MappingsFileResolvers;
 import com.hivemc.chunker.pruning.PruningConfig;
 import com.hivemc.chunker.scheduling.task.TrackedTask;
+import com.hivemc.chunker.util.LegacyBlockIDTranslationLoader;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import picocli.CommandLine;
 
@@ -109,6 +110,12 @@ public class CLI implements Runnable {
             description = "Whether original NBT should be kept and written to the output world (only works if the output is the same as the input)."
     )
     private boolean keepOriginalNBT;
+
+    @CommandLine.Option(
+            names = {"--legacyIdTranslations", "-t"},
+            description = "A file containing identifier to legacy ID mappings."
+    )
+    private File legacyIdTranslations;
 
     /**
      * Main entry point for the CLI
@@ -227,6 +234,16 @@ public class CLI implements Runnable {
                     worldConverter.setDimensionMapping(dimensionMapping);
                 } catch (Exception e) {
                     System.err.println("Failed to parse dimension mappings.");
+                    throw new RuntimeException(e);
+                }
+            }
+
+            if (legacyIdTranslations != null) {
+                try {
+                    Map<String, Integer> translations = LegacyBlockIDTranslationLoader.load(legacyIdTranslations);
+                    worldConverter.setLegacyBlockIDTranslations(translations);
+                } catch (Exception e) {
+                    System.err.println("Failed to parse legacy ID translations.");
                     throw new RuntimeException(e);
                 }
             }

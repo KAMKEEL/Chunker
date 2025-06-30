@@ -35,6 +35,16 @@ import java.util.*;
  * A reader for Java levels.
  */
 public class JavaLevelReader implements LevelReader, JavaReaderWriter {
+    /**
+     * Map of slot ID to equipment name (used for 1.21.5 Java).
+     */
+    public static final Map<Byte, String> SLOT_TO_EQUIPMENT = Map.of(
+            (byte) -106, "offhand",
+            (byte) 100, "feet",
+            (byte) 101, "legs",
+            (byte) 102, "chest",
+            (byte) 103, "head"
+    );
     protected final File inputDirectory;
     protected final Version inputVersion;
     protected final Converter converter;
@@ -248,10 +258,16 @@ public class JavaLevelReader implements LevelReader, JavaReaderWriter {
         if (parts.length != 4 || file.length() < 4096)
             return; // Skip if it doesn't have the right parts or isn't the right size
 
-        // Parse region co-ordinates
-        int regionX = Integer.parseInt(parts[1]);
-        int regionZ = Integer.parseInt(parts[2]);
-        RegionCoordPair regionCoordPair = new RegionCoordPair(regionX, regionZ);
+        RegionCoordPair regionCoordPair;
+        try {
+            // Parse region co-ordinates
+            int regionX = Integer.parseInt(parts[1]);
+            int regionZ = Integer.parseInt(parts[2]);
+            regionCoordPair = new RegionCoordPair(regionX, regionZ);
+        } catch (NumberFormatException e) {
+            // Ignore if the region co-ordinates didn't parse properly
+            return;
+        }
 
         // Read the MCA file
         try (MCAReader mcaReader = new MCAReader(converter, file)) {
@@ -360,6 +376,19 @@ public class JavaLevelReader implements LevelReader, JavaReaderWriter {
             }
         }
 
+        // Parse the equipment if there is an equipment tag
+        CompoundTag equipment = player.getCompound("equipment");
+        if (equipment != null) {
+            for (Map.Entry<Byte, String> slot : SLOT_TO_EQUIPMENT.entrySet()) {
+                CompoundTag itemTag = equipment.getCompound(slot.getValue());
+                if (itemTag == null) continue;
+
+                // Read item
+                ChunkerItemStack item = resolvers.readItem(itemTag);
+                inventory.put(slot.getKey().byteValue(), item);
+            }
+        }
+
         // Create the local player
         return new ChunkerLevelPlayer(
                 Dimension.fromJavaNBT(player.get("Dimension"), Dimension.OVERWORLD),
@@ -378,6 +407,11 @@ public class JavaLevelReader implements LevelReader, JavaReaderWriter {
 
     @Override
     public @Nullable Object readCustomLevelSetting(@NotNull CompoundTag root, @NotNull String targetName, @NotNull Class<?> type) {
+        // Check for SummerDrop2025 support
+        if (targetName.equals("SummerDrop2025")) {
+            return false;
+        }
+
         if (targetName.equals("WinterDrop2024")) {
             // Not in less than 1.21.2
             return false;
@@ -485,7 +519,7 @@ public class JavaLevelReader implements LevelReader, JavaReaderWriter {
     protected ChunkerMap parseMap(File mapFile) {
         try {
             // Read the file
-            CompoundTag mapCompound = Tag.readGZipJavaNBT(mapFile);
+            CompoundTag mapCompound = Tag.readPossibleGZipJavaNBT(mapFile);
             if (mapCompound == null) return null; // Failed to parse
 
             // Remove the map_ prefix and the .dat suffix
@@ -515,7 +549,7 @@ public class JavaLevelReader implements LevelReader, JavaReaderWriter {
             return map;
 
         } catch (Exception e) {
-            converter.logNonFatalException(e);
+            converter.logNonFatalException(new Exception("Could not read map " + mapFile.getName(), e));
             return null;
         }
     }

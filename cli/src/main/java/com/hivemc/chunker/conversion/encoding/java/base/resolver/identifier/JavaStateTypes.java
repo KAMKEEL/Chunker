@@ -207,6 +207,11 @@ public class JavaStateTypes {
             .mapping("false", Creaking.DISABLED)
             .mapping("true", Creaking.ACTIVE)
             .build();
+    public static final TypeMapping<String, Creaking> CREAKING_HEART_STATE = new TypeMapping.Builder<String, Creaking>()
+            .mapping("uprooted", Creaking.DISABLED)
+            .mapping("dormant", Creaking.DORMANT)
+            .mapping("awake", Creaking.ACTIVE)
+            .build();
     public static final TypeMapping<String, Delay> DELAY = new TypeMapping.Builder<String, Delay>()
             .mapping("1", Delay._1)
             .mapping("2", Delay._2)
@@ -539,6 +544,12 @@ public class JavaStateTypes {
             .mapping("side", RedstoneConnection.SIDE)
             .mapping("none", RedstoneConnection.NONE)
             .build();
+    public static final TypeMapping<String, RehydrationLevel> REHYDRATION_LEVEL = new TypeMapping.Builder<String, RehydrationLevel>()
+            .mapping("0", RehydrationLevel._0)
+            .mapping("1", RehydrationLevel._1)
+            .mapping("2", RehydrationLevel._2)
+            .mapping("3", RehydrationLevel._3)
+            .build();
     public static final TypeMapping<String, Rotation> ROTATION = new TypeMapping.Builder<String, Rotation>()
             .mapping("0", Rotation._0)
             .mapping("1", Rotation._1)
@@ -561,6 +572,12 @@ public class JavaStateTypes {
             .mapping("inactive", SculkSensorPhase.INACTIVE)
             .mapping("active", SculkSensorPhase.ACTIVE)
             .mapping("cooldown", SculkSensorPhase.COOLDOWN)
+            .build();
+    public static final TypeMapping<String, Segments> SEGMENT_AMOUNT = new TypeMapping.Builder<String, Segments>()
+            .mapping("1", Segments._1)
+            .mapping("2", Segments._2)
+            .mapping("3", Segments._3)
+            .mapping("4", Segments._4)
             .build();
     public static final TypeMapping<String, SlabType> SLAB_TYPE = new TypeMapping.Builder<String, SlabType>()
             .mapping("top", SlabType.TOP)
@@ -597,6 +614,12 @@ public class JavaStateTypes {
             // Not supported on Java
             .mapping("save", StructureBlockMode.EXPORT)
             .mapping("save", StructureBlockMode.INVALID)
+            .build();
+    public static final TypeMapping<String, TestBlockMode> TEST_BLOCK_MODE = new TypeMapping.Builder<String, TestBlockMode>()
+            .mapping("start", TestBlockMode.START)
+            .mapping("log", TestBlockMode.LOG)
+            .mapping("fail", TestBlockMode.FAIL)
+            .mapping("accept", TestBlockMode.ACCEPT)
             .build();
     public static final TypeMapping<String, Tilt> TILT = new TypeMapping.Builder<String, Tilt>()
             .mapping("none", Tilt.NONE)

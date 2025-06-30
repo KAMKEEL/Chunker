@@ -18,10 +18,10 @@ public class JavaNamedBiomeResolver implements Resolver<String, ChunkerBiome> {
     /**
      * Create a new java identifier biome resolver.
      *
-     * @param javaVersion                the game version being used, as certain biomes are only available after
-     *                                   specific versions.
+     * @param javaVersion               the game version being used, as certain biomes are only available after
+     *                                  specific versions.
      * @param customIdentifierSupported whether custom identifiers should be passed through as
-     *                                   ChunkerCustomBiome.
+     *                                  ChunkerCustomBiome.
      */
     public JavaNamedBiomeResolver(Version javaVersion, boolean customIdentifierSupported) {
         this.customIdentifierSupported = customIdentifierSupported;
@@ -104,8 +104,8 @@ public class JavaNamedBiomeResolver implements Resolver<String, ChunkerBiome> {
 
     @Override
     public Optional<String> from(ChunkerBiome input) {
-        if (input instanceof ChunkerBiome.ChunkerVanillaBiome ChunkerVanillaBiome) {
-            return from(ChunkerVanillaBiome);
+        if (input instanceof ChunkerBiome.ChunkerVanillaBiome chunkerVanillaBiome) {
+            return from(chunkerVanillaBiome);
         } else if (input instanceof ChunkerCustomBiome customIdentifierBiome) {
             if (customIdentifierSupported) {
                 return Optional.ofNullable(customIdentifierBiome.getIdentifier());

@@ -6,6 +6,7 @@ import com.hivemc.chunker.conversion.encoding.base.Converter;
 import com.hivemc.chunker.conversion.encoding.base.resolver.itemstack.ItemStackResolver;
 import com.hivemc.chunker.conversion.encoding.java.base.resolver.JavaResolvers;
 import com.hivemc.chunker.conversion.encoding.java.base.resolver.entity.legacy.JavaLegacyEntityTypeIDResolver;
+import com.hivemc.chunker.conversion.encoding.java.base.resolver.identifier.legacy.JavaLegacyItemIDResolver;
 import com.hivemc.chunker.conversion.intermediate.column.blockentity.BlockEntity;
 import com.hivemc.chunker.conversion.intermediate.column.chunk.identifier.ChunkerBlockIdentifier;
 import com.hivemc.chunker.conversion.intermediate.column.chunk.identifier.type.block.states.vanilla.VanillaBlockStates;
@@ -26,6 +27,7 @@ import com.hivemc.chunker.nbt.TagType;
 import com.hivemc.chunker.nbt.tags.Tag;
 import com.hivemc.chunker.nbt.tags.collection.CompoundTag;
 import com.hivemc.chunker.nbt.tags.collection.ListTag;
+import com.hivemc.chunker.nbt.tags.primitive.ShortTag;
 import com.hivemc.chunker.nbt.tags.primitive.StringTag;
 import com.hivemc.chunker.resolver.property.PropertyHandler;
 import com.hivemc.chunker.util.JsonTextUtil;
@@ -43,6 +45,8 @@ import java.util.stream.IntStream;
  * Resolver for converting Java Legacy NBT to the Chunker ItemStack and resolving all the properties of the item.
  */
 public class JavaLegacyItemStackResolver extends ItemStackResolver<JavaResolvers, CompoundTag> {
+    private JavaLegacyItemIDResolver legacyItemIDResolver;
+
     /**
      * Create a new legacy java item stack resolver.
      *
@@ -50,6 +54,7 @@ public class JavaLegacyItemStackResolver extends ItemStackResolver<JavaResolvers
      */
     public JavaLegacyItemStackResolver(JavaResolvers resolvers) {
         super(resolvers);
+        this.legacyItemIDResolver = new JavaLegacyItemIDResolver(resolvers.dataVersion().getVersion());
     }
 
     @Override
@@ -264,7 +269,7 @@ public class JavaLegacyItemStackResolver extends ItemStackResolver<JavaResolvers
                 for (Map.Entry<ChunkerEnchantmentType, Integer> enchantment : value.entrySet()) {
                     Optional<Integer> id = resolvers.enchantmentIDResolver().from(enchantment.getKey());
                     if (id.isEmpty()) {
-                        resolvers.converter().logMissingMapping(Converter.MissingMappingType.ENCHANTMENT, enchantment.getKey().toString());
+                        resolvers.converter().logMissingMapping(Converter.MissingMappingType.ENCHANTMENT, String.valueOf(enchantment.getKey()));
                         continue; // Don't include not supported enchantments
                     }
 
@@ -347,7 +352,7 @@ public class JavaLegacyItemStackResolver extends ItemStackResolver<JavaResolvers
                         entityTag.put("id", type.get());
                     } else {
                         // Report missing mapping
-                        resolvers.converter().logMissingMapping(Converter.MissingMappingType.ENTITY_TYPE, entityType.toString());
+                        resolvers.converter().logMissingMapping(Converter.MissingMappingType.ENTITY_TYPE, String.valueOf(entityType));
 
                         // If it's a spawn egg, turn the output to null as it's not valid
                         if (state.key().getIdentifier() == ChunkerVanillaItemType.SPAWN_EGG) {
@@ -429,12 +434,7 @@ public class JavaLegacyItemStackResolver extends ItemStackResolver<JavaResolvers
                     if (state.key().getIdentifier().getItemStackType() == ChunkerVanillaItemType.WRITABLE_BOOK) {
                         pagesJSON.add(JsonTextUtil.fromText(page));
                     } else {
-                        try {
-                            pagesJSON.add(JsonTextUtil.fromJSON(page));
-                        } catch (Exception e) {
-                            // Fallback to literal parsing
-                            pagesJSON.add(JsonTextUtil.fromText(page));
-                        }
+                        pagesJSON.add(JsonTextUtil.fromJSON(page));
                     }
                 }
                 return Optional.of(pagesJSON);
@@ -691,10 +691,31 @@ public class JavaLegacyItemStackResolver extends ItemStackResolver<JavaResolvers
     @Override
     protected Optional<ChunkerItemStack> createPropertyHolder(CompoundTag input) {
         // First turn the NBT into an identifier
-        Identifier identifier = Identifier.fromData(
-                input.getString("id"),
-                OptionalInt.of(input.getShort("Damage", (short) 0))
-        );
+        Tag<?> id = input.get("id");
+        Identifier identifier;
+        if (id instanceof StringTag stringTag) {
+            identifier = Identifier.fromData(
+                    stringTag.getValue(),
+                    OptionalInt.of(input.getShort("Damage", (short) 0))
+            );
+        } else if (id instanceof ShortTag shortTag)  {
+            Optional<String> value = legacyItemIDResolver.inverse().from((int) shortTag.getValue());
+
+            // Couldn't find the legacy ID
+            if (value.isEmpty()) {
+                return Optional.empty();
+            }
+
+            // Create an identifier using the converter ID
+            identifier = Identifier.fromData(
+                    value.get(),
+                    OptionalInt.of(input.getShort("Damage", (short) 0))
+            );
+        } else {
+            // Couldn't find the ID
+            return Optional.empty();
+        }
+
 
         // Now use the item identifier reader to turn it into an item/block
         return Optional.of(resolvers.readItemIdentifier(identifier));

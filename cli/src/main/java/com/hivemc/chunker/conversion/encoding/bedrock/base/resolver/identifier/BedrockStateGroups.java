@@ -280,10 +280,18 @@ public class BedrockStateGroups {
             .state("triggered_bit", VanillaBlockStates.TRIGGERED, BedrockStateTypes.BOOL)
             .state("orientation", VanillaBlockStates.ORIENTATION, BedrockStateTypes.ORIENTATION)
             .build();
-    public static final StateMappingGroup CREAKING_HEART = new StateMappingGroup.Builder()
-            .state("pillar_axis", VanillaBlockStates.AXIS, BedrockStateTypes.AXIS)
-            .state("active", VanillaBlockStates.CREAKING, BedrockStateTypes.CREAKING)
-            .state("natural", VanillaBlockStates.NATURAL, BedrockStateTypes.BOOL)
+    public static final VersionedStateMappingGroup CREAKING_HEART = new VersionedStateMappingGroup.Builder()
+            .defaults(new StateMappingGroup.Builder()
+                    .state("pillar_axis", VanillaBlockStates.AXIS, BedrockStateTypes.AXIS)
+                    .state("active", VanillaBlockStates.CREAKING, BedrockStateTypes.CREAKING_BOOL)
+                    .state("natural", VanillaBlockStates.NATURAL, BedrockStateTypes.BOOL)
+                    .build())
+            // 1.21.60 added creaking_heart_state instead of active
+            .version(new Version(1, 21, 60), new StateMappingGroup.Builder()
+                    .state("pillar_axis", VanillaBlockStates.AXIS, BedrockStateTypes.AXIS)
+                    .state("creaking_heart_state", VanillaBlockStates.CREAKING, BedrockStateTypes.CREAKING)
+                    .state("natural", VanillaBlockStates.NATURAL, BedrockStateTypes.BOOL)
+                    .build())
             .build();
     public static final StateMappingGroup CROP = new StateMappingGroup.Builder()
             .state("growth", VanillaBlockStates.AGE_7, BedrockStateTypes.AGE_7)
@@ -327,9 +335,21 @@ public class BedrockStateGroups {
                     .state("open_bit", VanillaBlockStates.OPEN, BedrockStateTypes.BOOL)
                     .defaultOutput(VanillaBlockStates.POWERED, Bool.FALSE)
                     .build())
+            // 1.21.60 migrated direction to minecraft:cardinal_direction
+            .version(new Version(1, 21, 60), new StateMappingGroup.Builder()
+                    .state("minecraft:cardinal_direction", VanillaBlockStates.FACING_HORIZONTAL, BedrockStateTypes.CARDINAL_DIRECTION_DOOR)
+                    .state("upper_block_bit", VanillaBlockStates.HALF, BedrockStateTypes.HALF)
+                    .state("door_hinge_bit", VanillaBlockStates.DOOR_HINGE, BedrockStateTypes.HINGE)
+                    .state("open_bit", VanillaBlockStates.OPEN, BedrockStateTypes.BOOL)
+                    .defaultOutput(VanillaBlockStates.POWERED, Bool.FALSE)
+                    .build())
             .build();
     public static final StateMappingGroup DOUBLE_BLOCK = new StateMappingGroup.Builder()
             .state("upper_block_bit", VanillaBlockStates.HALF, BedrockStateTypes.HALF)
+            .build();
+    public static final StateMappingGroup DRIED_GHAST = new StateMappingGroup.Builder()
+            .state("minecraft:cardinal_direction", VanillaBlockStates.FACING_HORIZONTAL, BedrockStateTypes.CARDINAL_DIRECTION)
+            .state("rehydration_level", VanillaBlockStates.REHYDRATION_LEVEL, BedrockStateTypes.REHYDRATION_LEVEL)
             .build();
     public static final VersionedStateMappingGroup ENDER_CHEST = new VersionedStateMappingGroup.Builder()
             .defaults(new StateMappingGroup.Builder()
@@ -373,12 +393,21 @@ public class BedrockStateGroups {
     public static final StateMappingGroup FARMLAND = new StateMappingGroup.Builder()
             .state("moisturized_amount", VanillaBlockStates.MOISTURE, BedrockStateTypes.MOISTURE)
             .build();
-    public static final StateMappingGroup FENCE_GATE = new StateMappingGroup.Builder()
-            .state("direction", VanillaBlockStates.FACING_HORIZONTAL, BedrockStateTypes.CARDINAL_DIRECTION_LEGACY)
-            .state("in_wall_bit", VanillaBlockStates.IN_WALL, BedrockStateTypes.BOOL)
-            .state("open_bit", VanillaBlockStates.OPEN, BedrockStateTypes.BOOL)
-            .defaultOutput(VanillaBlockStates.POWERED, Bool.FALSE)
-            .build();
+    public static final VersionedStateMappingGroup FENCE_GATE = new VersionedStateMappingGroup.Builder()
+            .defaults(new StateMappingGroup.Builder()
+                    .state("direction", VanillaBlockStates.FACING_HORIZONTAL, BedrockStateTypes.CARDINAL_DIRECTION_LEGACY)
+                    .state("in_wall_bit", VanillaBlockStates.IN_WALL, BedrockStateTypes.BOOL)
+                    .state("open_bit", VanillaBlockStates.OPEN, BedrockStateTypes.BOOL)
+                    .defaultOutput(VanillaBlockStates.POWERED, Bool.FALSE)
+                    .build())
+            // 1.21.60 migrated direction to minecraft:cardinal_direction
+            .version(new Version(1, 21, 60), new StateMappingGroup.Builder()
+                    .state("minecraft:cardinal_direction", VanillaBlockStates.FACING_HORIZONTAL, BedrockStateTypes.CARDINAL_DIRECTION)
+                    .state("in_wall_bit", VanillaBlockStates.IN_WALL, BedrockStateTypes.BOOL)
+                    .state("open_bit", VanillaBlockStates.OPEN, BedrockStateTypes.BOOL)
+                    .defaultOutput(VanillaBlockStates.POWERED, Bool.FALSE)
+                    .build()
+            ).build();
     public static final StateMappingGroup FIRE = new StateMappingGroup.Builder()
             .state("age", VanillaBlockStates.AGE_15, BedrockStateTypes.AGE_15)
             .defaultOutput(VanillaBlockStates.EAST, Bool.FALSE)
@@ -467,6 +496,10 @@ public class BedrockStateGroups {
             .build();
     public static final StateMappingGroup LAYER_BLOCK = new StateMappingGroup.Builder()
             .state("height", VanillaBlockStates.LAYERS, BedrockStateTypes.LAYERS)
+            .build();
+    public static final VersionedStateMappingGroup LEAF_LITTER = new StateMappingGroup.Builder()
+            .state("minecraft:cardinal_direction", VanillaBlockStates.FACING_HORIZONTAL, BedrockStateTypes.CARDINAL_DIRECTION)
+            .state("growth", VanillaBlockStates.SEGMENT_AMOUNT, BedrockStateTypes.SEGMENT_COUNT)
             .build();
     public static final StateMappingGroup LEAVES = new StateMappingGroup.Builder()
             .state("persistent_bit", VanillaBlockStates.PERSISTENT, BedrockStateTypes.BOOL)
@@ -956,6 +989,10 @@ public class BedrockStateGroups {
             .build();
     public static final StateMappingGroup WEIGHTED_PRESSURE_PLATE = new StateMappingGroup.Builder()
             .state("redstone_signal", VanillaBlockStates.POWER, BedrockStateTypes.POWER)
+            .build();
+    public static final VersionedStateMappingGroup WILDFLOWERS = new StateMappingGroup.Builder()
+            .state("minecraft:cardinal_direction", VanillaBlockStates.FACING_HORIZONTAL, BedrockStateTypes.CARDINAL_DIRECTION)
+            .state("growth", VanillaBlockStates.FLOWER_AMOUNT, BedrockStateTypes.FLOWER_COUNT)
             .build();
     public static final StateMappingGroup WIRE = new StateMappingGroup.Builder()
             .state("redstone_signal", VanillaBlockStates.POWER, BedrockStateTypes.POWER)

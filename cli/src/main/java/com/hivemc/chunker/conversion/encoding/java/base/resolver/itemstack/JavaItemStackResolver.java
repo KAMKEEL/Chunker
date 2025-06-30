@@ -271,7 +271,7 @@ public class JavaItemStackResolver extends ItemStackResolver<JavaResolvers, Comp
                 for (Map.Entry<ChunkerEnchantmentType, Integer> enchantment : value.entrySet()) {
                     Optional<String> id = resolvers.enchantmentResolver().from(enchantment.getKey());
                     if (id.isEmpty()) {
-                        resolvers.converter().logMissingMapping(Converter.MissingMappingType.ENCHANTMENT, enchantment.getKey().toString());
+                        resolvers.converter().logMissingMapping(Converter.MissingMappingType.ENCHANTMENT, String.valueOf(enchantment.getKey()));
                         continue; // Don't include not supported enchantments
                     }
 
@@ -349,7 +349,7 @@ public class JavaItemStackResolver extends ItemStackResolver<JavaResolvers, Comp
                     entityTag.put("id", type.get());
                 } else {
                     // Report missing mapping
-                    resolvers.converter().logMissingMapping(Converter.MissingMappingType.ENTITY_TYPE, entityType.toString());
+                    resolvers.converter().logMissingMapping(Converter.MissingMappingType.ENTITY_TYPE, String.valueOf(entityType));
 
                     // If it's a spawn egg, turn the output to null as it's not valid
                     if (state.key().getIdentifier() == ChunkerVanillaItemType.SPAWN_EGG) {
@@ -404,12 +404,7 @@ public class JavaItemStackResolver extends ItemStackResolver<JavaResolvers, Comp
                     if (state.key().getIdentifier().getItemStackType() == ChunkerVanillaItemType.WRITABLE_BOOK) {
                         pagesJSON.add(JsonTextUtil.fromText(page));
                     } else {
-                        try {
-                            pagesJSON.add(JsonTextUtil.fromJSON(page));
-                        } catch (Exception e) {
-                            // Fallback to literal parsing
-                            pagesJSON.add(JsonTextUtil.fromText(page));
-                        }
+                        pagesJSON.add(JsonTextUtil.fromJSON(page));
                     }
                 }
                 return Optional.of(pagesJSON);
@@ -520,7 +515,7 @@ public class JavaItemStackResolver extends ItemStackResolver<JavaResolvers, Comp
                 Optional<String> trimPattern = resolvers.trimPatternResolver().from(chunkerTrim.getPattern());
                 if (trimPattern.isEmpty()) {
                     // Report missing mapping
-                    resolvers.converter().logMissingMapping(Converter.MissingMappingType.TRIM_PATTERN, chunkerTrim.getPattern().toString());
+                    resolvers.converter().logMissingMapping(Converter.MissingMappingType.TRIM_PATTERN, String.valueOf(chunkerTrim.getPattern()));
                     return; // Don't write
                 }
 
@@ -528,7 +523,7 @@ public class JavaItemStackResolver extends ItemStackResolver<JavaResolvers, Comp
                 Optional<String> trimMaterial = resolvers.trimMaterialResolver().from(chunkerTrim.getMaterial());
                 if (trimMaterial.isEmpty()) {
                     // Report missing mapping
-                    resolvers.converter().logMissingMapping(Converter.MissingMappingType.TRIM_MATERIAL, chunkerTrim.getMaterial().toString());
+                    resolvers.converter().logMissingMapping(Converter.MissingMappingType.TRIM_MATERIAL, String.valueOf(chunkerTrim.getMaterial()));
                     return; // Don't write
                 }
 
@@ -746,6 +741,7 @@ public class JavaItemStackResolver extends ItemStackResolver<JavaResolvers, Comp
                     CompoundTag tag = entityTag.get();
 
                     // Remove any position based data
+                    tag.remove("block_pos");
                     tag.remove("TileX");
                     tag.remove("TileY");
                     tag.remove("TileZ");

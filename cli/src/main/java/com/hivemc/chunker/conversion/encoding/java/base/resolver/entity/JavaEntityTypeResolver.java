@@ -206,6 +206,7 @@ public class JavaEntityTypeResolver implements Resolver<String, ChunkerEntityTyp
             mapping.put(ChunkerVanillaEntityType.WIND_CHARGE, "minecraft:wind_charge");
             mapping.put(ChunkerVanillaEntityType.ARMADILLO, "minecraft:armadillo");
             mapping.put(ChunkerVanillaEntityType.BOGGED, "minecraft:bogged");
+            mapping.put(ChunkerVanillaEntityType.OMINOUS_ITEM_SPAWNER, "minecraft:ominous_item_spawner");
         }
         if (version.isGreaterThanOrEqual(1, 21, 2)) {
             mapping.put(ChunkerVanillaEntityType.CREAKING, "minecraft:creaking");
@@ -231,6 +232,14 @@ public class JavaEntityTypeResolver implements Resolver<String, ChunkerEntityTyp
             mapping.put(ChunkerVanillaEntityType.PALE_OAK_CHEST_BOAT, "minecraft:pale_oak_chest_boat");
             mapping.put(ChunkerVanillaEntityType.MANGROVE_CHEST_BOAT, "minecraft:mangrove_chest_boat");
             mapping.put(ChunkerVanillaEntityType.BAMBOO_CHEST_RAFT, "minecraft:bamboo_chest_raft");
+        }
+        if (version.isGreaterThanOrEqual(1, 21, 5)) {
+            // Potion was flattened
+            mapping.put(ChunkerVanillaEntityType.LINGERING_POTION, "minecraft:lingering_potion");
+            mapping.put(ChunkerVanillaEntityType.POTION, "minecraft:splash_potion");
+        }
+        if (version.isGreaterThanOrEqual(1, 21, 6)) {
+            mapping.put(ChunkerVanillaEntityType.HAPPY_GHAST, "minecraft:happy_ghast");
         }
     }
 

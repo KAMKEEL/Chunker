@@ -259,6 +259,12 @@ public class BedrockStateTypes {
             .mapping("south", FacingDirectionHorizontal.SOUTH)
             .mapping("west", FacingDirectionHorizontal.WEST)
             .build();
+    public static final TypeMapping<String, FacingDirectionHorizontal> CARDINAL_DIRECTION_DOOR = new TypeMapping.Builder<String, FacingDirectionHorizontal>()
+            .mapping("north", FacingDirectionHorizontal.WEST)
+            .mapping("east", FacingDirectionHorizontal.NORTH)
+            .mapping("south", FacingDirectionHorizontal.EAST)
+            .mapping("west", FacingDirectionHorizontal.SOUTH)
+            .build();
     public static final TypeMapping<Integer, FacingDirectionHorizontal> CARDINAL_DIRECTION_LEGACY = new TypeMapping.Builder<Integer, FacingDirectionHorizontal>()
             .mapping(0, FacingDirectionHorizontal.SOUTH)
             .mapping(1, FacingDirectionHorizontal.WEST)
@@ -312,10 +318,15 @@ public class BedrockStateTypes {
             .mapping(0, CoralFanDirection.EAST_WEST)
             .mapping(1, CoralFanDirection.NORTH_SOUTH)
             .build();
-    public static final TypeMapping<Boolean, Creaking> CREAKING = new TypeMapping.Builder<Boolean, Creaking>()
+    public static final TypeMapping<Boolean, Creaking> CREAKING_BOOL = new TypeMapping.Builder<Boolean, Creaking>()
             .mapping(false, Creaking.DORMANT)
             .mapping(false, Creaking.DISABLED)
             .mapping(true, Creaking.ACTIVE)
+            .build();
+    public static final TypeMapping<String, Creaking> CREAKING = new TypeMapping.Builder<String, Creaking>()
+            .mapping("uprooted", Creaking.DISABLED)
+            .mapping("dormant", Creaking.DORMANT)
+            .mapping("awake", Creaking.ACTIVE)
             .build();
     public static final TypeMapping<Integer, Delay> DELAY = new TypeMapping.Builder<Integer, Delay>()
             .mapping(0, Delay._1)
@@ -776,6 +787,12 @@ public class BedrockStateTypes {
             .mapping(14, Bool.TRUE)
             .mapping(15, Bool.TRUE)
             .build();
+    public static final TypeMapping<Integer, RehydrationLevel> REHYDRATION_LEVEL = new TypeMapping.Builder<Integer, RehydrationLevel>()
+            .mapping(0, RehydrationLevel._0)
+            .mapping(1, RehydrationLevel._1)
+            .mapping(2, RehydrationLevel._2)
+            .mapping(3, RehydrationLevel._3)
+            .build();
     public static final TypeMapping<Integer, RespawnAnchorCharges> RESPAWN_ANCHOR_CHARGE = new TypeMapping.Builder<Integer, RespawnAnchorCharges>()
             .mapping(0, RespawnAnchorCharges._0)
             .mapping(1, RespawnAnchorCharges._1)
@@ -805,6 +822,16 @@ public class BedrockStateTypes {
             .mapping(0, SculkSensorPhase.INACTIVE)
             .mapping(1, SculkSensorPhase.ACTIVE)
             .mapping(2, SculkSensorPhase.COOLDOWN)
+            .build();
+    public static final TypeMapping<Integer, Segments> SEGMENT_COUNT = new TypeMapping.Builder<Integer, Segments>()
+            .mapping(0, Segments._1)
+            .mapping(1, Segments._2)
+            .mapping(2, Segments._3)
+            .mapping(3, Segments._4)
+            .mapping(4, Segments._4)
+            .mapping(5, Segments._4)
+            .mapping(6, Segments._4)
+            .mapping(7, Segments._4)
             .build();
     public static final TypeMapping<String, SlabType> SLAB_TYPE = new TypeMapping.Builder<String, SlabType>()
             .mapping("top", SlabType.TOP)

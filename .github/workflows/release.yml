@@ -28,7 +28,7 @@ jobs:
           distribution: 'temurin'
 
       - name: Setup Gradle
-        uses: gradle/actions/setup-gradle@0bdd871935719febd78681f197cd39af5b6e16a6 # v4
+        uses: gradle/actions/setup-gradle@8379f6a1328ee0e06e2bb424dadb7b159856a326 # v4
 
       - name: Mark Gradle as Executable
         run: chmod +x gradlew
@@ -70,13 +70,13 @@ jobs:
           distribution: 'temurin'
 
       - name: Setup Gradle
-        uses: gradle/actions/setup-gradle@0bdd871935719febd78681f197cd39af5b6e16a6 # v4
+        uses: gradle/actions/setup-gradle@8379f6a1328ee0e06e2bb424dadb7b159856a326 # v4
 
       - name: Build with Gradle Wrapper
         run: ./gradlew build -x test
 
       - name: Sign exe with Trusted Signing
-        uses: azure/trusted-signing-action@v0.5.0
+        uses: azure/trusted-signing-action@v0.5.1
         if: github.repository == 'HiveGamesOSS/Chunker'
         with:
           azure-tenant-id: ${{ secrets.AZURE_TENANT_ID }}
@@ -92,7 +92,7 @@ jobs:
           timestamp-digest: SHA256
 
       - name: Sign unpacked with Trusted Signing
-        uses: azure/trusted-signing-action@v0.5.0
+        uses: azure/trusted-signing-action@v0.5.1
         if: github.repository == 'HiveGamesOSS/Chunker'
         with:
           azure-tenant-id: ${{ secrets.AZURE_TENANT_ID }}
@@ -131,7 +131,7 @@ jobs:
           distribution: 'temurin'
 
       - name: Setup Gradle
-        uses: gradle/actions/setup-gradle@0bdd871935719febd78681f197cd39af5b6e16a6 # v4
+        uses: gradle/actions/setup-gradle@8379f6a1328ee0e06e2bb424dadb7b159856a326 # v4
 
       - name: Mark Gradle as Executable
         run: chmod +x gradlew

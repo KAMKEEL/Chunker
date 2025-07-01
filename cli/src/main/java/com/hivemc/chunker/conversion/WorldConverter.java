@@ -75,6 +75,8 @@ public class WorldConverter implements Converter {
     private List<ChunkerMap> maps;
     @Nullable
     private MappingsFileResolvers blockMappings;
+    @Nullable
+    private Map<String, Integer> legacyBlockIdTranslations;
     private boolean levelDBCompaction = false;
     private boolean processMaps = true;
     private boolean processItems = true;
@@ -402,6 +404,21 @@ public class WorldConverter implements Converter {
     @Nullable
     public MappingsFileResolvers getBlockMappings() {
         return blockMappings;
+    }
+
+    @Override
+    @Nullable
+    public Map<String, Integer> getLegacyBlockIDTranslations() {
+        return legacyBlockIdTranslations;
+    }
+
+    /**
+     * Set custom legacy block ID translations.
+     *
+     * @param translations the mapping to use or null if none.
+     */
+    public void setLegacyBlockIDTranslations(@Nullable Map<String, Integer> translations) {
+        this.legacyBlockIdTranslations = translations;
     }
 
     /**

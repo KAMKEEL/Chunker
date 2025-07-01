@@ -134,6 +134,14 @@ public interface Converter {
     MappingsFileResolvers getBlockMappings();
 
     /**
+     * Get custom legacy block ID translations to override default mappings.
+     *
+     * @return a mapping of identifier -> legacy ID or null if none.
+     */
+    @Nullable
+    java.util.Map<String, Integer> getLegacyBlockIDTranslations();
+
+    /**
      * Log a non-fatal exception.
      *
      * @param throwable the exception.

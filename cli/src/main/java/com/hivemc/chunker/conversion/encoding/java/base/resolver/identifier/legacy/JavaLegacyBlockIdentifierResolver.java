@@ -1114,5 +1114,108 @@ public class JavaLegacyBlockIdentifierResolver extends ChunkerBlockIdentifierRes
                             .build(),
                     JavaLegacyStateGroups.FACING_HORIZONTAL_SWNE));
         }
+
+        // 1.16
+        if (version.isGreaterThanOrEqual(1, 16, 0)) {
+            register(BlockMapping.of("minecraft:ancient_debris", ChunkerVanillaBlockType.ANCIENT_DEBRIS));
+            register(BlockMapping.of("minecraft:netherite_block", ChunkerVanillaBlockType.NETHERITE_BLOCK));
+            register(BlockMapping.of("minecraft:crying_obsidian", ChunkerVanillaBlockType.CRYING_OBSIDIAN));
+            register(BlockMapping.of("minecraft:respawn_anchor", ChunkerVanillaBlockType.RESPAWN_ANCHOR, JavaLegacyStateGroups.RESPAWN_ANCHOR));
+            register(BlockMapping.of("minecraft:lodestone", ChunkerVanillaBlockType.LODESTONE));
+            register(BlockMapping.of("minecraft:blackstone", ChunkerVanillaBlockType.BLACKSTONE));
+            register(BlockMapping.of("minecraft:gilded_blackstone", ChunkerVanillaBlockType.GILDED_BLACKSTONE));
+            register(BlockMapping.of("minecraft:polished_blackstone", ChunkerVanillaBlockType.POLISHED_BLACKSTONE));
+            register(BlockMapping.of("minecraft:polished_blackstone_bricks", ChunkerVanillaBlockType.POLISHED_BLACKSTONE_BRICKS));
+            register(BlockMapping.of("minecraft:cracked_polished_blackstone_bricks", ChunkerVanillaBlockType.CRACKED_POLISHED_BLACKSTONE_BRICKS));
+            register(BlockMapping.of("minecraft:chiseled_polished_blackstone", ChunkerVanillaBlockType.CHISELED_POLISHED_BLACKSTONE));
+            register(BlockMapping.of("minecraft:chiseled_nether_bricks", ChunkerVanillaBlockType.CHISELED_NETHER_BRICKS));
+            register(BlockMapping.of("minecraft:cracked_nether_bricks", ChunkerVanillaBlockType.CRACKED_NETHER_BRICKS));
+            register(BlockMapping.of("minecraft:shroomlight", ChunkerVanillaBlockType.SHROOMLIGHT));
+            register(BlockMapping.of("minecraft:soul_soil", ChunkerVanillaBlockType.SOUL_SOIL));
+            register(BlockMapping.of("minecraft:basalt", ChunkerVanillaBlockType.BASALT));
+            register(BlockMapping.of("minecraft:polished_basalt", ChunkerVanillaBlockType.POLISHED_BASALT));
+            register(BlockMapping.of("minecraft:target", ChunkerVanillaBlockType.TARGET, JavaLegacyStateGroups.POWER));
+            register(BlockMapping.of("minecraft:warped_nylium", ChunkerVanillaBlockType.WARPED_NYLIUM));
+            register(BlockMapping.of("minecraft:crimson_nylium", ChunkerVanillaBlockType.CRIMSON_NYLIUM));
+            register(BlockMapping.of("minecraft:nether_gold_ore", ChunkerVanillaBlockType.NETHER_GOLD_ORE));
+            register(BlockMapping.of("minecraft:nether_sprouts", ChunkerVanillaBlockType.NETHER_SPROUTS));
+            register(BlockMapping.of("minecraft:soul_fire", ChunkerVanillaBlockType.SOUL_FIRE, JavaLegacyStateGroups.SOUL_FIRE));
+            register(BlockMapping.of("minecraft:soul_torch", ChunkerVanillaBlockType.SOUL_TORCH));
+            register(BlockMapping.of("minecraft:soul_wall_torch", ChunkerVanillaBlockType.SOUL_WALL_TORCH, JavaLegacyStateGroups.FACING_HORIZONTAL));
+            register(BlockMapping.of("minecraft:soul_campfire", ChunkerVanillaBlockType.SOUL_CAMPFIRE, JavaLegacyStateGroups.CAMPFIRE));
+            register(BlockMapping.of("minecraft:soul_lantern", ChunkerVanillaBlockType.SOUL_LANTERN, JavaLegacyStateGroups.LANTERN));
+            register(BlockMapping.of("minecraft:crimson_planks", ChunkerVanillaBlockType.CRIMSON_PLANKS));
+            register(BlockMapping.of("minecraft:warped_planks", ChunkerVanillaBlockType.WARPED_PLANKS));
+            register(BlockMapping.of("minecraft:crimson_stem", ChunkerVanillaBlockType.CRIMSON_STEM, JavaLegacyStateGroups.AXIS));
+            register(BlockMapping.of("minecraft:warped_stem", ChunkerVanillaBlockType.WARPED_STEM, JavaLegacyStateGroups.AXIS));
+            register(BlockMapping.of("minecraft:crimson_hyphae", ChunkerVanillaBlockType.CRIMSON_HYPHAE, JavaLegacyStateGroups.AXIS));
+            register(BlockMapping.of("minecraft:warped_hyphae", ChunkerVanillaBlockType.WARPED_HYPHAE, JavaLegacyStateGroups.AXIS));
+            register(BlockMapping.of("minecraft:stripped_crimson_stem", ChunkerVanillaBlockType.STRIPPED_CRIMSON_STEM, JavaLegacyStateGroups.AXIS));
+            register(BlockMapping.of("minecraft:stripped_warped_stem", ChunkerVanillaBlockType.STRIPPED_WARPED_STEM, JavaLegacyStateGroups.AXIS));
+            register(BlockMapping.of("minecraft:stripped_crimson_hyphae", ChunkerVanillaBlockType.STRIPPED_CRIMSON_HYPHAE, JavaLegacyStateGroups.AXIS));
+            register(BlockMapping.of("minecraft:stripped_warped_hyphae", ChunkerVanillaBlockType.STRIPPED_WARPED_HYPHAE, JavaLegacyStateGroups.AXIS));
+            register(BlockMapping.of("minecraft:warped_wart_block", ChunkerVanillaBlockType.WARPED_WART_BLOCK));
+            register(BlockMapping.of("minecraft:crimson_fungus", ChunkerVanillaBlockType.CRIMSON_FUNGUS));
+            register(BlockMapping.of("minecraft:warped_fungus", ChunkerVanillaBlockType.WARPED_FUNGUS));
+            register(BlockMapping.of("minecraft:crimson_roots", ChunkerVanillaBlockType.CRIMSON_ROOTS));
+            register(BlockMapping.of("minecraft:warped_roots", ChunkerVanillaBlockType.WARPED_ROOTS));
+            register(BlockMapping.of("minecraft:twisting_vines", ChunkerVanillaBlockType.TWISTING_VINES, JavaLegacyStateGroups.AGE_25));
+            register(BlockMapping.of("minecraft:twisting_vines_plant", ChunkerVanillaBlockType.TWISTING_VINES_PLANT));
+            register(BlockMapping.of("minecraft:weeping_vines", ChunkerVanillaBlockType.WEEPING_VINES, JavaLegacyStateGroups.AGE_25));
+            register(BlockMapping.of("minecraft:weeping_vines_plant", ChunkerVanillaBlockType.WEEPING_VINES_PLANT));
+            register(BlockMapping.of("minecraft:crimson_fence", ChunkerVanillaBlockType.CRIMSON_FENCE, JavaLegacyStateGroups.CONNECTABLE_HORIZONTAL));
+            register(BlockMapping.of("minecraft:warped_fence", ChunkerVanillaBlockType.WARPED_FENCE, JavaLegacyStateGroups.CONNECTABLE_HORIZONTAL));
+            register(BlockMapping.of("minecraft:crimson_fence_gate", ChunkerVanillaBlockType.CRIMSON_FENCE_GATE, JavaLegacyStateGroups.FENCE_GATE));
+            register(BlockMapping.of("minecraft:warped_fence_gate", ChunkerVanillaBlockType.WARPED_FENCE_GATE, JavaLegacyStateGroups.FENCE_GATE));
+            register(BlockMapping.of("minecraft:crimson_pressure_plate", ChunkerVanillaBlockType.CRIMSON_PRESSURE_PLATE, JavaLegacyStateGroups.POWERED));
+            register(BlockMapping.of("minecraft:warped_pressure_plate", ChunkerVanillaBlockType.WARPED_PRESSURE_PLATE, JavaLegacyStateGroups.POWERED));
+            register(BlockMapping.of("minecraft:polished_blackstone_pressure_plate", ChunkerVanillaBlockType.POLISHED_BLACKSTONE_PRESSURE_PLATE, JavaLegacyStateGroups.POWERED));
+            register(BlockMapping.of("minecraft:crimson_button", ChunkerVanillaBlockType.CRIMSON_BUTTON, JavaLegacyStateGroups.BUTTON));
+            register(BlockMapping.of("minecraft:warped_button", ChunkerVanillaBlockType.WARPED_BUTTON, JavaLegacyStateGroups.BUTTON));
+            register(BlockMapping.of("minecraft:polished_blackstone_button", ChunkerVanillaBlockType.POLISHED_BLACKSTONE_BUTTON, JavaLegacyStateGroups.BUTTON));
+            register(BlockMapping.of("minecraft:crimson_door", ChunkerVanillaBlockType.CRIMSON_DOOR, JavaLegacyStateGroups.DOOR));
+            register(BlockMapping.of("minecraft:warped_door", ChunkerVanillaBlockType.WARPED_DOOR, JavaLegacyStateGroups.DOOR));
+            register(BlockMapping.of("minecraft:crimson_trapdoor", ChunkerVanillaBlockType.CRIMSON_TRAPDOOR, JavaLegacyStateGroups.TRAPDOOR));
+            register(BlockMapping.of("minecraft:warped_trapdoor", ChunkerVanillaBlockType.WARPED_TRAPDOOR, JavaLegacyStateGroups.TRAPDOOR));
+            register(BlockMapping.of("minecraft:blackstone_slab", ChunkerVanillaBlockType.BLACKSTONE_SLAB, JavaLegacyStateGroups.SLAB));
+            register(BlockMapping.of("minecraft:blackstone_stairs", ChunkerVanillaBlockType.BLACKSTONE_STAIRS, JavaLegacyStateGroups.STAIRS));
+            register(BlockMapping.of("minecraft:blackstone_wall", ChunkerVanillaBlockType.BLACKSTONE_WALL, JavaLegacyStateGroups.WALL));
+            register(BlockMapping.of("minecraft:polished_blackstone_slab", ChunkerVanillaBlockType.POLISHED_BLACKSTONE_SLAB, JavaLegacyStateGroups.SLAB));
+            register(BlockMapping.of("minecraft:polished_blackstone_stairs", ChunkerVanillaBlockType.POLISHED_BLACKSTONE_STAIRS, JavaLegacyStateGroups.STAIRS));
+            register(BlockMapping.of("minecraft:polished_blackstone_wall", ChunkerVanillaBlockType.POLISHED_BLACKSTONE_WALL, JavaLegacyStateGroups.WALL));
+            register(BlockMapping.of("minecraft:polished_blackstone_brick_slab", ChunkerVanillaBlockType.POLISHED_BLACKSTONE_BRICK_SLAB, JavaLegacyStateGroups.SLAB));
+            register(BlockMapping.of("minecraft:polished_blackstone_brick_stairs", ChunkerVanillaBlockType.POLISHED_BLACKSTONE_BRICK_STAIRS, JavaLegacyStateGroups.STAIRS));
+            register(BlockMapping.of("minecraft:polished_blackstone_brick_wall", ChunkerVanillaBlockType.POLISHED_BLACKSTONE_BRICK_WALL, JavaLegacyStateGroups.WALL));
+            register(BlockMapping.of("minecraft:crimson_stairs", ChunkerVanillaBlockType.CRIMSON_STAIRS, JavaLegacyStateGroups.STAIRS));
+            register(BlockMapping.of("minecraft:warped_stairs", ChunkerVanillaBlockType.WARPED_STAIRS, JavaLegacyStateGroups.STAIRS));
+            register(BlockMapping.of("minecraft:crimson_slab", ChunkerVanillaBlockType.CRIMSON_SLAB, JavaLegacyStateGroups.SLAB));
+            register(BlockMapping.of("minecraft:warped_slab", ChunkerVanillaBlockType.WARPED_SLAB, JavaLegacyStateGroups.SLAB));
+            register(BlockMapping.of("minecraft:crimson_sign", ChunkerVanillaBlockType.CRIMSON_SIGN, JavaLegacyStateGroups.SIGN));
+            register(BlockMapping.of("minecraft:warped_sign", ChunkerVanillaBlockType.WARPED_SIGN, JavaLegacyStateGroups.SIGN));
+            register(BlockMapping.of("minecraft:crimson_wall_sign", ChunkerVanillaBlockType.CRIMSON_WALL_SIGN, JavaLegacyStateGroups.FACING_HORIZONTAL_WATERLOGGED));
+            register(BlockMapping.of("minecraft:warped_wall_sign", ChunkerVanillaBlockType.WARPED_WALL_SIGN, JavaLegacyStateGroups.FACING_HORIZONTAL_WATERLOGGED));
+        }
+
+        // Register any remaining blocks that don't have explicit mappings
+        registerRemainingBlocks();
+    }
+
+    /**
+     * Automatically register mappings for any {@link ChunkerVanillaBlockType}
+     * values that don't already have a mapping defined. This converts the enum
+     * name to the corresponding "minecraft:" identifier (lower case with
+     * underscores).
+     */
+    private void registerRemainingBlocks() {
+        for (ChunkerVanillaBlockType type : ChunkerVanillaBlockType.values()) {
+            if (isSupported(type)) {
+                continue;
+            }
+
+            String identifier = "minecraft:" + type.name().toLowerCase();
+            if (!isSupported(identifier)) {
+                register(BlockMapping.of(identifier, type));
+            }
+        }
     }
 }

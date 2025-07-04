@@ -331,6 +331,22 @@ public class JavaLegacyBlockIdentifierResolver extends ChunkerBlockIdentifierRes
                         .put("minecraft:bed", ChunkerVanillaBlockType.LIME_BED)
                         .build(),
                 JavaLegacyStateGroups.BED));
+        registerDuplicateInput(BlockMapping.of("minecraft:white_bed", ChunkerVanillaBlockType.WHITE_BED));
+        registerDuplicateInput(BlockMapping.of("minecraft:orange_bed", ChunkerVanillaBlockType.ORANGE_BED));
+        registerDuplicateInput(BlockMapping.of("minecraft:magenta_bed", ChunkerVanillaBlockType.MAGENTA_BED));
+        registerDuplicateInput(BlockMapping.of("minecraft:light_blue_bed", ChunkerVanillaBlockType.LIGHT_BLUE_BED));
+        registerDuplicateInput(BlockMapping.of("minecraft:yellow_bed", ChunkerVanillaBlockType.YELLOW_BED));
+        registerDuplicateInput(BlockMapping.of("minecraft:lime_bed", ChunkerVanillaBlockType.LIME_BED));
+        registerDuplicateInput(BlockMapping.of("minecraft:pink_bed", ChunkerVanillaBlockType.PINK_BED));
+        registerDuplicateInput(BlockMapping.of("minecraft:gray_bed", ChunkerVanillaBlockType.GRAY_BED));
+        registerDuplicateInput(BlockMapping.of("minecraft:light_gray_bed", ChunkerVanillaBlockType.LIGHT_GRAY_BED));
+        registerDuplicateInput(BlockMapping.of("minecraft:cyan_bed", ChunkerVanillaBlockType.CYAN_BED));
+        registerDuplicateInput(BlockMapping.of("minecraft:purple_bed", ChunkerVanillaBlockType.PURPLE_BED));
+        registerDuplicateInput(BlockMapping.of("minecraft:blue_bed", ChunkerVanillaBlockType.BLUE_BED));
+        registerDuplicateInput(BlockMapping.of("minecraft:brown_bed", ChunkerVanillaBlockType.BROWN_BED));
+        registerDuplicateInput(BlockMapping.of("minecraft:green_bed", ChunkerVanillaBlockType.GREEN_BED));
+        registerDuplicateInput(BlockMapping.of("minecraft:red_bed", ChunkerVanillaBlockType.RED_BED));
+        registerDuplicateInput(BlockMapping.of("minecraft:black_bed", ChunkerVanillaBlockType.BLACK_BED));
 
         register(BlockMapping.flatten("minecraft:wool", "data",
                 ImmutableMultimap.<Integer, ChunkerVanillaBlockType>builder()
@@ -1128,6 +1144,77 @@ public class JavaLegacyBlockIdentifierResolver extends ChunkerBlockIdentifierRes
             register(BlockMapping.of("minecraft:prismarine_stairs", ChunkerVanillaBlockType.PRISMARINE_STAIRS));
             register(BlockMapping.of("minecraft:prismarine_wall", ChunkerVanillaBlockType.PRISMARINE_WALL));
             register(BlockMapping.of("minecraft:blue_ice", ChunkerVanillaBlockType.BLUE_ICE));
+            register(BlockMapping.of("minecraft:acacia_pressure_plate", ChunkerVanillaBlockType.ACACIA_PRESSURE_PLATE, JavaLegacyStateGroups.POWERED));
+            register(BlockMapping.of("minecraft:birch_pressure_plate", ChunkerVanillaBlockType.BIRCH_PRESSURE_PLATE, JavaLegacyStateGroups.POWERED));
+            register(BlockMapping.of("minecraft:jungle_pressure_plate", ChunkerVanillaBlockType.JUNGLE_PRESSURE_PLATE, JavaLegacyStateGroups.POWERED));
+            register(BlockMapping.of("minecraft:dark_oak_pressure_plate", ChunkerVanillaBlockType.DARK_OAK_PRESSURE_PLATE, JavaLegacyStateGroups.POWERED));
+            register(BlockMapping.of("minecraft:spruce_pressure_plate", ChunkerVanillaBlockType.SPRUCE_PRESSURE_PLATE, JavaLegacyStateGroups.POWERED));
+            register(BlockMapping.of("minecraft:acacia_trapdoor", ChunkerVanillaBlockType.ACACIA_TRAPDOOR, JavaLegacyStateGroups.TRAPDOOR));
+            register(BlockMapping.of("minecraft:birch_trapdoor", ChunkerVanillaBlockType.BIRCH_TRAPDOOR, JavaLegacyStateGroups.TRAPDOOR));
+            register(BlockMapping.of("minecraft:jungle_trapdoor", ChunkerVanillaBlockType.JUNGLE_TRAPDOOR, JavaLegacyStateGroups.TRAPDOOR));
+            register(BlockMapping.of("minecraft:dark_oak_trapdoor", ChunkerVanillaBlockType.DARK_OAK_TRAPDOOR, JavaLegacyStateGroups.TRAPDOOR));
+            register(BlockMapping.of("minecraft:spruce_trapdoor", ChunkerVanillaBlockType.SPRUCE_TRAPDOOR, JavaLegacyStateGroups.TRAPDOOR));
+            register(BlockMapping.of("minecraft:prismarine_brick_slab", ChunkerVanillaBlockType.PRISMARINE_BRICK_SLAB, JavaLegacyStateGroups.SLAB));
+            register(BlockMapping.of("minecraft:prismarine_slab", ChunkerVanillaBlockType.PRISMARINE_SLAB, JavaLegacyStateGroups.SLAB));
+            register(BlockMapping.of("minecraft:dark_prismarine_slab", ChunkerVanillaBlockType.DARK_PRISMARINE_SLAB, JavaLegacyStateGroups.SLAB));
+            register(BlockMapping.of("minecraft:prismarine_brick_stairs", ChunkerVanillaBlockType.PRISMARINE_BRICK_STAIRS, JavaLegacyStateGroups.STAIRS));
+            register(BlockMapping.of("minecraft:dark_prismarine_stairs", ChunkerVanillaBlockType.DARK_PRISMARINE_STAIRS, JavaLegacyStateGroups.STAIRS));
+            register(BlockMapping.of("minecraft:sea_pickle", ChunkerVanillaBlockType.SEA_PICKLE));
+            register(BlockMapping.of("minecraft:brain_coral_block", ChunkerVanillaBlockType.BRAIN_CORAL_BLOCK));
+            register(BlockMapping.of("minecraft:bubble_coral_block", ChunkerVanillaBlockType.BUBBLE_CORAL_BLOCK));
+            register(BlockMapping.of("minecraft:fire_coral_block", ChunkerVanillaBlockType.FIRE_CORAL_BLOCK));
+            register(BlockMapping.of("minecraft:horn_coral_block", ChunkerVanillaBlockType.HORN_CORAL_BLOCK));
+            register(BlockMapping.of("minecraft:tube_coral_block", ChunkerVanillaBlockType.TUBE_CORAL_BLOCK));
+            register(BlockMapping.of("minecraft:dead_brain_coral_block", ChunkerVanillaBlockType.DEAD_BRAIN_CORAL_BLOCK));
+            register(BlockMapping.of("minecraft:dead_bubble_coral_block", ChunkerVanillaBlockType.DEAD_BUBBLE_CORAL_BLOCK));
+            register(BlockMapping.of("minecraft:dead_fire_coral_block", ChunkerVanillaBlockType.DEAD_FIRE_CORAL_BLOCK));
+            register(BlockMapping.of("minecraft:dead_horn_coral_block", ChunkerVanillaBlockType.DEAD_HORN_CORAL_BLOCK));
+            register(BlockMapping.of("minecraft:dead_tube_coral_block", ChunkerVanillaBlockType.DEAD_TUBE_CORAL_BLOCK));
+            register(BlockMapping.of("minecraft:brain_coral", ChunkerVanillaBlockType.BRAIN_CORAL));
+            register(BlockMapping.of("minecraft:bubble_coral", ChunkerVanillaBlockType.BUBBLE_CORAL));
+            register(BlockMapping.of("minecraft:fire_coral", ChunkerVanillaBlockType.FIRE_CORAL));
+            register(BlockMapping.of("minecraft:horn_coral", ChunkerVanillaBlockType.HORN_CORAL));
+            register(BlockMapping.of("minecraft:tube_coral", ChunkerVanillaBlockType.TUBE_CORAL));
+            register(BlockMapping.of("minecraft:dead_brain_coral", ChunkerVanillaBlockType.DEAD_BRAIN_CORAL));
+            register(BlockMapping.of("minecraft:dead_bubble_coral", ChunkerVanillaBlockType.DEAD_BUBBLE_CORAL));
+            register(BlockMapping.of("minecraft:dead_fire_coral", ChunkerVanillaBlockType.DEAD_FIRE_CORAL));
+            register(BlockMapping.of("minecraft:dead_horn_coral", ChunkerVanillaBlockType.DEAD_HORN_CORAL));
+            register(BlockMapping.of("minecraft:dead_tube_coral", ChunkerVanillaBlockType.DEAD_TUBE_CORAL));
+            register(BlockMapping.of("minecraft:brain_coral_fan", ChunkerVanillaBlockType.BRAIN_CORAL_FAN, JavaLegacyStateGroups.CORAL_FAN));
+            register(BlockMapping.of("minecraft:bubble_coral_fan", ChunkerVanillaBlockType.BUBBLE_CORAL_FAN, JavaLegacyStateGroups.CORAL_FAN));
+            register(BlockMapping.of("minecraft:fire_coral_fan", ChunkerVanillaBlockType.FIRE_CORAL_FAN, JavaLegacyStateGroups.CORAL_FAN));
+            register(BlockMapping.of("minecraft:horn_coral_fan", ChunkerVanillaBlockType.HORN_CORAL_FAN, JavaLegacyStateGroups.CORAL_FAN));
+            register(BlockMapping.of("minecraft:tube_coral_fan", ChunkerVanillaBlockType.TUBE_CORAL_FAN, JavaLegacyStateGroups.CORAL_FAN));
+            register(BlockMapping.of("minecraft:dead_brain_coral_fan", ChunkerVanillaBlockType.DEAD_BRAIN_CORAL_FAN, JavaLegacyStateGroups.CORAL_FAN));
+            register(BlockMapping.of("minecraft:dead_bubble_coral_fan", ChunkerVanillaBlockType.DEAD_BUBBLE_CORAL_FAN, JavaLegacyStateGroups.CORAL_FAN));
+            register(BlockMapping.of("minecraft:dead_fire_coral_fan", ChunkerVanillaBlockType.DEAD_FIRE_CORAL_FAN, JavaLegacyStateGroups.CORAL_FAN));
+            register(BlockMapping.of("minecraft:dead_horn_coral_fan", ChunkerVanillaBlockType.DEAD_HORN_CORAL_FAN, JavaLegacyStateGroups.CORAL_FAN));
+            register(BlockMapping.of("minecraft:dead_tube_coral_fan", ChunkerVanillaBlockType.DEAD_TUBE_CORAL_FAN, JavaLegacyStateGroups.CORAL_FAN));
+            register(BlockMapping.of("minecraft:mushroom_stem", ChunkerVanillaBlockType.MUSHROOM_STEM));
+            register(BlockMapping.of("minecraft:carved_pumpkin", ChunkerVanillaBlockType.CARVED_PUMPKIN, JavaLegacyStateGroups.FACING_HORIZONTAL_SWNE));
+            register(BlockMapping.of("minecraft:smooth_quartz", ChunkerVanillaBlockType.SMOOTH_QUARTZ));
+            register(BlockMapping.of("minecraft:smooth_red_sandstone", ChunkerVanillaBlockType.SMOOTH_RED_SANDSTONE));
+            register(BlockMapping.of("minecraft:smooth_sandstone", ChunkerVanillaBlockType.SMOOTH_SANDSTONE));
+            register(BlockMapping.of("minecraft:smooth_stone", ChunkerVanillaBlockType.SMOOTH_STONE));
+            register(BlockMapping.of("minecraft:petrified_oak_slab", ChunkerVanillaBlockType.PETRIFIED_OAK_SLAB, JavaLegacyStateGroups.SLAB));
+            register(BlockMapping.of("minecraft:stripped_oak_log", ChunkerVanillaBlockType.STRIPPED_OAK_LOG, JavaLegacyStateGroups.WOOD));
+            register(BlockMapping.of("minecraft:stripped_spruce_log", ChunkerVanillaBlockType.STRIPPED_SPRUCE_LOG, JavaLegacyStateGroups.WOOD));
+            register(BlockMapping.of("minecraft:stripped_birch_log", ChunkerVanillaBlockType.STRIPPED_BIRCH_LOG, JavaLegacyStateGroups.WOOD));
+            register(BlockMapping.of("minecraft:stripped_jungle_log", ChunkerVanillaBlockType.STRIPPED_JUNGLE_LOG, JavaLegacyStateGroups.WOOD));
+            register(BlockMapping.of("minecraft:stripped_acacia_log", ChunkerVanillaBlockType.STRIPPED_ACACIA_LOG, JavaLegacyStateGroups.WOOD));
+            register(BlockMapping.of("minecraft:stripped_dark_oak_log", ChunkerVanillaBlockType.STRIPPED_DARK_OAK_LOG, JavaLegacyStateGroups.WOOD));
+            register(BlockMapping.of("minecraft:stripped_oak_wood", ChunkerVanillaBlockType.STRIPPED_OAK_WOOD, JavaLegacyStateGroups.WOOD));
+            register(BlockMapping.of("minecraft:stripped_spruce_wood", ChunkerVanillaBlockType.STRIPPED_SPRUCE_WOOD, JavaLegacyStateGroups.WOOD));
+            register(BlockMapping.of("minecraft:stripped_birch_wood", ChunkerVanillaBlockType.STRIPPED_BIRCH_WOOD, JavaLegacyStateGroups.WOOD));
+            register(BlockMapping.of("minecraft:stripped_jungle_wood", ChunkerVanillaBlockType.STRIPPED_JUNGLE_WOOD, JavaLegacyStateGroups.WOOD));
+            register(BlockMapping.of("minecraft:stripped_acacia_wood", ChunkerVanillaBlockType.STRIPPED_ACACIA_WOOD, JavaLegacyStateGroups.WOOD));
+            register(BlockMapping.of("minecraft:stripped_dark_oak_wood", ChunkerVanillaBlockType.STRIPPED_DARK_OAK_WOOD, JavaLegacyStateGroups.WOOD));
+            register(BlockMapping.of("minecraft:acacia_wood", ChunkerVanillaBlockType.ACACIA_WOOD, JavaLegacyStateGroups.WOOD));
+            register(BlockMapping.of("minecraft:birch_wood", ChunkerVanillaBlockType.BIRCH_WOOD, JavaLegacyStateGroups.WOOD));
+            register(BlockMapping.of("minecraft:dark_oak_wood", ChunkerVanillaBlockType.DARK_OAK_WOOD, JavaLegacyStateGroups.WOOD));
+            register(BlockMapping.of("minecraft:jungle_wood", ChunkerVanillaBlockType.JUNGLE_WOOD, JavaLegacyStateGroups.WOOD));
+            register(BlockMapping.of("minecraft:oak_wood", ChunkerVanillaBlockType.OAK_WOOD, JavaLegacyStateGroups.WOOD));
+            register(BlockMapping.of("minecraft:spruce_wood", ChunkerVanillaBlockType.SPRUCE_WOOD, JavaLegacyStateGroups.WOOD));
         }
 
         // 1.14

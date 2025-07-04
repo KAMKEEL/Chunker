@@ -351,6 +351,10 @@ public class JavaLegacyStateGroups {
             .defaultOutput(VanillaBlockStates.HANGING, Bool.FALSE)
             .defaultOutput(VanillaBlockStates.WATERLOGGED, Bool.FALSE)
             .build();
+    public static final StateMappingGroup CORAL_FAN = new StateMappingGroup.Builder()
+            .defaultOutput(VanillaBlockStates.FACING_HORIZONTAL, FacingDirectionHorizontal.NORTH)
+            .defaultOutput(VanillaBlockStates.WATERLOGGED, Bool.FALSE)
+            .build();
     public static final StateMappingGroup RESPAWN_ANCHOR = new StateMappingGroup.Builder()
             .defaultOutput(VanillaBlockStates.RESPAWN_ANCHOR_CHARGES, RespawnAnchorCharges._0)
             .build();

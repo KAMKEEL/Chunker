@@ -341,6 +341,19 @@ public class JavaLegacyStateGroups {
             .multiState("data", List.of(VanillaBlockStates.NO_DROP, VanillaBlockStates.FACING_HORIZONTAL), JavaLegacyStateTypes.WALL_SKULL)
             .defaultOutput(VanillaBlockStates.POWERED, Bool.FALSE)
             .build();
+    public static final StateMappingGroup CAMPFIRE = new StateMappingGroup.Builder()
+            .defaultOutput(VanillaBlockStates.LIT, Bool.TRUE)
+            .defaultOutput(VanillaBlockStates.FACING_HORIZONTAL, FacingDirectionHorizontal.NORTH)
+            .defaultOutput(VanillaBlockStates.SIGNAL_FIRE, Bool.FALSE)
+            .defaultOutput(VanillaBlockStates.WATERLOGGED, Bool.FALSE)
+            .build();
+    public static final StateMappingGroup LANTERN = new StateMappingGroup.Builder()
+            .defaultOutput(VanillaBlockStates.HANGING, Bool.FALSE)
+            .defaultOutput(VanillaBlockStates.WATERLOGGED, Bool.FALSE)
+            .build();
+    public static final StateMappingGroup RESPAWN_ANCHOR = new StateMappingGroup.Builder()
+            .defaultOutput(VanillaBlockStates.RESPAWN_ANCHOR_CHARGES, RespawnAnchorCharges._0)
+            .build();
     public static final StateMappingGroup WOOD = new StateMappingGroup.Builder()
             .defaultOutput(VanillaBlockStates.AXIS, Axis.Y)
             .build();

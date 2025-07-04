@@ -267,7 +267,8 @@ public class JavaResolversBuilder {
                             // Use a placeholder ID so the block can be
                             // remapped later. This ensures data isn't lost
                             // when converting newer worlds to legacy formats.
-                            return new LegacyIdentifier(JavaLegacyBlockIDResolver.PLACEHOLDER_ID, (byte) 0);
+                            int id = blockIDResolver.placeholder(String.valueOf(chunkerBlockIdentifier));
+                            return new LegacyIdentifier(id, (byte) 0);
                         });
             }
 

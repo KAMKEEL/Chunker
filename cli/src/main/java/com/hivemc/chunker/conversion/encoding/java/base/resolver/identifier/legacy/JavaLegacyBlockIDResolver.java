@@ -12,16 +12,17 @@ import java.util.Optional;
 public class JavaLegacyBlockIDResolver implements Resolver<Integer, String> {
     /**
      * Placeholder ID used when a block identifier is missing from the mapping.
-     * This value must fit within the 16-bit limit enforced by the legacy chunk
-     * format. 60000 was chosen so it is clearly out of range of vanilla blocks
-     * but still compatible with mods such as NotEnoughIDs.
+     * This value must fit within the 12-bit limit used by the legacy chunk
+     * format. 306 was chosen so it does not collide with vanilla 1.12 IDs and
+     * leaves room for additional mappings while remaining below the 4096 ID
+     * ceiling.
      */
-    public static final int PLACEHOLDER_START_ID = 60000;
+    public static final int PLACEHOLDER_START_ID = 306;
     private final InvertibleMap<String, Integer> mapping = InvertibleMap.intValues();
     private final java.util.Map<String, Integer> placeholderIds = new java.util.HashMap<>();
     private int nextPlaceholder = PLACEHOLDER_START_ID;
 
-    private int placeholder(String identifier) {
+    public int placeholder(String identifier) {
         return placeholderIds.computeIfAbsent(identifier, k -> nextPlaceholder++);
     }
 
@@ -304,88 +305,68 @@ public class JavaLegacyBlockIDResolver implements Resolver<Integer, String> {
 
         // 1.13 blocks
         if (version.isGreaterThanOrEqual(1, 13, 0)) {
-            String[] v113 = {
-                    "minecraft:seagrass",
-                    "minecraft:tall_seagrass",
-                    "minecraft:kelp",
-                    "minecraft:kelp_plant",
-                    "minecraft:dried_kelp_block",
-                    "minecraft:turtle_egg",
-                    "minecraft:bubble_column",
-                    "minecraft:conduit",
-                    "minecraft:prismarine_stairs",
-                    "minecraft:prismarine_wall",
-                    "minecraft:blue_ice"
-            };
-            for (String id : v113) {
-                mapping.put(id, placeholder(id));
-            }
+            mapping.put("minecraft:seagrass", 256);
+            mapping.put("minecraft:tall_seagrass", 257);
+            mapping.put("minecraft:kelp", 258);
+            mapping.put("minecraft:kelp_plant", 259);
+            mapping.put("minecraft:dried_kelp_block", 260);
+            mapping.put("minecraft:turtle_egg", 261);
+            mapping.put("minecraft:bubble_column", 262);
+            mapping.put("minecraft:conduit", 263);
+            mapping.put("minecraft:prismarine_stairs", 264);
+            mapping.put("minecraft:prismarine_wall", 265);
+            mapping.put("minecraft:blue_ice", 266);
         }
 
         // 1.14 blocks
         if (version.isGreaterThanOrEqual(1, 14, 0)) {
-            String[] v114 = {
-                    "minecraft:barrel",
-                    "minecraft:smoker",
-                    "minecraft:blast_furnace",
-                    "minecraft:cartography_table",
-                    "minecraft:fletching_table",
-                    "minecraft:grindstone",
-                    "minecraft:lectern",
-                    "minecraft:loom",
-                    "minecraft:smithing_table",
-                    "minecraft:composter",
-                    "minecraft:bell",
-                    "minecraft:lantern",
-                    "minecraft:campfire",
-                    "minecraft:stonecutter"
-            };
-            for (String id : v114) {
-                mapping.put(id, placeholder(id));
-            }
+            mapping.put("minecraft:barrel", 267);
+            mapping.put("minecraft:smoker", 268);
+            mapping.put("minecraft:blast_furnace", 269);
+            mapping.put("minecraft:cartography_table", 270);
+            mapping.put("minecraft:fletching_table", 271);
+            mapping.put("minecraft:grindstone", 272);
+            mapping.put("minecraft:lectern", 273);
+            mapping.put("minecraft:loom", 274);
+            mapping.put("minecraft:smithing_table", 275);
+            mapping.put("minecraft:composter", 276);
+            mapping.put("minecraft:bell", 277);
+            mapping.put("minecraft:lantern", 278);
+            mapping.put("minecraft:campfire", 279);
+            mapping.put("minecraft:stonecutter", 280);
         }
 
         // 1.15 blocks
         if (version.isGreaterThanOrEqual(1, 15, 0)) {
-            String[] v115 = {
-                    "minecraft:bee_nest",
-                    "minecraft:beehive",
-                    "minecraft:honey_block",
-                    "minecraft:honeycomb_block"
-            };
-            for (String id : v115) {
-                mapping.put(id, placeholder(id));
-            }
+            mapping.put("minecraft:bee_nest", 281);
+            mapping.put("minecraft:beehive", 282);
+            mapping.put("minecraft:honey_block", 283);
+            mapping.put("minecraft:honeycomb_block", 284);
         }
 
         // 1.16 blocks
         if (version.isGreaterThanOrEqual(1, 16, 0)) {
-            String[] v116 = {
-                    "minecraft:ancient_debris",
-                    "minecraft:netherite_block",
-                    "minecraft:lodestone",
-                    "minecraft:target",
-                    "minecraft:basalt",
-                    "minecraft:blackstone",
-                    "minecraft:polished_blackstone",
-                    "minecraft:polished_blackstone_bricks",
-                    "minecraft:gilded_blackstone",
-                    "minecraft:crimson_nylium",
-                    "minecraft:warped_nylium",
-                    "minecraft:soul_soil",
-                    "minecraft:soul_fire",
-                    "minecraft:soul_torch",
-                    "minecraft:soul_wall_torch",
-                    "minecraft:soul_campfire",
-                    "minecraft:soul_lantern",
-                    "minecraft:crimson_fence",
-                    "minecraft:warped_fence",
-                    "minecraft:crimson_door",
-                    "minecraft:warped_door"
-            };
-            for (String id : v116) {
-                mapping.put(id, placeholder(id));
-            }
+            mapping.put("minecraft:ancient_debris", 285);
+            mapping.put("minecraft:netherite_block", 286);
+            mapping.put("minecraft:lodestone", 287);
+            mapping.put("minecraft:target", 288);
+            mapping.put("minecraft:basalt", 289);
+            mapping.put("minecraft:blackstone", 290);
+            mapping.put("minecraft:polished_blackstone", 291);
+            mapping.put("minecraft:polished_blackstone_bricks", 292);
+            mapping.put("minecraft:gilded_blackstone", 293);
+            mapping.put("minecraft:crimson_nylium", 294);
+            mapping.put("minecraft:warped_nylium", 295);
+            mapping.put("minecraft:soul_soil", 296);
+            mapping.put("minecraft:soul_fire", 297);
+            mapping.put("minecraft:soul_torch", 298);
+            mapping.put("minecraft:soul_wall_torch", 299);
+            mapping.put("minecraft:soul_campfire", 300);
+            mapping.put("minecraft:soul_lantern", 301);
+            mapping.put("minecraft:crimson_fence", 302);
+            mapping.put("minecraft:warped_fence", 303);
+            mapping.put("minecraft:crimson_door", 304);
+            mapping.put("minecraft:warped_door", 305);
         }
     }
 

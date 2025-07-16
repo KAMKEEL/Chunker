@@ -13,8 +13,11 @@ import com.hivemc.chunker.conversion.encoding.base.writer.LevelWriter;
 import com.hivemc.chunker.conversion.intermediate.world.Dimension;
 import com.hivemc.chunker.mapping.MappingsFile;
 import com.hivemc.chunker.mapping.resolver.MappingsFileResolvers;
+import com.hivemc.chunker.mapping.parser.SimpleMappingsParser;
+import com.hivemc.chunker.mapping.parser.SimpleMappingsTemplateGenerator;
 import com.hivemc.chunker.pruning.PruningConfig;
 import com.hivemc.chunker.scheduling.task.TrackedTask;
+import java.io.IOException;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import picocli.CommandLine;
 
@@ -77,6 +80,18 @@ public class CLI implements Runnable {
     private JsonObjectOrFile blockMappings;
 
     @CommandLine.Option(
+            names = {"--simpleBlockMappings", "-sm"},
+            description = "A text file containing simple block mappings in the form 'old[state=value] -> new[state=value]'."
+    )
+    private File simpleBlockMappings;
+
+    @CommandLine.Option(
+            names = {"--generateSimpleMappingsTemplate"},
+            description = "Writes an example simple mapping file to the provided path and exits."
+    )
+    private File generateSimpleMappingsTemplate;
+
+    @CommandLine.Option(
             names = {"--worldSettings", "-s"},
             description = "A JSON file/object containing world settings.",
             converter = JsonObjectOrFile.Converter.class
@@ -133,6 +148,16 @@ public class CLI implements Runnable {
             // Create the converter
             Stopwatch stopwatch = Stopwatch.createStarted();
 
+            if (generateSimpleMappingsTemplate != null) {
+                try {
+                    SimpleMappingsTemplateGenerator.writeTemplate(generateSimpleMappingsTemplate.toPath());
+                    System.out.println("Template written to " + generateSimpleMappingsTemplate.getAbsolutePath());
+                } catch (IOException e) {
+                    System.err.println("Failed to write template: " + e.getMessage());
+                }
+                return;
+            }
+
             // Create the converter
             WorldConverter worldConverter = new WorldConverter(UUID.randomUUID());
 
@@ -156,6 +181,14 @@ public class CLI implements Runnable {
                     worldConverter.setBlockMappings(new MappingsFileResolvers(mappingsFile));
                 } catch (Exception e) {
                     System.err.println("Failed to parse block mappings.");
+                    throw new RuntimeException(e);
+                }
+            } else if (simpleBlockMappings != null) {
+                try {
+                    MappingsFile mappingsFile = SimpleMappingsParser.parse(simpleBlockMappings.toPath());
+                    worldConverter.setBlockMappings(new MappingsFileResolvers(mappingsFile));
+                } catch (Exception e) {
+                    System.err.println("Failed to parse simple block mappings.");
                     throw new RuntimeException(e);
                 }
             }

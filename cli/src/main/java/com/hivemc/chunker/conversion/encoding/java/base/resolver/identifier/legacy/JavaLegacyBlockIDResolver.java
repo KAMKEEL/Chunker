@@ -298,9 +298,14 @@ public class JavaLegacyBlockIDResolver implements Resolver<Integer, String> {
     @Override
     public Optional<Integer> from(String input) {
         if (!input.contains(":")) {
-            input = "minecraft:" + input;
+            try {
+                return Optional.of(Integer.parseInt(input));
+            } catch (NumberFormatException ignored) {
+                input = "minecraft:" + input;
+            }
         }
-        return Optional.ofNullable(mapping.forward().get(input));
+        Integer value = mapping.forward().get(input);
+        return value == null ? Optional.empty() : Optional.of(value);
     }
 
     /**

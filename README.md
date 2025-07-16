@@ -75,6 +75,8 @@ The following parameters are required:
 Additionally, the following parameters are supported:
 
 - `-m` / `--blockMappings` - a path to a json file or a json object containing block mappings.
+- `-sm` / `--simpleBlockMappings` - a path to a text file containing simple mappings in the form `old[state=value] -> new[state=value]`.
+- `--generateSimpleMappingsTemplate` - write an example simple mapping file to the given path and exit.
 - `-s` / `--worldSettings` - a path to a json file or a json object containing world settings.
 - `-p` / `--pruning` - a path to a json file or a json object containing pruning settings.
 - `-c` / `--converterSettings` - a path to a json file or a json object containing converter settings.

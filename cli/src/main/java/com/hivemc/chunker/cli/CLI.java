@@ -17,6 +17,8 @@ import com.hivemc.chunker.mapping.parser.SimpleMappingsParser;
 import com.hivemc.chunker.mapping.parser.SimpleMappingsTemplateGenerator;
 import com.hivemc.chunker.pruning.PruningConfig;
 import com.hivemc.chunker.scheduling.task.TrackedTask;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
 import java.io.IOException;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import picocli.CommandLine;
@@ -126,6 +128,30 @@ public class CLI implements Runnable {
     private boolean keepOriginalNBT;
 
     /**
+     * Merge two mappings files by appending the identifier list from the second
+     * to the first. This is primarily used so simple mappings can extend a JSON
+     * mappings file when both are supplied.
+     */
+    public static MappingsFile mergeMappings(MappingsFile base, MappingsFile extra) {
+        JsonObject baseJson = base.toJson().getAsJsonObject();
+        JsonArray baseIds = baseJson.getAsJsonArray("identifiers");
+        if (baseIds == null) {
+            baseIds = new JsonArray();
+            baseJson.add("identifiers", baseIds);
+        }
+
+        JsonObject extraJson = extra.toJson().getAsJsonObject();
+        JsonArray extraIds = extraJson.getAsJsonArray("identifiers");
+        if (extraIds != null) {
+            for (int i = 0; i < extraIds.size(); i++) {
+                baseIds.add(extraIds.get(i));
+            }
+        }
+
+        return MappingsFile.load(baseJson);
+    }
+
+    /**
      * Main entry point for the CLI
      *
      * @param args the arguments which should be parsed by picocli.
@@ -175,22 +201,33 @@ public class CLI implements Runnable {
                     throw new RuntimeException(e);
                 }
             }
+
+            MappingsFile loadedMappings = null;
             if (blockMappings != null) {
                 try {
-                    MappingsFile mappingsFile = MappingsFile.load(blockMappings.getJSONObjectString());
-                    worldConverter.setBlockMappings(new MappingsFileResolvers(mappingsFile));
+                    loadedMappings = MappingsFile.load(blockMappings.getJSONObjectString());
                 } catch (Exception e) {
                     System.err.println("Failed to parse block mappings.");
                     throw new RuntimeException(e);
                 }
-            } else if (simpleBlockMappings != null) {
+            }
+
+            if (simpleBlockMappings != null) {
                 try {
                     MappingsFile mappingsFile = SimpleMappingsParser.parse(simpleBlockMappings.toPath());
-                    worldConverter.setBlockMappings(new MappingsFileResolvers(mappingsFile));
+                    if (loadedMappings == null) {
+                        loadedMappings = mappingsFile;
+                    } else {
+                        loadedMappings = mergeMappings(loadedMappings, mappingsFile);
+                    }
                 } catch (Exception e) {
                     System.err.println("Failed to parse simple block mappings.");
                     throw new RuntimeException(e);
                 }
+            }
+
+            if (loadedMappings != null) {
+                worldConverter.setBlockMappings(new MappingsFileResolvers(loadedMappings));
             }
 
             // Apply world settings if they're present and parse

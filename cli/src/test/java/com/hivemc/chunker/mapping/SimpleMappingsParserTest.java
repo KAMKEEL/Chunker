@@ -3,6 +3,7 @@ package com.hivemc.chunker.mapping;
 import com.hivemc.chunker.mapping.identifier.Identifier;
 import com.hivemc.chunker.mapping.identifier.states.StateValueInt;
 import com.hivemc.chunker.mapping.identifier.states.StateValueString;
+import com.hivemc.chunker.mapping.identifier.states.StateValueBoolean;
 import com.hivemc.chunker.mapping.parser.SimpleMappingsParser;
 import org.junit.jupiter.api.Test;
 
@@ -51,6 +52,26 @@ public class SimpleMappingsParserTest {
         MappingsFile mappingsFile = SimpleMappingsParser.parse(temp.toPath());
         Identifier input = new Identifier("minecraft:stairs", Map.of("facing", new StateValueString("EAST")));
         Identifier expected = new Identifier("112", Map.of("facing", new StateValueString("EAST"), "data", new StateValueInt(3)));
+        assertEquals(expected, mappingsFile.convertBlock(input).orElse(null));
+    }
+
+    @Test
+    public void testExtraStates() throws IOException {
+        File temp = File.createTempFile("simple", ".txt");
+        temp.deleteOnExit();
+        Files.writeString(temp.toPath(), "minecraft:stripped_spruce_log[axis=Y] -> 3006:0\n");
+
+        MappingsFile mappingsFile = SimpleMappingsParser.parse(temp.toPath());
+        Identifier input = new Identifier("minecraft:stripped_spruce_log", Map.of(
+                "axis", new StateValueString("Y"),
+                "waterlogged", StateValueBoolean.FALSE
+        ));
+        Identifier expected = new Identifier("3006", Map.of(
+                "axis", new StateValueString("Y"),
+                "waterlogged", StateValueBoolean.FALSE,
+                "data", new StateValueInt(0)
+        ));
+
         assertEquals(expected, mappingsFile.convertBlock(input).orElse(null));
     }
 }

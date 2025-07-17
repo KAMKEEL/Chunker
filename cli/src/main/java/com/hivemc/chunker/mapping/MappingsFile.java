@@ -3,6 +3,7 @@ package com.hivemc.chunker.mapping;
 import com.google.gson.*;
 import com.hivemc.chunker.mapping.identifier.Identifier;
 import com.hivemc.chunker.mapping.identifier.states.StateValue;
+import com.hivemc.chunker.mapping.identifier.states.StateValueString;
 import com.hivemc.chunker.mapping.mappings.IdentifierMapping;
 import com.hivemc.chunker.mapping.mappings.IdentifierMappings;
 import com.hivemc.chunker.mapping.mappings.StateMappings;
@@ -223,6 +224,27 @@ public class MappingsFile {
 
             // Apply the identifier mapping
             identifierMapping = entry.getValue().get(inputValues);
+            if (identifierMapping == null) {
+                // Fallback to case-insensitive matching for string values
+                outer:
+                for (Map.Entry<List<StateValue<?>>, IdentifierMapping> valEntry : entry.getValue().entrySet()) {
+                    List<StateValue<?>> keyValues = valEntry.getKey();
+                    if (keyValues.size() != inputValues.size()) continue;
+                    for (int i = 0; i < keyValues.size(); i++) {
+                        StateValue<?> expected = keyValues.get(i);
+                        StateValue<?> actual = inputValues.get(i);
+                        if (expected instanceof StateValueString e && actual instanceof StateValueString a) {
+                            if (!e.getValue().equalsIgnoreCase(a.getValue())) {
+                                continue outer;
+                            }
+                        } else if (!Objects.equals(expected, actual)) {
+                            continue outer;
+                        }
+                    }
+                    identifierMapping = valEntry.getValue();
+                    break;
+                }
+            }
             if (identifierMapping != null) {
                 break; // Found value
             }

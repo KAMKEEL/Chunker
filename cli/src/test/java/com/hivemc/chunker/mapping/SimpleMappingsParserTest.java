@@ -101,4 +101,31 @@ public class SimpleMappingsParserTest {
 
         assertEquals(expected, mappingsFile.convertBlock(input).orElse(null));
     }
+
+    @Test
+    public void testCaseInsensitiveStateKeys() throws IOException {
+        File temp = File.createTempFile("simple", ".txt");
+        temp.deleteOnExit();
+        Files.writeString(temp.toPath(),
+                "minecraft:acacia_trapdoor[facing=north,half=top,open=false] -> 3006:2\n");
+
+        MappingsFile mappingsFile = SimpleMappingsParser.parse(temp.toPath());
+        Identifier input = new Identifier("minecraft:acacia_trapdoor", Map.of(
+                "FACING", new StateValueString("north"),
+                "Half", new StateValueString("top"),
+                "Open", StateValueBoolean.FALSE,
+                "powered", StateValueBoolean.FALSE,
+                "waterlogged", StateValueBoolean.FALSE
+        ));
+        Identifier expected = new Identifier("3006", Map.of(
+                "FACING", new StateValueString("north"),
+                "Half", new StateValueString("top"),
+                "Open", StateValueBoolean.FALSE,
+                "powered", StateValueBoolean.FALSE,
+                "waterlogged", StateValueBoolean.FALSE,
+                "data", new StateValueInt(2)
+        ));
+
+        assertEquals(expected, mappingsFile.convertBlock(input).orElse(null));
+    }
 }

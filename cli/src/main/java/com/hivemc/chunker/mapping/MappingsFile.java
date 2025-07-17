@@ -193,6 +193,12 @@ public class MappingsFile {
     protected Optional<Identifier> convert(Map<String, IdentifierMappings> identifierLookup, Identifier input) {
         Map<String, StateValue<?>> outputStates = new Object2ObjectOpenHashMap<>();
 
+        // Normalise input state keys to lowercase for matching
+        Map<String, StateValue<?>> normalizedInputStates = new Object2ObjectOpenHashMap<>(input.getStates().size());
+        for (Map.Entry<String, StateValue<?>> entry : input.getStates().entrySet()) {
+            normalizedInputStates.put(entry.getKey().toLowerCase(), entry.getValue());
+        }
+
         // Lookup identifier
         IdentifierMappings identifierMappings = identifierLookup.get(input.getIdentifier());
         if (identifierMappings == null) {
@@ -211,15 +217,22 @@ public class MappingsFile {
         // If it depends on the state values, calculate it otherwise pick first value
         IdentifierMapping identifierMapping = null;
         for (Map.Entry<Set<String>, Map<List<StateValue<?>>, IdentifierMapping>> entry : identifierMappings.getLookup().entrySet()) {
-            // If the input doesn't have all the keys, skip it
-            if (!input.getStates().keySet().containsAll(entry.getKey())) {
+            // If the input doesn't have all the keys, skip it (case-insensitive)
+            boolean hasAll = true;
+            for (String key : entry.getKey()) {
+                if (!normalizedInputStates.containsKey(key)) {
+                    hasAll = false;
+                    break;
+                }
+            }
+            if (!hasAll) {
                 continue;
             }
 
             // Collect the inputValues
             List<StateValue<?>> inputValues = new ArrayList<>(entry.getKey().size());
             for (String name : entry.getKey()) {
-                inputValues.add(input.getStates().get(name));
+                inputValues.add(normalizedInputStates.get(name));
             }
 
             // Apply the identifier mapping
@@ -265,7 +278,7 @@ public class MappingsFile {
 
         // If it contains a stateList, apply the stateList
         if (identifierMapping.getStateMapping() != null) {
-            identifierMapping.getStateMapping().apply(input.getStates(), outputStates);
+            identifierMapping.getStateMapping().apply(normalizedInputStates, outputStates);
         } else {
             // Null means we pass through all the input states (*)
             outputStates.putAll(input.getStates());

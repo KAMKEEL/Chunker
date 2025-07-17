@@ -15,7 +15,7 @@ public final class SimpleMappingsTemplateGenerator {
 # Example mapping modern basalt to legacy ID 3005
 minecraft:basalt -> 3005
 # Example mapping with state and data value
-minecraft:oak_stairs[facing=east] -> 112:3
+minecraft:oak_stairs[facing=EAST] -> 112:3
 """;
 
     private SimpleMappingsTemplateGenerator() {

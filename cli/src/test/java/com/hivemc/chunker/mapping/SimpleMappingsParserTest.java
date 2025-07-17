@@ -36,8 +36,9 @@ public class SimpleMappingsParserTest {
         Files.writeString(temp.toPath(), "minecraft:stairs[facing=east] -> custom:stairs[data=3]\n");
 
         MappingsFile mappingsFile = SimpleMappingsParser.parse(temp.toPath());
-        Identifier input = new Identifier("minecraft:stairs", Map.of("facing", new StateValueString("east")));
-        Identifier expected = new Identifier("custom:stairs", Map.of("facing", new StateValueString("east"), "data", new StateValueInt(3)));
+        Identifier input = new Identifier("minecraft:stairs", Map.of("facing", new StateValueString("EAST")));
+        Identifier expected = new Identifier("custom:stairs", Map.of("facing", new StateValueString("EAST"), "data", new StateValueInt(3)));
+
         assertEquals(expected, mappingsFile.convertBlock(input).orElse(null));
     }
 
@@ -48,8 +49,8 @@ public class SimpleMappingsParserTest {
         Files.writeString(temp.toPath(), "minecraft:stairs[facing=east] -> 112:3\n");
 
         MappingsFile mappingsFile = SimpleMappingsParser.parse(temp.toPath());
-        Identifier input = new Identifier("minecraft:stairs", Map.of("facing", new StateValueString("east")));
-        Identifier expected = new Identifier("112", Map.of("facing", new StateValueString("east"), "data", new StateValueInt(3)));
+        Identifier input = new Identifier("minecraft:stairs", Map.of("facing", new StateValueString("EAST")));
+        Identifier expected = new Identifier("112", Map.of("facing", new StateValueString("EAST"), "data", new StateValueInt(3)));
         assertEquals(expected, mappingsFile.convertBlock(input).orElse(null));
     }
 }

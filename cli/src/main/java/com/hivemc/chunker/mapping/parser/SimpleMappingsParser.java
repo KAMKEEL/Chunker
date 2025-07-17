@@ -123,7 +123,7 @@ public final class SimpleMappingsParser {
             return new JsonPrimitive(Integer.parseInt(value));
         } catch (NumberFormatException ignored) {
         }
-        return new JsonPrimitive(value);
+        return new JsonPrimitive(value.toUpperCase());
     }
 
     private record ParsedIdentifier(String identifier, JsonObject states) {

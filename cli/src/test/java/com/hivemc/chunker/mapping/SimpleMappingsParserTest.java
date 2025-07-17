@@ -128,4 +128,25 @@ public class SimpleMappingsParserTest {
 
         assertEquals(expected, mappingsFile.convertBlock(input).orElse(null));
     }
+
+    @Test
+    public void testBooleanStringEquivalence() throws IOException {
+        File temp = File.createTempFile("simple", ".txt");
+        temp.deleteOnExit();
+        Files.writeString(temp.toPath(),
+                "minecraft:acacia_trapdoor[open=false] -> 3006:0\n");
+
+        MappingsFile mappingsFile = SimpleMappingsParser.parse(temp.toPath());
+        Identifier input = new Identifier("minecraft:acacia_trapdoor", Map.of(
+                "open", new StateValueString("false"),
+                "powered", StateValueBoolean.FALSE
+        ));
+        Identifier expected = new Identifier("3006", Map.of(
+                "open", new StateValueString("false"),
+                "powered", StateValueBoolean.FALSE,
+                "data", new StateValueInt(0)
+        ));
+
+        assertEquals(expected, mappingsFile.convertBlock(input).orElse(null));
+    }
 }

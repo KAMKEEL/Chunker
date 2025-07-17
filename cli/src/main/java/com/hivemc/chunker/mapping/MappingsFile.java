@@ -4,6 +4,8 @@ import com.google.gson.*;
 import com.hivemc.chunker.mapping.identifier.Identifier;
 import com.hivemc.chunker.mapping.identifier.states.StateValue;
 import com.hivemc.chunker.mapping.identifier.states.StateValueString;
+import com.hivemc.chunker.mapping.identifier.states.StateValueBoolean;
+import com.hivemc.chunker.mapping.identifier.states.StateValueInt;
 import com.hivemc.chunker.mapping.mappings.IdentifierMapping;
 import com.hivemc.chunker.mapping.mappings.IdentifierMappings;
 import com.hivemc.chunker.mapping.mappings.StateMappings;
@@ -246,8 +248,34 @@ public class MappingsFile {
                     for (int i = 0; i < keyValues.size(); i++) {
                         StateValue<?> expected = keyValues.get(i);
                         StateValue<?> actual = inputValues.get(i);
+
+                        // Allow cross-type comparisons for common state formats
                         if (expected instanceof StateValueString e && actual instanceof StateValueString a) {
                             if (!e.getValue().equalsIgnoreCase(a.getValue())) {
+                                continue outer;
+                            }
+                        } else if (expected instanceof StateValueBoolean eb && actual instanceof StateValueString as) {
+                            if (eb.getValue() != Boolean.parseBoolean(as.getValue())) {
+                                continue outer;
+                            }
+                        } else if (expected instanceof StateValueString es && actual instanceof StateValueBoolean ab) {
+                            if (ab.getValue() != Boolean.parseBoolean(es.getValue())) {
+                                continue outer;
+                            }
+                        } else if (expected instanceof StateValueInt ei && actual instanceof StateValueString ais) {
+                            try {
+                                if (ei.getValue() != Integer.parseInt(ais.getValue())) {
+                                    continue outer;
+                                }
+                            } catch (NumberFormatException ex) {
+                                continue outer;
+                            }
+                        } else if (expected instanceof StateValueString eis && actual instanceof StateValueInt ai) {
+                            try {
+                                if (ai.getValue() != Integer.parseInt(eis.getValue())) {
+                                    continue outer;
+                                }
+                            } catch (NumberFormatException ex) {
                                 continue outer;
                             }
                         } else if (!Objects.equals(expected, actual)) {

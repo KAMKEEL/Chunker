@@ -13,8 +13,13 @@ import com.hivemc.chunker.conversion.encoding.base.writer.LevelWriter;
 import com.hivemc.chunker.conversion.intermediate.world.Dimension;
 import com.hivemc.chunker.mapping.MappingsFile;
 import com.hivemc.chunker.mapping.resolver.MappingsFileResolvers;
+import com.hivemc.chunker.mapping.parser.SimpleMappingsParser;
+import com.hivemc.chunker.mapping.parser.SimpleMappingsTemplateGenerator;
 import com.hivemc.chunker.pruning.PruningConfig;
 import com.hivemc.chunker.scheduling.task.TrackedTask;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
+import java.io.IOException;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import picocli.CommandLine;
 
@@ -77,6 +82,18 @@ public class CLI implements Runnable {
     private JsonObjectOrFile blockMappings;
 
     @CommandLine.Option(
+            names = {"--simpleBlockMappings", "-sm"},
+            description = "A text file containing simple block mappings in the form 'old[state=value] -> new[state=value]'."
+    )
+    private File simpleBlockMappings;
+
+    @CommandLine.Option(
+            names = {"--generateSimpleMappingsTemplate"},
+            description = "Writes an example simple mapping file to the provided path and exits."
+    )
+    private File generateSimpleMappingsTemplate;
+
+    @CommandLine.Option(
             names = {"--worldSettings", "-s"},
             description = "A JSON file/object containing world settings.",
             converter = JsonObjectOrFile.Converter.class
@@ -111,6 +128,30 @@ public class CLI implements Runnable {
     private boolean keepOriginalNBT;
 
     /**
+     * Merge two mappings files by appending the identifier list from the second
+     * to the first. This is primarily used so simple mappings can extend a JSON
+     * mappings file when both are supplied.
+     */
+    public static MappingsFile mergeMappings(MappingsFile base, MappingsFile extra) {
+        JsonObject baseJson = base.toJson().getAsJsonObject();
+        JsonArray baseIds = baseJson.getAsJsonArray("identifiers");
+        if (baseIds == null) {
+            baseIds = new JsonArray();
+            baseJson.add("identifiers", baseIds);
+        }
+
+        JsonObject extraJson = extra.toJson().getAsJsonObject();
+        JsonArray extraIds = extraJson.getAsJsonArray("identifiers");
+        if (extraIds != null) {
+            for (int i = 0; i < extraIds.size(); i++) {
+                baseIds.add(extraIds.get(i));
+            }
+        }
+
+        return MappingsFile.load(baseJson);
+    }
+
+    /**
      * Main entry point for the CLI
      *
      * @param args the arguments which should be parsed by picocli.
@@ -133,6 +174,16 @@ public class CLI implements Runnable {
             // Create the converter
             Stopwatch stopwatch = Stopwatch.createStarted();
 
+            if (generateSimpleMappingsTemplate != null) {
+                try {
+                    SimpleMappingsTemplateGenerator.writeTemplate(generateSimpleMappingsTemplate.toPath());
+                    System.out.println("Template written to " + generateSimpleMappingsTemplate.getAbsolutePath());
+                } catch (IOException e) {
+                    System.err.println("Failed to write template: " + e.getMessage());
+                }
+                return;
+            }
+
             // Create the converter
             WorldConverter worldConverter = new WorldConverter(UUID.randomUUID());
 
@@ -150,14 +201,33 @@ public class CLI implements Runnable {
                     throw new RuntimeException(e);
                 }
             }
+
+            MappingsFile loadedMappings = null;
             if (blockMappings != null) {
                 try {
-                    MappingsFile mappingsFile = MappingsFile.load(blockMappings.getJSONObjectString());
-                    worldConverter.setBlockMappings(new MappingsFileResolvers(mappingsFile));
+                    loadedMappings = MappingsFile.load(blockMappings.getJSONObjectString());
                 } catch (Exception e) {
                     System.err.println("Failed to parse block mappings.");
                     throw new RuntimeException(e);
                 }
+            }
+
+            if (simpleBlockMappings != null) {
+                try {
+                    MappingsFile mappingsFile = SimpleMappingsParser.parse(simpleBlockMappings.toPath());
+                    if (loadedMappings == null) {
+                        loadedMappings = mappingsFile;
+                    } else {
+                        loadedMappings = mergeMappings(loadedMappings, mappingsFile);
+                    }
+                } catch (Exception e) {
+                    System.err.println("Failed to parse simple block mappings.");
+                    throw new RuntimeException(e);
+                }
+            }
+
+            if (loadedMappings != null) {
+                worldConverter.setBlockMappings(new MappingsFileResolvers(loadedMappings));
             }
 
             // Apply world settings if they're present and parse

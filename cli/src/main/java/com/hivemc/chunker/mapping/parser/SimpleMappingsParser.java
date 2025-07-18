@@ -97,7 +97,7 @@ public final class SimpleMappingsParser {
                     if (kv.length != 2) {
                         throw new IOException("Invalid state entry: " + pair);
                     }
-                    String key = kv[0].trim();
+                    String key = kv[0].trim().toLowerCase();
                     String value = kv[1].trim();
                     statesObj.add(key, parseValue(value));
                 }

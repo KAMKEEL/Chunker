@@ -23,6 +23,7 @@ import com.hivemc.chunker.mapping.identifier.Identifier;
 import com.hivemc.chunker.nbt.tags.collection.CompoundTag;
 import com.hivemc.chunker.resolver.Resolver;
 import com.hivemc.chunker.util.LegacyIdentifier;
+import com.hivemc.chunker.conversion.encoding.java.base.resolver.identifier.legacy.JavaLegacyBlockIDResolver;
 
 import java.util.Objects;
 import java.util.Optional;
@@ -263,8 +264,11 @@ public class JavaResolversBuilder {
                             // Report the error
                             converter.logMissingMapping(Converter.MissingMappingType.BLOCK, String.valueOf(chunkerBlockIdentifier));
 
-                            // Return air
-                            return new LegacyIdentifier(0, (byte) 0);
+                            // Use a placeholder ID so the block can be
+                            // remapped later. This ensures data isn't lost
+                            // when converting newer worlds to legacy formats.
+                            int id = blockIDResolver.placeholder(String.valueOf(chunkerBlockIdentifier));
+                            return new LegacyIdentifier(id, (byte) 0);
                         });
             }
 

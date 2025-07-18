@@ -10,7 +10,24 @@ import java.util.Optional;
  * Resolver to convert between legacy block identifiers and the block ID.
  */
 public class JavaLegacyBlockIDResolver implements Resolver<Integer, String> {
+    /**
+     * Placeholder ID used when a block identifier is missing from the mapping.
+     * This value must fit within the 12-bit limit used by the legacy chunk
+     * format. 306 was chosen so it does not collide with vanilla 1.12 IDs and
+     * leaves room for additional mappings while remaining below the 4096 ID
+     * ceiling.
+     */
+    // Use IDs outside the vanilla 1.12 range so they can be replaced later
+    // when converting to a modded environment. 3050 is safely above the last
+    // vanilla ID (2267) but still fits in the 12-bit limit (4095).
+    public static final int PLACEHOLDER_START_ID = 3050;
     private final InvertibleMap<String, Integer> mapping = InvertibleMap.intValues();
+    private final java.util.Map<String, Integer> placeholderIds = new java.util.HashMap<>();
+    private int nextPlaceholder = PLACEHOLDER_START_ID;
+
+    public int placeholder(String identifier) {
+        return placeholderIds.computeIfAbsent(identifier, k -> nextPlaceholder++);
+    }
 
     /**
      * Create a new legacy block ID resolver.
@@ -287,6 +304,143 @@ public class JavaLegacyBlockIDResolver implements Resolver<Integer, String> {
             mapping.put("minecraft:black_glazed_terracotta", 250);
             mapping.put("minecraft:concrete", 251);
             mapping.put("minecraft:concrete_powder", 252);
+        }
+
+        // 1.13 blocks
+        if (version.isGreaterThanOrEqual(1, 13, 0)) {
+            mapping.put("minecraft:seagrass", 3000);
+            mapping.put("minecraft:tall_seagrass", 3001);
+            mapping.put("minecraft:kelp", 3002);
+            mapping.put("minecraft:kelp_plant", 3003);
+            mapping.put("minecraft:dried_kelp_block", 3004);
+            mapping.put("minecraft:turtle_egg", 3005);
+            mapping.put("minecraft:bubble_column", 3006);
+            mapping.put("minecraft:conduit", 3007);
+            mapping.put("minecraft:prismarine_stairs", 3008);
+            mapping.put("minecraft:prismarine_wall", 3009);
+            mapping.put("minecraft:blue_ice", 3010);
+            mapping.put("minecraft:acacia_pressure_plate", 3050);
+            mapping.put("minecraft:birch_pressure_plate", 3051);
+            mapping.put("minecraft:jungle_pressure_plate", 3052);
+            mapping.put("minecraft:dark_oak_pressure_plate", 3053);
+            mapping.put("minecraft:spruce_pressure_plate", 3054);
+            mapping.put("minecraft:acacia_trapdoor", 3055);
+            mapping.put("minecraft:birch_trapdoor", 3056);
+            mapping.put("minecraft:jungle_trapdoor", 3057);
+            mapping.put("minecraft:dark_oak_trapdoor", 3058);
+            mapping.put("minecraft:spruce_trapdoor", 3059);
+            mapping.put("minecraft:prismarine_brick_slab", 3060);
+            mapping.put("minecraft:prismarine_slab", 3061);
+            mapping.put("minecraft:dark_prismarine_slab", 3062);
+            mapping.put("minecraft:prismarine_brick_stairs", 3063);
+            mapping.put("minecraft:dark_prismarine_stairs", 3064);
+            mapping.put("minecraft:sea_pickle", 3065);
+            mapping.put("minecraft:brain_coral_block", 3066);
+            mapping.put("minecraft:bubble_coral_block", 3067);
+            mapping.put("minecraft:fire_coral_block", 3068);
+            mapping.put("minecraft:horn_coral_block", 3069);
+            mapping.put("minecraft:tube_coral_block", 3070);
+            mapping.put("minecraft:dead_brain_coral_block", 3071);
+            mapping.put("minecraft:dead_bubble_coral_block", 3072);
+            mapping.put("minecraft:dead_fire_coral_block", 3073);
+            mapping.put("minecraft:dead_horn_coral_block", 3074);
+            mapping.put("minecraft:dead_tube_coral_block", 3075);
+            mapping.put("minecraft:brain_coral", 3076);
+            mapping.put("minecraft:bubble_coral", 3077);
+            mapping.put("minecraft:fire_coral", 3078);
+            mapping.put("minecraft:horn_coral", 3079);
+            mapping.put("minecraft:tube_coral", 3080);
+            mapping.put("minecraft:dead_brain_coral", 3081);
+            mapping.put("minecraft:dead_bubble_coral", 3082);
+            mapping.put("minecraft:dead_fire_coral", 3083);
+            mapping.put("minecraft:dead_horn_coral", 3084);
+            mapping.put("minecraft:dead_tube_coral", 3085);
+            mapping.put("minecraft:brain_coral_fan", 3086);
+            mapping.put("minecraft:bubble_coral_fan", 3087);
+            mapping.put("minecraft:fire_coral_fan", 3088);
+            mapping.put("minecraft:horn_coral_fan", 3089);
+            mapping.put("minecraft:tube_coral_fan", 3090);
+            mapping.put("minecraft:dead_brain_coral_fan", 3091);
+            mapping.put("minecraft:dead_bubble_coral_fan", 3092);
+            mapping.put("minecraft:dead_fire_coral_fan", 3093);
+            mapping.put("minecraft:dead_horn_coral_fan", 3094);
+            mapping.put("minecraft:dead_tube_coral_fan", 3095);
+            mapping.put("minecraft:mushroom_stem", 3096);
+            mapping.put("minecraft:carved_pumpkin", 3097);
+            mapping.put("minecraft:smooth_quartz", 3098);
+            mapping.put("minecraft:smooth_red_sandstone", 3099);
+            mapping.put("minecraft:smooth_sandstone", 3100);
+            mapping.put("minecraft:smooth_stone", 3101);
+            mapping.put("minecraft:petrified_oak_slab", 3102);
+            mapping.put("minecraft:stripped_oak_log", 3103);
+            mapping.put("minecraft:stripped_spruce_log", 3104);
+            mapping.put("minecraft:stripped_birch_log", 3105);
+            mapping.put("minecraft:stripped_jungle_log", 3106);
+            mapping.put("minecraft:stripped_acacia_log", 3107);
+            mapping.put("minecraft:stripped_dark_oak_log", 3108);
+            mapping.put("minecraft:stripped_oak_wood", 3109);
+            mapping.put("minecraft:stripped_spruce_wood", 3110);
+            mapping.put("minecraft:stripped_birch_wood", 3111);
+            mapping.put("minecraft:stripped_jungle_wood", 3112);
+            mapping.put("minecraft:stripped_acacia_wood", 3113);
+            mapping.put("minecraft:stripped_dark_oak_wood", 3114);
+            mapping.put("minecraft:acacia_wood", 3115);
+            mapping.put("minecraft:birch_wood", 3116);
+            mapping.put("minecraft:dark_oak_wood", 3117);
+            mapping.put("minecraft:jungle_wood", 3118);
+            mapping.put("minecraft:oak_wood", 3119);
+            mapping.put("minecraft:spruce_wood", 3120);
+        }
+
+        // 1.14 blocks
+        if (version.isGreaterThanOrEqual(1, 14, 0)) {
+            mapping.put("minecraft:barrel", 3011);
+            mapping.put("minecraft:smoker", 3012);
+            mapping.put("minecraft:blast_furnace", 3013);
+            mapping.put("minecraft:cartography_table", 3014);
+            mapping.put("minecraft:fletching_table", 3015);
+            mapping.put("minecraft:grindstone", 3016);
+            mapping.put("minecraft:lectern", 3017);
+            mapping.put("minecraft:loom", 3018);
+            mapping.put("minecraft:smithing_table", 3019);
+            mapping.put("minecraft:composter", 3020);
+            mapping.put("minecraft:bell", 3021);
+            mapping.put("minecraft:lantern", 3022);
+            mapping.put("minecraft:campfire", 3023);
+            mapping.put("minecraft:stonecutter", 3024);
+        }
+
+        // 1.15 blocks
+        if (version.isGreaterThanOrEqual(1, 15, 0)) {
+            mapping.put("minecraft:bee_nest", 3025);
+            mapping.put("minecraft:beehive", 3026);
+            mapping.put("minecraft:honey_block", 3027);
+            mapping.put("minecraft:honeycomb_block", 3028);
+        }
+
+        // 1.16 blocks
+        if (version.isGreaterThanOrEqual(1, 16, 0)) {
+            mapping.put("minecraft:ancient_debris", 3029);
+            mapping.put("minecraft:netherite_block", 3030);
+            mapping.put("minecraft:lodestone", 3031);
+            mapping.put("minecraft:target", 3032);
+            mapping.put("minecraft:basalt", 3033);
+            mapping.put("minecraft:blackstone", 3034);
+            mapping.put("minecraft:polished_blackstone", 3035);
+            mapping.put("minecraft:polished_blackstone_bricks", 3036);
+            mapping.put("minecraft:gilded_blackstone", 3037);
+            mapping.put("minecraft:crimson_nylium", 3038);
+            mapping.put("minecraft:warped_nylium", 3039);
+            mapping.put("minecraft:soul_soil", 3040);
+            mapping.put("minecraft:soul_fire", 3041);
+            mapping.put("minecraft:soul_torch", 3042);
+            mapping.put("minecraft:soul_wall_torch", 3043);
+            mapping.put("minecraft:soul_campfire", 3044);
+            mapping.put("minecraft:soul_lantern", 3045);
+            mapping.put("minecraft:crimson_fence", 3046);
+            mapping.put("minecraft:warped_fence", 3047);
+            mapping.put("minecraft:crimson_door", 3048);
+            mapping.put("minecraft:warped_door", 3049);
         }
     }
 

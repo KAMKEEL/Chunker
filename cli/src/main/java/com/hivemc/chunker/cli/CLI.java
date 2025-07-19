@@ -8,12 +8,14 @@ import com.hivemc.chunker.cli.messenger.Messenger;
 import com.hivemc.chunker.cli.messenger.messaging.DimensionPruningList;
 import com.hivemc.chunker.conversion.WorldConverter;
 import com.hivemc.chunker.conversion.encoding.EncodingType;
+import com.hivemc.chunker.conversion.encoding.base.Version;
 import com.hivemc.chunker.conversion.encoding.base.reader.LevelReader;
 import com.hivemc.chunker.conversion.encoding.base.writer.LevelWriter;
 import com.hivemc.chunker.conversion.intermediate.world.Dimension;
 import com.hivemc.chunker.mapping.MappingsFile;
 import com.hivemc.chunker.mapping.resolver.MappingsFileResolvers;
 import com.hivemc.chunker.mapping.parser.SimpleMappingsParser;
+import com.hivemc.chunker.mapping.parser.LevelConvertMappingsParser;
 import com.hivemc.chunker.mapping.parser.SimpleMappingsTemplateGenerator;
 import com.hivemc.chunker.pruning.PruningConfig;
 import com.hivemc.chunker.scheduling.task.TrackedTask;
@@ -86,6 +88,12 @@ public class CLI implements Runnable {
             description = "A text file containing simple block mappings in the form 'old[state=value] -> new[state=value]'."
     )
     private File simpleBlockMappings;
+
+    @CommandLine.Option(
+            names = {"--levelConvert"},
+            description = "Path to a level.dat used to resolve simple mappings to legacy IDs (Java 1.12 and below only)."
+    )
+    private File levelConvert;
 
     @CommandLine.Option(
             names = {"--generateSimpleMappingsTemplate"},
@@ -186,6 +194,9 @@ public class CLI implements Runnable {
 
             // Create the converter
             WorldConverter worldConverter = new WorldConverter(UUID.randomUUID());
+            if (levelConvert != null) {
+                worldConverter.setLegacyLevelDat(levelConvert);
+            }
 
             // If any of the mappings file aren't present, check if they're inside the input world
 
@@ -214,7 +225,12 @@ public class CLI implements Runnable {
 
             if (simpleBlockMappings != null) {
                 try {
-                    MappingsFile mappingsFile = SimpleMappingsParser.parse(simpleBlockMappings.toPath());
+                    MappingsFile mappingsFile;
+                    if (levelConvert != null) {
+                        mappingsFile = LevelConvertMappingsParser.parse(simpleBlockMappings.toPath(), levelConvert);
+                    } else {
+                        mappingsFile = SimpleMappingsParser.parse(simpleBlockMappings.toPath());
+                    }
                     if (loadedMappings == null) {
                         loadedMappings = mappingsFile;
                     } else {
@@ -353,6 +369,13 @@ public class CLI implements Runnable {
             if (writer.isEmpty()) {
                 System.err.println("Failed to find suitable writer for the world.");
                 return;
+            }
+            if (levelConvert != null) {
+                if (writer.get().getEncodingType() != EncodingType.JAVA ||
+                        writer.get().getVersion().isGreaterThan(new Version(1, 12, 2))) {
+                    System.err.println("--levelConvert can only be used when converting to Java 1.12 or lower.");
+                    return;
+                }
             }
             System.out.println(MessageFormat.format(
                     "Converting from {0} {1} to {2} {3}",

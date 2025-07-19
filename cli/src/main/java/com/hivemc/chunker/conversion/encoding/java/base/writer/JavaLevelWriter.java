@@ -299,6 +299,24 @@ public class JavaLevelWriter implements LevelWriter, JavaReaderWriter {
         // Write the level.dat
         CompoundTag root = new CompoundTag();
         root.put("Data", data);
+
+        if (converter instanceof com.hivemc.chunker.conversion.WorldConverter wc) {
+            File legacyFile = wc.getLegacyLevelDat();
+            if (legacyFile != null) {
+                try {
+                    CompoundTag legacyRoot = Tag.readPossibleGZipJavaNBT(legacyFile);
+                    if (legacyRoot != null) {
+                        CompoundTag fml = legacyRoot.getCompound("FML");
+                        if (fml != null) root.put("FML", fml);
+                        CompoundTag forge = legacyRoot.getCompound("Forge");
+                        if (forge != null) root.put("Forge", forge);
+                    }
+                } catch (Exception e) {
+                    converter.logNonFatalException(e);
+                }
+            }
+        }
+
         Tag.writeGZipJavaNBT(new File(outputFolder, "level.dat"), root);
     }
 

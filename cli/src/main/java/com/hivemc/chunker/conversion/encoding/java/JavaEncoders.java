@@ -23,6 +23,11 @@ public class JavaEncoders {
     static {
         // This is a list of encoders (not required for every version) but versions where format changes
         register(
+                JavaDataVersion.V1_7_10,
+                JavaLevelReader::new,
+                JavaLevelWriter::new
+        );
+        register(
                 JavaDataVersion.V1_8_8,
                 JavaLevelReader::new,
                 JavaLevelWriter::new

@@ -138,7 +138,7 @@ def download_version(version_id, version_url):
                     json.dump(obj, file, indent=2)
 
 
-# Fetch the version list and download the versions down to 1.8.7 marked as release
+# Fetch the version list and download the versions down to 1.7.9 marked as release
 response = requests.get("https://launchermeta.mojang.com/mc/game/version_manifest.json")
 version_manifest = response.json()
 
@@ -148,6 +148,6 @@ for version in version_manifest["versions"]:
         version["id"] = "1.21.6"
     if version["type"] == "snapshot":
         continue
-    if version["id"] == "1.8.7":
-        break  # Don't download versions below 1.8.8
+    if version["id"] == "1.7.9":
+        break  # Don't download versions below 1.7.10
     download_version(version["id"], version["url"])

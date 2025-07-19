@@ -183,39 +183,45 @@ public class JavaLegacyBlockIDResolver implements Resolver<Integer, String> {
         mapping.put("minecraft:log2", 162);
         mapping.put("minecraft:acacia_stairs", 163);
         mapping.put("minecraft:dark_oak_stairs", 164);
-        mapping.put("minecraft:slime", 165);
-        mapping.put("minecraft:barrier", 166);
-        mapping.put("minecraft:iron_trapdoor", 167);
-        mapping.put("minecraft:prismarine", 168);
-        mapping.put("minecraft:sea_lantern", 169);
+
+        // 1.7+
         mapping.put("minecraft:hay_block", 170);
         mapping.put("minecraft:carpet", 171);
         mapping.put("minecraft:hardened_clay", 172);
         mapping.put("minecraft:coal_block", 173);
         mapping.put("minecraft:packed_ice", 174);
         mapping.put("minecraft:double_plant", 175);
-        mapping.put("minecraft:standing_banner", 176);
-        mapping.put("minecraft:wall_banner", 177);
-        mapping.put("minecraft:daylight_detector_inverted", 178);
-        mapping.put("minecraft:red_sandstone", 179);
-        mapping.put("minecraft:red_sandstone_stairs", 180);
-        mapping.put("minecraft:double_stone_slab2", 181);
-        mapping.put("minecraft:stone_slab2", 182);
-        mapping.put("minecraft:spruce_fence_gate", 183);
-        mapping.put("minecraft:birch_fence_gate", 184);
-        mapping.put("minecraft:jungle_fence_gate", 185);
-        mapping.put("minecraft:dark_oak_fence_gate", 186);
-        mapping.put("minecraft:acacia_fence_gate", 187);
-        mapping.put("minecraft:spruce_fence", 188);
-        mapping.put("minecraft:birch_fence", 189);
-        mapping.put("minecraft:jungle_fence", 190);
-        mapping.put("minecraft:dark_oak_fence", 191);
-        mapping.put("minecraft:acacia_fence", 192);
-        mapping.put("minecraft:spruce_door", 193);
-        mapping.put("minecraft:birch_door", 194);
-        mapping.put("minecraft:jungle_door", 195);
-        mapping.put("minecraft:acacia_door", 196);
-        mapping.put("minecraft:dark_oak_door", 197);
+
+        // 1.8.0
+        if (version.isGreaterThanOrEqual(1, 8, 0)) {
+            mapping.put("minecraft:slime", 165);
+            mapping.put("minecraft:barrier", 166);
+            mapping.put("minecraft:iron_trapdoor", 167);
+            mapping.put("minecraft:prismarine", 168);
+            mapping.put("minecraft:sea_lantern", 169);
+            mapping.put("minecraft:standing_banner", 176);
+            mapping.put("minecraft:wall_banner", 177);
+            mapping.put("minecraft:daylight_detector_inverted", 178);
+            mapping.put("minecraft:red_sandstone", 179);
+            mapping.put("minecraft:red_sandstone_stairs", 180);
+            mapping.put("minecraft:double_stone_slab2", 181);
+            mapping.put("minecraft:stone_slab2", 182);
+            mapping.put("minecraft:spruce_fence_gate", 183);
+            mapping.put("minecraft:birch_fence_gate", 184);
+            mapping.put("minecraft:jungle_fence_gate", 185);
+            mapping.put("minecraft:dark_oak_fence_gate", 186);
+            mapping.put("minecraft:acacia_fence_gate", 187);
+            mapping.put("minecraft:spruce_fence", 188);
+            mapping.put("minecraft:birch_fence", 189);
+            mapping.put("minecraft:jungle_fence", 190);
+            mapping.put("minecraft:dark_oak_fence", 191);
+            mapping.put("minecraft:acacia_fence", 192);
+            mapping.put("minecraft:spruce_door", 193);
+            mapping.put("minecraft:birch_door", 194);
+            mapping.put("minecraft:jungle_door", 195);
+            mapping.put("minecraft:acacia_door", 196);
+            mapping.put("minecraft:dark_oak_door", 197);
+        }
 
         // 1.9
         if (version.isGreaterThanOrEqual(1, 9, 0)) {

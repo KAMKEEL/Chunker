@@ -16,6 +16,9 @@ public class JavaDataVersion implements Comparable<JavaDataVersion> {
     private static final TreeMap<Integer, JavaDataVersion> DATA_VERSION_LOOKUP = new TreeMap<>();
     private static final TreeMap<Version, JavaDataVersion> VERSION_LOOKUP = new TreeMap<>();
 
+    // 1.7 (no data versions)
+    public static final JavaDataVersion V1_7_10 = register(-1, new Version(1, 7, 10));
+
     // 1.8 (no data versions)
     public static final JavaDataVersion V1_8_8 = register(0, new Version(1, 8, 8));
 
@@ -199,7 +202,7 @@ public class JavaDataVersion implements Comparable<JavaDataVersion> {
             if (versionTag == null) {
                 // If this is null, it's likely an older version or not a valid NBT dat
                 if (level.getInt("version", -1) != LAST_ANVIL_FILE_VERSION) {
-                    // Currently only the last anvil file format is handled (as 1.8.8)
+                    // Currently only the last anvil file format is handled (1.7.10+)
                     return Optional.empty();
                 }
 

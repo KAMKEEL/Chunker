@@ -19,6 +19,7 @@ Supported Formats:
     - 1.20.0 - 1.20.80
     - 1.21.0 - 1.21.90
 - Java
+    - 1.7.10
     - 1.8.8
     - 1.9.0 - 1.9.3
     - 1.10.0 - 1.10.2
@@ -70,7 +71,7 @@ The following parameters are required:
 - `-i` / `--inputDirectory` - the path relative to the application which should be used as the input directory.
 - `-o` / `--outputDirectory` - the path relative to the application which should be used as the output directory.
 - `-f` / `--outputFormat` - the output format to convert the world to in the form `EDITION_X_Y_Z`,
-  e.g. `JAVA_1_20_5`, `JAVA_1_20`, `BEDROCK_1_19_30`.
+  e.g. `JAVA_1_20_5`, `JAVA_1_7_10`, `BEDROCK_1_19_30`.
 
 Additionally, the following parameters are supported:
 

@@ -116,6 +116,9 @@ public class JavaChunkWriter {
         // Blocks
         byte[] blockArray = new byte[4096];
         byte[] addArray = new byte[2048];
+        // When NotEnoughIDs is enabled we also write the full 16-bit ID array.
+        // This mirrors how the legacy mIDas Platinum converter stores the "Blocks16" tag.
+        short[] blocks16Shorts = converter.shouldUseNotEnoughIDs() ? new short[4096] : null;
         byte[] dataArray = new byte[2048];
 
         if (!chunk.isEmpty()) {
@@ -131,12 +134,16 @@ public class JavaChunkWriter {
                 LegacyIdentifier legacyIdentifier = resolvers.writeLegacyBlockIdentifier(identifier);
 
                 // Set block id
-                byte blockValue = (byte) (legacyIdentifier.id() & 0xFF);
-                byte addValue = (byte) ((legacyIdentifier.id() >> 8) & 0xFF);
+                int legacyId = legacyIdentifier.id();
+                byte blockValue = (byte) (legacyId & 0xFF);
+                byte addValue = (byte) ((legacyId >> 8) & 0xF);
                 blockArray[i] = blockValue;
 
                 // Set add value (extra block ids)
                 addArray[nibbleIndex] = ByteUtil.updateNibble(addArray[nibbleIndex], addValue, lowestBits);
+                if (blocks16Shorts != null) {
+                    blocks16Shorts[i] = (short) legacyId;
+                }
 
                 // Set block data
                 dataArray[nibbleIndex] = ByteUtil.updateNibble(dataArray[nibbleIndex], legacyIdentifier.data(), lowestBits);
@@ -146,6 +153,9 @@ public class JavaChunkWriter {
         // Add tags
         output.add(new TagWithName<>("Blocks", new ByteArrayTag(blockArray)));
         output.add(new TagWithName<>("Add", new ByteArrayTag(addArray)));
+        if (blocks16Shorts != null) {
+            output.add(new TagWithName<>("Blocks16", new ByteArrayTag(ByteUtil.shortArrayToBytes(blocks16Shorts))));
+        }
         output.add(new TagWithName<>("Data", new ByteArrayTag(dataArray)));
     }
 

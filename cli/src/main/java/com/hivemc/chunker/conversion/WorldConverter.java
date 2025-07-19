@@ -88,6 +88,7 @@ public class WorldConverter implements Converter {
     private boolean allowNBTCopying = false;
     private boolean discardEmptyChunks = false;
     private boolean preventYBiomeBlending = false;
+    private boolean notEnoughIDs = false;
     private boolean customIdentifiers = true;
     private boolean exceptions = false;
     private boolean cancelled = false;
@@ -154,6 +155,17 @@ public class WorldConverter implements Converter {
      */
     public void setPreventYBiomeBlending(boolean preventYBiomeBlending) {
         this.preventYBiomeBlending = preventYBiomeBlending;
+    }
+
+    /**
+     * Set whether NotEnoughIDs formatting should be used for legacy region files.
+     * When enabled the Java writer will output a {@code Blocks16} tag containing
+     * the full 16-bit block IDs, matching the behaviour of mIDas Platinum.
+     *
+     * @param notEnoughIDs true if NotEnoughIDs should be enabled.
+     */
+    public void setNotEnoughIDs(boolean notEnoughIDs) {
+        this.notEnoughIDs = notEnoughIDs;
     }
 
     /**
@@ -308,6 +320,11 @@ public class WorldConverter implements Converter {
     @Override
     public boolean shouldPreventYBiomeBlending() {
         return preventYBiomeBlending;
+    }
+
+    @Override
+    public boolean shouldUseNotEnoughIDs() {
+        return notEnoughIDs;
     }
 
     @Override

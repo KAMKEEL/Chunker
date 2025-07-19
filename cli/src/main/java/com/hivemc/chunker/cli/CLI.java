@@ -377,8 +377,8 @@ public class CLI implements Runnable {
             }
             if (levelConvert != null) {
                 if (writer.get().getEncodingType() != EncodingType.JAVA ||
-                        writer.get().getVersion().isGreaterThan(new Version(1, 12, 2))) {
-                    System.err.println("--levelConvert can only be used when converting to Java 1.12 or lower.");
+                        !writer.get().getVersion().equals(new Version(1, 7, 10))) {
+                    System.err.println("--levelConvert can only be used when converting to Java 1.7.10.");
                     return;
                 }
             }

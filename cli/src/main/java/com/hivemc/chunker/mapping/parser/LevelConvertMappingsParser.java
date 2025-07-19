@@ -137,33 +137,25 @@ public final class LevelConvertMappingsParser {
             meta = root.getCompound("Forge");
         }
         if (meta == null) return map;
-        CompoundTag registries = meta.getCompound("Registries");
-        if (registries == null) {
-            registries = meta.getCompound("registries", null);
+
+        // Locate the ItemData compound used in legacy FML versions (1.7.10)
+        CompoundTag itemData = meta.getCompound("Item Data", null);
+        if (itemData == null) {
+            itemData = meta.getCompound("ItemData", null);
         }
-        if (registries == null) return map;
-        CompoundTag blocks = registries.getCompound("minecraft:blocks", null);
-        if (blocks == null) {
-            blocks = registries.getCompound("Minecraft:blocks", null);
+        if (itemData == null) {
+            throw new IOException("Missing ItemData in level.dat");
         }
-        if (blocks == null) return map;
-        ListTag<CompoundTag, ?> ids = blocks.getList("ids", CompoundTag.class, null);
-        if (ids != null) {
-            for (CompoundTag entry : ids) {
-                String key = entry.getString("K", entry.getString("k", null));
-                int value = entry.getInt("V", entry.getInt("v", -1));
-                if (key != null && value != -1) {
-                    map.put(key, value);
-                }
-            }
-        } else {
-            CompoundTag comp = blocks.getCompound("ids", null);
-            if (comp != null) {
-                for (Map.Entry<String, Tag<?>> e : comp) {
-                    if (e.getValue() instanceof IntTag intTag) {
-                        map.put(e.getKey(), intTag.getValue());
-                    }
-                }
+
+        ListTag<CompoundTag, ?> ids = itemData.getList("ItemData", CompoundTag.class, null);
+        if (ids == null) {
+            throw new IOException("Missing ItemData list in level.dat");
+        }
+        for (CompoundTag entry : ids) {
+            String key = entry.getString("K", entry.getString("k", null));
+            int value = entry.getInt("V", entry.getInt("v", -1));
+            if (key != null && value != -1) {
+                map.put(key, value);
             }
         }
         return map;

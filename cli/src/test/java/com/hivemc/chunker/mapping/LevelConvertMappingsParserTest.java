@@ -25,16 +25,14 @@ public class LevelConvertMappingsParserTest {
         CompoundTag root = new CompoundTag();
         CompoundTag fml = new CompoundTag();
         root.put("FML", fml);
-        CompoundTag registries = new CompoundTag();
-        fml.put("Registries", registries);
-        CompoundTag blocks = new CompoundTag();
-        registries.put("minecraft:blocks", blocks);
+        CompoundTag itemData = new CompoundTag();
+        fml.put("ItemData", itemData);
         ListTag<CompoundTag, ?> ids = new ListTag<>();
         CompoundTag entry = new CompoundTag();
         entry.put("K", new StringTag("etfuturum:stripped_acacia_log"));
         entry.put("V", new IntTag(1300));
         ids.add(entry);
-        blocks.put("ids", ids);
+        itemData.put("ItemData", ids);
 
         File levelDat = File.createTempFile("level", ".dat");
         levelDat.deleteOnExit();
@@ -62,13 +60,14 @@ public class LevelConvertMappingsParserTest {
         CompoundTag root = new CompoundTag();
         CompoundTag forge = new CompoundTag();
         root.put("Forge", forge);
-        CompoundTag registries = new CompoundTag();
-        forge.put("Registries", registries);
-        CompoundTag blocks = new CompoundTag();
-        registries.put("minecraft:blocks", blocks);
-        CompoundTag ids = new CompoundTag();
-        ids.put("etfuturum:stripped_acacia_log", new IntTag(1300));
-        blocks.put("ids", ids);
+        CompoundTag itemData = new CompoundTag();
+        forge.put("ItemData", itemData);
+        ListTag<CompoundTag, ?> ids = new ListTag<>();
+        CompoundTag entry = new CompoundTag();
+        entry.put("K", new StringTag("etfuturum:stripped_acacia_log"));
+        entry.put("V", new IntTag(1300));
+        ids.add(entry);
+        itemData.put("ItemData", ids);
 
         File levelDat = File.createTempFile("level2", ".dat");
         levelDat.deleteOnExit();

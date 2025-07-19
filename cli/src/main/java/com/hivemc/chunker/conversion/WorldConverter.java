@@ -31,6 +31,7 @@ import com.hivemc.chunker.scheduling.task.TrackedTask;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.io.File;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -91,6 +92,8 @@ public class WorldConverter implements Converter {
     private boolean customIdentifiers = true;
     private boolean exceptions = false;
     private boolean cancelled = false;
+    @Nullable
+    private File legacyLevelDat;
 
     /**
      * Create a new WorldConverter with a sessionID.
@@ -226,6 +229,16 @@ public class WorldConverter implements Converter {
      */
     public void setAllowNBTCopying(boolean allowNBTCopying) {
         this.allowNBTCopying = allowNBTCopying;
+    }
+
+    /**
+     * Provide a legacy level.dat used for resolving mappings.
+     * When set, modded registry tags will be copied to the output level.dat.
+     *
+     * @param levelDat the legacy level.dat file or null.
+     */
+    public void setLegacyLevelDat(@Nullable File levelDat) {
+        this.legacyLevelDat = levelDat;
     }
 
     /**
@@ -396,6 +409,16 @@ public class WorldConverter implements Converter {
     @Override
     public boolean shouldAllowCustomIdentifiers() {
         return customIdentifiers;
+    }
+
+    /**
+     * Get the legacy level.dat provided for conversion.
+     *
+     * @return the file or null if none was provided.
+     */
+    @Nullable
+    public File getLegacyLevelDat() {
+        return legacyLevelDat;
     }
 
     @Override

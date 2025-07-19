@@ -167,6 +167,17 @@ public interface Converter {
     boolean shouldPreventYBiomeBlending();
 
     /**
+     * Whether NotEnoughIDs formatting should be written for legacy worlds.
+     * Implementations enabling this will output a {@code Blocks16} tag
+     * containing 16-bit block IDs in the same layout as mIDas Platinum.
+     *
+     * @return true if NotEnoughIDs should be used.
+     */
+    default boolean shouldUseNotEnoughIDs() {
+        return false;
+    }
+
+    /**
      * Get the dimension mapping given an input.
      *
      * @param dimension the input dimension.

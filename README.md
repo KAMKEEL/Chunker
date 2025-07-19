@@ -87,6 +87,7 @@ Additionally, the following parameters are supported:
 - `-k` / `--keepOriginalNBT` - indicates that NBT should be copied from the input to output where processed by Chunker,
   this is only supported where the output format is the same as the input and for optimal results you will want to copy
   the input world to the output folder prior to conversion.
+- `--enableNEIDs` - enable NotEnoughIDs formatting (the `Blocks16` tag) when converting to legacy Java worlds.
 
 You can export settings for your world by using the web interface on `https://chunker.app` through the Advanced
 Settings -> Converter Settings tab, the CLI also supports preloading settings from the input directory.

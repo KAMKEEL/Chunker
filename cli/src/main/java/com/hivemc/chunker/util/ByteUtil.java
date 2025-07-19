@@ -53,4 +53,35 @@ public class ByteUtil {
         }
         return output;
     }
+
+    /**
+     * Convert an array of shorts to a big endian byte array. This mirrors how
+     * mIDas Platinum stores the {@code Blocks16} tag for NotEnoughIDs support.
+     *
+     * @param input the input short array.
+     * @return a big endian byte array containing the same values.
+     */
+    public static byte[] shortArrayToBytes(short[] input) {
+        byte[] output = new byte[input.length * 2];
+        for (int i = 0; i < input.length; i++) {
+            output[i * 2] = (byte) ((input[i] >> 8) & 0xFF);
+            output[i * 2 + 1] = (byte) (input[i] & 0xFF);
+        }
+        return output;
+    }
+
+    /**
+     * Convert a big endian byte array to a short array. This is the inverse of
+     * {@link #shortArrayToBytes(short[])}.
+     *
+     * @param input the byte array to convert.
+     * @return the resulting short array.
+     */
+    public static short[] bytesToShortArray(byte[] input) {
+        short[] output = new short[input.length / 2];
+        for (int i = 0; i < output.length; i++) {
+            output[i] = (short) (((input[i * 2] & 0xFF) << 8) | (input[i * 2 + 1] & 0xFF));
+        }
+        return output;
+    }
 }

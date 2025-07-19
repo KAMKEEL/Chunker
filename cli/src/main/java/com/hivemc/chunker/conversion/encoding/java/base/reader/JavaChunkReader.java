@@ -64,6 +64,8 @@ public class JavaChunkReader {
         // Gather the data
         byte[] data = nbt.getByteArray("Data", null);
         byte[] extraData = nbt.getByteArray("Add", null);
+        byte[] blocks16Bytes = nbt.getByteArray("Blocks16", null);
+        short[] blocks16 = blocks16Bytes != null ? ByteUtil.bytesToShortArray(blocks16Bytes) : null;
 
         ShortBasedPalette<LegacyIdentifier> intPalette = new ShortBasedPalette<>(16, 16);
         for (int i = 0; i < 4096; i++) {
@@ -76,15 +78,19 @@ public class JavaChunkReader {
             int nibbleIndex = i >> 1;
             boolean lowestBits = (i & 1) == 0;
 
-            // Extra data used for blocks over 255
-            byte extraByte = 0;
-            if (extraData != null) {
-                extraByte = ByteUtil.getNibbleFromByte(extraData[nibbleIndex], lowestBits);
+            int id = (blocks[i] & 0xFF);
+            if (blocks16 != null) {
+                // When the Blocks16 tag is present it contains the full 16-bit
+                // ID for each block in big endian order, just like mIDas Platinum.
+                id = blocks16[i] & 0xFFFF;
+            } else if (extraData != null) {
+                // Fallback for vanilla 12-bit ids using the Add array.
+                id |= (ByteUtil.getNibbleFromByte(extraData[nibbleIndex], lowestBits) & 0xF) << 8;
             }
 
             // Create a legacy identifier, pairing the id and data
             LegacyIdentifier identifier = new LegacyIdentifier(
-                    (blocks[i] & 0xFF | ((extraByte & 0xFF) << 8)),
+                    id,
                     data == null ? 0 : ByteUtil.getNibbleFromByte(data[nibbleIndex], lowestBits)
             );
 

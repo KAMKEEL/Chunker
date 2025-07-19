@@ -20,7 +20,6 @@ import com.hivemc.chunker.mapping.parser.SimpleMappingsTemplateGenerator;
 import com.hivemc.chunker.pruning.PruningConfig;
 import com.hivemc.chunker.scheduling.task.TrackedTask;
 import com.google.gson.JsonArray;
-import com.google.gson.JsonObject;
 import java.io.IOException;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import picocli.CommandLine;
@@ -134,6 +133,12 @@ public class CLI implements Runnable {
             description = "Whether original NBT should be kept and written to the output world (only works if the output is the same as the input)."
     )
     private boolean keepOriginalNBT;
+
+    @CommandLine.Option(
+            names = {"--enableNEIDs"},
+            description = "Enable NotEnoughIDs formatting when converting to a legacy version."
+    )
+    private boolean enableNEIDs;
 
     /**
      * Merge two mappings files by appending the identifier list from the second
@@ -393,6 +398,17 @@ public class CLI implements Runnable {
                 } else {
                     System.out.println("Original NBT will be copied for this world, if you experience issues consider turning this option off as incompatible NBT may be written.");
                 }
+            }
+
+            if (enableNEIDs) {
+                // Only legacy Java region formats support the extended Blocks16 tag.
+                if (writer.get().getEncodingType() != EncodingType.JAVA || !writer.get().getVersion().isLessThan(1, 13, 0)) {
+                    System.err.println("NotEnoughIDs is only supported when converting to legacy Java versions (1.12 or lower). Please remove the flag to continue.");
+                    System.exit(0);
+                }
+
+                // Enable NotEnoughIDs support so the writer will include Blocks16 like mIDas Platinum.
+                worldConverter.setNotEnoughIDs(true);
             }
 
             // Add the handler for the compaction signal

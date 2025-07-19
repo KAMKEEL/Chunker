@@ -147,16 +147,27 @@ public final class LevelConvertMappingsParser {
             throw new IOException("Missing ItemData in level.dat");
         }
 
-        ListTag<CompoundTag, ?> ids = itemData.getList("ItemData", CompoundTag.class, null);
-        if (ids == null) {
-            throw new IOException("Missing ItemData list in level.dat");
-        }
-        for (CompoundTag entry : ids) {
-            String key = entry.getString("K", entry.getString("k", null));
-            int value = entry.getInt("V", entry.getInt("v", -1));
-            if (key != null && value != -1) {
-                map.put(key, value);
+        // ItemData can either be stored as a list of compounds or as a
+        // compound mapping names to ids depending on Forge version
+        Tag<?> idsTag = itemData.get("ItemData", Tag.class);
+        if (idsTag instanceof ListTag<?, ?> listTag) {
+            @SuppressWarnings("unchecked")
+            ListTag<CompoundTag, ?> ids = (ListTag<CompoundTag, ?>) listTag;
+            for (CompoundTag entry : ids) {
+                String key = entry.getString("K", entry.getString("k", null));
+                int value = entry.getInt("V", entry.getInt("v", -1));
+                if (key != null && value != -1) {
+                    map.put(key, value);
+                }
             }
+        } else if (idsTag instanceof CompoundTag comp) {
+            for (Map.Entry<String, Tag<?>> e : comp) {
+                if (e.getValue() instanceof IntTag intTag) {
+                    map.put(e.getKey(), intTag.getValue());
+                }
+            }
+        } else {
+            throw new IOException("Missing ItemData list in level.dat");
         }
         return map;
     }

@@ -62,11 +62,8 @@ public class LevelConvertMappingsParserTest {
         root.put("Forge", forge);
         CompoundTag itemData = new CompoundTag();
         forge.put("ItemData", itemData);
-        ListTag<CompoundTag, ?> ids = new ListTag<>();
-        CompoundTag entry = new CompoundTag();
-        entry.put("K", new StringTag("etfuturum:stripped_acacia_log"));
-        entry.put("V", new IntTag(1300));
-        ids.add(entry);
+        CompoundTag ids = new CompoundTag();
+        ids.put("etfuturum:stripped_acacia_log", new IntTag(1300));
         itemData.put("ItemData", ids);
 
         File levelDat = File.createTempFile("level2", ".dat");

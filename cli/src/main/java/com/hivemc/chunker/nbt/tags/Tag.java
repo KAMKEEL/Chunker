@@ -495,6 +495,32 @@ public abstract class Tag<T> {
             return Tag.readUncompressedJavaNBT(file);
         }
     }
+    public static CompoundTag readRawJavaNBT(File file) throws IOException {
+        // sniff GZIP vs. plain
+        boolean isGzip;
+        try (FileInputStream fis = new FileInputStream(file)) {
+            byte[] header = new byte[2];
+            if (fis.read(header) == 2) {
+                int magic = ((header[1] & 0xFF) << 8) | (header[0] & 0xFF);
+                isGzip = magic == GZIPInputStream.GZIP_MAGIC;
+            } else {
+                isGzip = false;
+            }
+        }
+
+        // open the right stream, but do NOT strip a "data"/"Data" tag
+        try (InputStream in = new BufferedInputStream(
+                isGzip
+                        ? new GZIPInputStream(new FileInputStream(file))
+                        : new FileInputStream(file)
+        );
+             DataInputStream dis = new DataInputStream(in)
+        ) {
+            // this gives you the very outer CompoundTag, no Data-unwrapping
+            TagWithName<CompoundTag> pair = Tag.decodeNamed(Reader.toJavaReader(dis), CompoundTag.class);
+            return pair == null ? new CompoundTag() : pair.tag();
+        }
+    }
 
     /**
      * Read a Java edition based ZLIB NBT bytes automatically removing the nested "data" tag if

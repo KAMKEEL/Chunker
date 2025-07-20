@@ -27,11 +27,13 @@ public class LevelConvertMappingsParserTest {
         root.put("FML", fml);
         CompoundTag itemData = new CompoundTag();
         fml.put("ItemData", itemData);
+
         ListTag<CompoundTag, ?> ids = new ListTag<>();
         CompoundTag entry = new CompoundTag();
         entry.put("K", new StringTag("etfuturum:stripped_acacia_log"));
         entry.put("V", new IntTag(1300));
         ids.add(entry);
+
         itemData.put("ItemData", ids);
 
         File levelDat = File.createTempFile("level", ".dat");
@@ -57,14 +59,15 @@ public class LevelConvertMappingsParserTest {
 
     @Test
     public void testParseWithForgeFormat() throws Exception {
+        // Build minimal level.dat with *compound-of-ints* style Forge format
         CompoundTag root = new CompoundTag();
-        CompoundTag forge = new CompoundTag();
-        root.put("Forge", forge);
+        CompoundTag fml = new CompoundTag();
+        root.put("FML", fml);
         CompoundTag itemData = new CompoundTag();
-        forge.put("ItemData", itemData);
-        CompoundTag ids = new CompoundTag();
-        ids.put("etfuturum:stripped_acacia_log", new IntTag(1300));
-        itemData.put("ItemData", ids);
+        fml.put("ItemData", itemData);
+
+        // <-- change is here: put the IntTag directly into itemData, not wrapped in another CompoundTag
+        itemData.put("etfuturum:stripped_acacia_log", new IntTag(1300));
 
         File levelDat = File.createTempFile("level2", ".dat");
         levelDat.deleteOnExit();

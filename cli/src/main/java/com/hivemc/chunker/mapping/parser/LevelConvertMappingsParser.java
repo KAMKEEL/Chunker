@@ -38,6 +38,7 @@ public final class LevelConvertMappingsParser {
      */
     public static MappingsFile parse(Path path, File levelDat) throws IOException {
         Map<String, Integer> idMap = readLegacyIDs(levelDat);
+        System.out.println(idMap);
         List<String> lines = Files.readAllLines(path);
         JsonArray array = new JsonArray();
         int index = 0;
@@ -130,45 +131,68 @@ public final class LevelConvertMappingsParser {
 
     private static Map<String, Integer> readLegacyIDs(File levelDat) throws IOException {
         Map<String, Integer> map = new HashMap<>();
-        CompoundTag root = Tag.readPossibleGZipJavaNBT(levelDat);
+
+        // 1) raw root, no "Data" unwrapping
+        CompoundTag root = Tag.readRawJavaNBT(levelDat);
         if (root == null) return map;
-        CompoundTag meta = root.getCompound("FML");
-        if (meta == null) {
-            meta = root.getCompound("Forge");
-        }
+
+        // 2) find FML/Forge
+        CompoundTag meta = root.contains("FML") ? root.getCompound("FML")
+                : root.contains("Forge") ? root.getCompound("Forge")
+                : null;
         if (meta == null) return map;
 
-        // Locate the ItemData compound used in legacy FML versions (1.7.10)
-        CompoundTag itemData = meta.getCompound("Item Data", null);
-        if (itemData == null) {
-            itemData = meta.getCompound("ItemData", null);
-        }
-        if (itemData == null) {
+        // 3) grab the raw ItemData tag (could be list or compound)
+        Tag<?> itemTag = meta.get("ItemData");
+        if (itemTag == null) itemTag = meta.get("Item Data");
+        if (itemTag == null) {
             throw new IOException("Missing ItemData in level.dat");
         }
 
-        // ItemData can either be stored as a list of compounds or as a
-        // compound mapping names to ids depending on Forge version
-        Tag<?> idsTag = itemData.get("ItemData", Tag.class);
-        if (idsTag instanceof ListTag<?, ?> listTag) {
-            @SuppressWarnings("unchecked")
-            ListTag<CompoundTag, ?> ids = (ListTag<CompoundTag, ?>) listTag;
-            for (CompoundTag entry : ids) {
-                String key = entry.getString("K", entry.getString("k", null));
-                int value = entry.getInt("V", entry.getInt("v", -1));
-                if (key != null && value != -1) {
-                    map.put(key, value);
+        // CASE 1: top‐level list of compounds
+        if (itemTag instanceof ListTag<?,?> listRaw) {
+            for (Tag<?> elem : listRaw) {
+                if (elem instanceof CompoundTag entry) {
+                    String key = entry.getString("K", null);
+                    int    val = entry.getInt   ("V", -1);
+                    if (key != null && val >= 0) {
+                        String cleaned = key.trim().replace("\u0002", "").replace("\u0003", "").replace("\u0001", "");
+                        map.put(cleaned, val);
+                    }
                 }
             }
-        } else if (idsTag instanceof CompoundTag comp) {
-            for (Map.Entry<String, Tag<?>> e : comp) {
-                if (e.getValue() instanceof IntTag intTag) {
-                    map.put(e.getKey(), intTag.getValue());
+
+            // CASE 2 & 3: a compound under "ItemData"
+        } else if (itemTag instanceof CompoundTag itemData) {
+            // first see if it has its own nested list
+            Tag<?> nested = itemData.get("ItemData");
+            if (nested instanceof ListTag<?,?> nestedRaw) {
+                for (Tag<?> elem : nestedRaw) {
+                    if (elem instanceof CompoundTag entry) {
+                        String key = entry.getString("K", null);
+                        int    val = entry.getInt   ("V", -1);
+                        if (key != null && val >= 0) {
+                            String cleaned = key.trim().replace("\u0002", "").replace("\u0003", "").replace("\u0001", "");
+                            map.put(cleaned, val);
+                        }
+                    }
+                }
+            } else {
+                // fallback: any IntTag directly under itemData is name→id
+                for (Map.Entry<String, Tag<?>> e : itemData.getValue().entrySet()) {
+                    if (e.getValue() instanceof IntTag it) {
+                        String cleaned = e.getKey().replace("\u0002", "").replace("\u0003", "").replace("\u0001", "");
+                        map.put(cleaned, it.getValue());
+                    }
                 }
             }
+
         } else {
-            throw new IOException("Missing ItemData list in level.dat");
+            throw new IOException(
+                    "Unexpected ItemData tag type: " + itemTag.getClass().getSimpleName()
+            );
         }
+
         return map;
     }
 

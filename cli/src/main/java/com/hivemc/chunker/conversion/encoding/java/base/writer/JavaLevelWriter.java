@@ -1,5 +1,6 @@
 package com.hivemc.chunker.conversion.encoding.java.base.writer;
 
+import com.hivemc.chunker.conversion.WorldConverter;
 import com.hivemc.chunker.conversion.encoding.base.Converter;
 import com.hivemc.chunker.conversion.encoding.base.Version;
 import com.hivemc.chunker.conversion.encoding.base.writer.LevelWriter;
@@ -300,11 +301,11 @@ public class JavaLevelWriter implements LevelWriter, JavaReaderWriter {
         CompoundTag root = new CompoundTag();
         root.put("Data", data);
 
-        if (converter instanceof com.hivemc.chunker.conversion.WorldConverter wc) {
+        if (converter instanceof WorldConverter wc) {
             File legacyFile = wc.getLegacyLevelDat();
             if (legacyFile != null) {
                 try {
-                    CompoundTag legacyRoot = Tag.readPossibleGZipJavaNBT(legacyFile);
+                    CompoundTag legacyRoot = Tag.readRawJavaNBT(legacyFile);
                     if (legacyRoot != null) {
                         CompoundTag fml = legacyRoot.getCompound("FML");
                         if (fml != null) root.put("FML", fml);

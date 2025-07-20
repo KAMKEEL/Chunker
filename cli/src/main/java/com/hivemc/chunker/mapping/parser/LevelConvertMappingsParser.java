@@ -52,24 +52,15 @@ public final class LevelConvertMappingsParser {
             }
             ParsedIdentifier oldParsed = parseIdentifier(parts[0].trim());
             ParsedIdentifier newParsed = parseIdentifier(parts[1].trim());
+
             if (oldParsed.identifier.isEmpty() || newParsed.identifier.isEmpty()) {
                 throw new IOException("Invalid mapping line: " + line);
             }
-            String newIdentifier = newParsed.identifier;
-            Matcher matcher = DATA_ID.matcher(newIdentifier);
-            if (!matcher.matches()) {
-                Integer id = idMap.get(newIdentifier);
-                if (id == null) {
-                    throw new IOException("Unknown identifier in level.dat: " + newIdentifier);
-                }
-                newIdentifier = String.valueOf(id);
-            } else {
-                newIdentifier = matcher.group(1);
-                if (newParsed.states == null) newParsed.states = new JsonObject();
-                newParsed.states.addProperty("data", Integer.parseInt(matcher.group(2)));
-            }
+            String oldIdentifier = resolveIdentifier(idMap, oldParsed);
+            String newIdentifier = resolveIdentifier(idMap, newParsed);
+
             JsonObject obj = new JsonObject();
-            obj.addProperty("old_identifier", oldParsed.identifier);
+            obj.addProperty("old_identifier", oldIdentifier);
             obj.addProperty("new_identifier", newIdentifier);
             obj.addProperty("state_list", "*");
             if (oldParsed.states != null) {
@@ -126,6 +117,22 @@ public final class LevelConvertMappingsParser {
         }
 
         return new ParsedIdentifier(identifier, statesObj);
+    }
+
+    private static String resolveIdentifier(Map<String, Integer> idMap, ParsedIdentifier parsed) throws IOException {
+        String identifier = parsed.identifier;
+        Matcher matcher = DATA_ID.matcher(identifier);
+        if (!matcher.matches()) {
+            Integer id = idMap.get(identifier);
+            if (id == null) {
+                return identifier;
+            }
+            return String.valueOf(id);
+        }
+
+        if (parsed.states == null) parsed.states = new JsonObject();
+        parsed.states.addProperty("data", Integer.parseInt(matcher.group(2)));
+        return matcher.group(1);
     }
 
     private static Map<String, Integer> readLegacyIDs(File levelDat) throws IOException {

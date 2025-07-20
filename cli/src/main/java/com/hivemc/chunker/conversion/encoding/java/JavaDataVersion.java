@@ -207,7 +207,7 @@ public class JavaDataVersion implements Comparable<JavaDataVersion> {
                 }
 
                 // Use version 0
-                return Optional.ofNullable(JavaDataVersion.getNearestVersion(0));
+                return Optional.ofNullable(JavaDataVersion.getNearestVersion(-1));
             }
 
             // use the ID tag if it's present to determine the version

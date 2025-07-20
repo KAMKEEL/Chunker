@@ -7,11 +7,14 @@ import com.hivemc.chunker.nbt.tags.Tag;
 import com.hivemc.chunker.nbt.tags.collection.CompoundTag;
 import com.hivemc.chunker.nbt.tags.collection.ListTag;
 import com.hivemc.chunker.nbt.tags.primitive.IntTag;
+import com.hivemc.chunker.conversion.encoding.base.Version;
+import com.hivemc.chunker.conversion.encoding.java.base.resolver.identifier.legacy.JavaLegacyBlockIDResolver;
 
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -25,6 +28,8 @@ import java.util.regex.Pattern;
 public final class LevelConvertMappingsParser {
     /** Pattern matching a legacy numeric id with data, e.g. 112:3 */
     private static final Pattern DATA_ID = Pattern.compile("^(\\d+):(\\d+)$");
+    /** Pattern matching a plain numeric id */
+    private static final Pattern NUMERIC_ID = Pattern.compile("^\\d+$");
 
     private LevelConvertMappingsParser() {
     }
@@ -37,7 +42,8 @@ public final class LevelConvertMappingsParser {
      * @return a {@link MappingsFile} representing the mappings.
      */
     public static MappingsFile parse(Path path, File levelDat) throws IOException {
-        Map<String, Integer> idMap = readLegacyIDs(levelDat);
+        Map<String, Integer> idMap = levelDat == null ? Collections.emptyMap() : readLegacyIDs(levelDat);
+        JavaLegacyBlockIDResolver legacyResolver = new JavaLegacyBlockIDResolver(new Version(1, 12, 2));
         List<String> lines = Files.readAllLines(path);
         JsonArray array = new JsonArray();
         int index = 0;
@@ -55,6 +61,13 @@ public final class LevelConvertMappingsParser {
             if (oldParsed.identifier.isEmpty() || newParsed.identifier.isEmpty()) {
                 throw new IOException("Invalid mapping line: " + line);
             }
+            String oldIdentifier = oldParsed.identifier;
+            if (NUMERIC_ID.matcher(oldIdentifier).matches()) {
+                String resolved = legacyResolver.to(Integer.parseInt(oldIdentifier)).orElse(null);
+                if (resolved != null) {
+                    oldIdentifier = resolved;
+                }
+            }
             String newIdentifier = newParsed.identifier;
             Matcher matcher = DATA_ID.matcher(newIdentifier);
             if (!matcher.matches()) {
@@ -69,7 +82,7 @@ public final class LevelConvertMappingsParser {
                 newParsed.states.addProperty("data", Integer.parseInt(matcher.group(2)));
             }
             JsonObject obj = new JsonObject();
-            obj.addProperty("old_identifier", oldParsed.identifier);
+            obj.addProperty("old_identifier", oldIdentifier);
             obj.addProperty("new_identifier", newIdentifier);
             obj.addProperty("state_list", "*");
             if (oldParsed.states != null) {

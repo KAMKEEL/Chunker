@@ -88,4 +88,16 @@ public class LevelConvertMappingsParserTest {
         ));
         assertEquals(expected, mappingsFile.convertBlock(input).orElse(null));
     }
+
+    @Test
+    public void testNumericOldIdentifierConversion() throws Exception {
+        File mapping = File.createTempFile("simpleNum", ".txt");
+        mapping.deleteOnExit();
+        Files.writeString(mapping.toPath(), "240 -> uptodate:glazed_terracotta_lime\n");
+
+        MappingsFile mappingsFile = LevelConvertMappingsParser.parse(mapping.toPath(), null);
+        Identifier input = new Identifier("minecraft:lime_glazed_terracotta", Map.of());
+        Identifier expected = new Identifier("uptodate:glazed_terracotta_lime", Map.of());
+        assertEquals(expected, mappingsFile.convertBlock(input).orElse(null));
+    }
 }

@@ -25,7 +25,11 @@ public class JavaLegacyEnchantmentBlockEntityHandler extends BlockEntityHandler<
     @Override
     public void write(@NotNull JavaResolvers resolvers, @NotNull CompoundTag output, @NotNull EnchantmentTableBlockEntity value) {
         if (value.getCustomName() != null) {
-            output.put("CustomName", JsonTextUtil.toJSON(value.getCustomName()));
+            if (resolvers.dataVersion().getVersion().isLessThan(1, 8, 0)) {
+                output.put("CustomName", JsonTextUtil.toLegacy(value.getCustomName(), false));
+            } else {
+                output.put("CustomName", JsonTextUtil.toJSON(value.getCustomName()));
+            }
         }
     }
 }

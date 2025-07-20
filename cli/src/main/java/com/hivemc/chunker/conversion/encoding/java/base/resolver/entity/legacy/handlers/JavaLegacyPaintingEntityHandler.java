@@ -25,13 +25,24 @@ public class JavaLegacyPaintingEntityHandler extends EntityHandler<JavaResolvers
         value.setMotive(resolvers.readPaintingMotive(motive));
 
         // Facing
-        String name = input.contains("facing") ? "facing" : "Facing";
+        String name;
+        if (input.contains("facing")) {
+            name = "facing";
+        } else if (input.contains("Facing")) {
+            name = "Facing";
+        } else {
+            name = "Direction";
+        }
         value.setDirection(FacingDirectionHorizontal.from2DByte(input.getByte(name, (byte) 0)));
     }
 
     @Override
     public void write(@NotNull JavaResolvers resolvers, @NotNull CompoundTag output, @NotNull PaintingEntity value) {
         output.put("Motive", resolvers.writePaintingMotive(value.getMotive()));
-        output.put("Facing", value.getDirection() == null ? 0 : value.getDirection().to2DByte());
+        if (resolvers.dataVersion().getVersion().isLessThan(1, 8, 0)) {
+            output.put("Direction", value.getDirection() == null ? 0 : value.getDirection().to2DByte());
+        } else {
+            output.put("Facing", value.getDirection() == null ? 0 : value.getDirection().to2DByte());
+        }
     }
 }

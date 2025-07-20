@@ -28,7 +28,14 @@ public class JavaLegacyItemFrameEntityHandler extends EntityHandler<JavaResolver
         value.setItemRotation(input.getByte("ItemRotation", (byte) 0));
 
         // Facing
-        String name = input.contains("facing") ? "facing" : "Facing";
+        String name;
+        if (input.contains("facing")) {
+            name = "facing";
+        } else if (input.contains("Facing")) {
+            name = "Facing";
+        } else {
+            name = "Direction";
+        }
         value.setDirection(FacingDirection.from2DByte(input.getByte(name, (byte) 0)));
     }
 
@@ -43,6 +50,10 @@ public class JavaLegacyItemFrameEntityHandler extends EntityHandler<JavaResolver
         output.put("ItemRotation", value.getItemRotation());
 
         // Write facing
-        output.put("Facing", value.getDirection().to2DByte());
+        if (resolvers.dataVersion().getVersion().isLessThan(1, 8, 0)) {
+            output.put("Direction", value.getDirection().to2DByte());
+        } else {
+            output.put("Facing", value.getDirection().to2DByte());
+        }
     }
 }

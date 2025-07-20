@@ -33,7 +33,11 @@ public class JavaLegacyCommandBlockBlockEntityHandler extends BlockEntityHandler
         output.put("TrackOutput", value.isTrackOutput() ? (byte) 1 : (byte) 0);
 
         if (value.getCustomName() != null) {
-            output.put("CustomName", JsonTextUtil.toJSON(value.getCustomName()));
+            if (resolvers.dataVersion().getVersion().isLessThan(1, 8, 0)) {
+                output.put("CustomName", JsonTextUtil.toLegacy(value.getCustomName(), false));
+            } else {
+                output.put("CustomName", JsonTextUtil.toJSON(value.getCustomName()));
+            }
         }
     }
 }

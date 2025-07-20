@@ -1,10 +1,15 @@
-# Chunker
+# Chunkport
 
-**Convert Minecraft worlds between Java Edition and Bedrock Edition**
+**Backport and convert Minecraft worlds across editions**
 
-Chunker is a Java application which allows you to convert Java and Bedrock Minecraft worlds. It provides a simple
-interface for converting worlds and allows you to upgrade and downgrade worlds between different versions of the
-game.
+Chunkport is a Java application built from the
+[Chunker](https://github.com/HiveGamesOSS/Chunker) project. This fork extends
+the original tool so you can backport worlds from modern Minecraft releases to
+1.7.10 and other legacy versions. It also supports conversions between legacy
+versions. When provided with a `level.dat` file, Chunkport is able to map
+Minecraft block namespaces to modded identifiers using the IDs stored in the
+world. The project still retains all of the features of Chunker for converting
+between Bedrock and Java editions.
 
 Supported Formats:
 
@@ -41,16 +46,17 @@ https://learn.microsoft.com/en-us/minecraft/creator/documents/chunkeroverview?vi
 App Usage
 --------
 
-You can find pre-built copies of Chunker in the [releases section](https://github.com/HiveGamesOSS/Chunker/releases).
-Otherwise, see the building section on how to build Chunker yourself.
+You can find pre-built copies of Chunkport in the releases section of this repository. If you want the original tool you can grab it from the
+[Chunker releases page](https://github.com/HiveGamesOSS/Chunker/releases).
+Otherwise, see the building section on how to build Chunkport yourself.
 
 Download the appropriate version of the application depending on your operating system and then you will be able to run
-the electron based frontend for Chunker.
+the Electron based frontend for Chunkport.
 
-Chunker defaults to a maximum of 75% of available memory, you can customise this by specifying the amount when launching
-Chunker e.g. `Chunker.exe -Xmx8G` for 8 gigabytes.
+Chunkport defaults to a maximum of 75% of available memory; you can customise this by specifying the amount when launching
+Chunkport e.g. `Chunkport.exe -Xmx8G` for 8 gigabytes.
 
-Chunker forwards `-Xmx` and `-Xms` to the backing JVM, if you wish to supply other options use `--java-options="..."`.
+Chunkport forwards `-Xmx` and `-Xms` to the backing JVM. If you wish to supply other options use `--java-options="..."`.
 
 CLI Usage
 --------
@@ -59,10 +65,11 @@ CLI Usage
 
 - Java 17 or higher
 
-You can find pre-built copies of Chunker in the [releases section](https://github.com/HiveGamesOSS/Chunker/releases).
-Otherwise, see the building section on how to build Chunker yourself.
+You can find pre-built copies of Chunkport in the releases section of this repository or obtain the original from the
+[Chunker releases page](https://github.com/HiveGamesOSS/Chunker/releases).
+Otherwise, see the building section on how to build Chunkport yourself.
 
-Chunker can be run as a command-line application or as a UI, to use Chunker as a command line application run it as so:
+Chunkport can be run as a command-line application or as a UI. To use Chunkport on the command line run:
 
 `java -jar chunker-cli-VERSION.jar -i "my_world" -f BEDROCK_1_20_80 -o output`
 
@@ -84,7 +91,7 @@ Additionally, the following parameters are supported:
 - `-p` / `--pruning` - a path to a json file or a json object containing pruning settings.
 - `-c` / `--converterSettings` - a path to a json file or a json object containing converter settings.
 - `-d` / `--dimensionMappings` - a path to a json file or a json object containing dimension mappings.
-- `-k` / `--keepOriginalNBT` - indicates that NBT should be copied from the input to output where processed by Chunker,
+- `-k` / `--keepOriginalNBT` - indicates that NBT should be copied from the input to output where processed by Chunkport,
   this is only supported where the output format is the same as the input and for optimal results you will want to copy
   the input world to the output folder prior to conversion.
 - `--enableNEIDs` - enable NotEnoughIDs formatting (the `Blocks16` tag) when converting to legacy Java worlds.
@@ -92,7 +99,7 @@ Additionally, the following parameters are supported:
 You can export settings for your world by using the web interface on `https://chunker.app` through the Advanced
 Settings -> Converter Settings tab, the CLI also supports preloading settings from the input directory.
 
-You can also get Chunker to list available formats by providing an incorrect input,
+You can also get Chunkport to list available formats by providing an incorrect input,
 e.g. `java -jar chunker-VERSION.jar -f ?`.
 
 Building
@@ -104,21 +111,21 @@ Building
 - Java 17 or higher
 - Gradle (Optional)
 
-**Note:** Chunker is split into `app` and `cli`, the app provides an electron frontend for the application and the cli
-is a pure java application which can be used for conversion / integrating conversion.
+**Note:** Chunkport is split into `app` and `cli`; the app provides an Electron frontend for the application and the cli
+is a pure Java application which can be used for conversion or integrated into your own workflows.
 
 **Steps**
 
-1. Clone this repository via `git clone git://github.com/HiveGamesOSS/Chunker.git`.
+1. Clone this repository via `git clone https://github.com/<your-username>/Chunkport.git`.
 2. Build the project via `./gradlew build`.
 3. Obtain the binary from `build/libs/` (either as a CLI jar, native CLI executable or with the electron frontend).
 
-Chunker also uses its own fork of a Java LevelDB implementation, https://github.com/HiveGamesOSS/leveldb-mcpe-java/.
+Chunkport also uses its own fork of a Java LevelDB implementation, https://github.com/HiveGamesOSS/leveldb-mcpe-java/.
 
 Testing
 --------
 
-Chunker attempts to do automated testing where possible to validate data, an example of this is block identifiers are
+Chunkport attempts to do automated testing where possible to validate data. An example of this is block identifiers being
 validated against the palette of the Bedrock and Java, this allows issues with faulty mappings to be identified in the
 build process. You can skip tests in the build process by appending `-x test` to the `./gradlew build` command.
 
@@ -128,7 +135,7 @@ take several minutes to fully complete.
 
 Currently unsupported features
 --------
-The following features do not convert (or have limited conversion) when using Chunker:
+The following features do not convert (or have limited conversion) when using Chunkport:
 
 - Entities (excluding paintings / item frames).
 - Structure data (e.g. Villages / Strongholds).
@@ -136,10 +143,18 @@ The following features do not convert (or have limited conversion) when using Ch
 License and Legal
 --------
 
-The project is MIT licensed you can find details in the [LICENSE](LICENSE).
+Chunkport continues to use the MIT license. The upstream
+[Chunker](https://github.com/HiveGamesOSS/Chunker/blob/main/LICENSE) project is
+also MIT licensed, which permits modification and redistribution and therefore
+allows this fork. You can find the full license text in the local
+[LICENSE](LICENSE) file.
 
-This project is maintained by Hive Games. This project receives funding from Mojang Studios. Mojang Studios and it's
-parent company Microsoft assume no responsibility for the contents of this project.
+This project is maintained by Hive Games. This project receives funding from
+Mojang Studios. Mojang Studios and its parent company Microsoft assume no
+responsibility for the contents of this project.
+
+If you would like to support the original developers, please visit the
+[Chunker GitHub repository](https://github.com/HiveGamesOSS/Chunker).
 
 We're hiring!
 --------

@@ -37,6 +37,14 @@ public class JavaLegacySignBlockEntityHandler extends BlockEntityHandler<JavaRes
         SignBlockEntity.SignFace face = value.getFront();
         for (int i = 0; i < 4; i++) {
             output.put("Text" + (i + 1), JsonTextUtil.toJSON(face.getLines().size() > i ? face.getLines().get(i) : JsonTextUtil.EMPTY_TEXT_TAG));
+            JsonElement line = face.getLines().size() > i ? face.getLines().get(i) : JsonTextUtil.EMPTY_TEXT_TAG;
+
+            // Versions prior to 1.8 expect legacy text rather than JSON
+            if (resolvers.dataVersion().getVersion().isLessThan(1, 8, 0)) {
+                output.put("Text" + (i + 1), JsonTextUtil.toLegacy(line, false));
+            } else {
+                output.put("Text" + (i + 1), JsonTextUtil.toJSON(line));
+            }
         }
     }
 }

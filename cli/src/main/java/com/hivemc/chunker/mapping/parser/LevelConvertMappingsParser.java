@@ -38,7 +38,6 @@ public final class LevelConvertMappingsParser {
      */
     public static MappingsFile parse(Path path, File levelDat) throws IOException {
         Map<String, Integer> idMap = readLegacyIDs(levelDat);
-        System.out.println(idMap);
         List<String> lines = Files.readAllLines(path);
         JsonArray array = new JsonArray();
         int index = 0;

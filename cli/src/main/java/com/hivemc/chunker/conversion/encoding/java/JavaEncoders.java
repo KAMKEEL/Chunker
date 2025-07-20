@@ -28,11 +28,6 @@ public class JavaEncoders {
                 JavaLevelWriter::new
         );
         register(
-                JavaDataVersion.V1_8_8,
-                JavaLevelReader::new,
-                JavaLevelWriter::new
-        );
-        register(
                 JavaDataVersion.V1_11,
                 com.hivemc.chunker.conversion.encoding.java.v1_11.reader.LevelReader::new,
                 com.hivemc.chunker.conversion.encoding.java.v1_11.writer.LevelWriter::new

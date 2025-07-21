@@ -120,6 +120,8 @@ public final class LevelConvertMappingsParser {
     }
 
     private static String resolveIdentifier(Map<String, Integer> idMap, ParsedIdentifier parsed) throws IOException {
+        if(parsed.identifier.startsWith("minecraft:"))
+            return parsed.identifier;
         String identifier = parsed.identifier;
         Matcher matcher = DATA_ID.matcher(identifier);
         if (!matcher.matches()) {

@@ -3,6 +3,16 @@ package com.hivemc.chunker.mapping.parser;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.hivemc.chunker.mapping.MappingsFile;
+import com.hivemc.chunker.mapping.identifier.Identifier;
+import com.hivemc.chunker.mapping.identifier.states.StateValue;
+import com.hivemc.chunker.mapping.identifier.states.StateValueBoolean;
+import com.hivemc.chunker.mapping.identifier.states.StateValueInt;
+import com.hivemc.chunker.mapping.identifier.states.StateValueString;
+import com.hivemc.chunker.conversion.WorldConverter;
+import com.hivemc.chunker.conversion.encoding.base.Version;
+import com.hivemc.chunker.conversion.encoding.java.base.resolver.identifier.JavaBlockIdentifierResolver;
+import com.hivemc.chunker.conversion.encoding.java.base.resolver.identifier.legacy.JavaLegacyBlockIdentifierResolver;
+import com.hivemc.chunker.conversion.intermediate.column.chunk.identifier.ChunkerBlockIdentifier;
 import com.hivemc.chunker.nbt.tags.Tag;
 import com.hivemc.chunker.nbt.tags.collection.CompoundTag;
 import com.hivemc.chunker.nbt.tags.collection.ListTag;
@@ -40,6 +50,14 @@ public final class LevelConvertMappingsParser {
         Map<String, Integer> idMap = readLegacyIDs(levelDat);
         List<String> lines = Files.readAllLines(path);
         JsonArray array = new JsonArray();
+
+        // Build temporary resolvers to modernise legacy identifiers
+        WorldConverter dummyConverter = new WorldConverter(java.util.UUID.randomUUID());
+        JavaLegacyBlockIdentifierResolver legacyResolver = new JavaLegacyBlockIdentifierResolver(
+                dummyConverter, new Version(1, 12, 2), true, false);
+        JavaBlockIdentifierResolver modernResolver = new JavaBlockIdentifierResolver(
+                dummyConverter, Version.LATEST, true, false);
+
         int index = 0;
         for (String line : lines) {
             String trimmed = line.trim();
@@ -56,15 +74,31 @@ public final class LevelConvertMappingsParser {
             if (oldParsed.identifier.isEmpty() || newParsed.identifier.isEmpty()) {
                 throw new IOException("Invalid mapping line: " + line);
             }
-            String oldIdentifier = resolveIdentifier(idMap, oldParsed);
+
+            // Build Identifier objects for conversion
+            Identifier oldIdentifierObj = toIdentifier(oldParsed);
+
+            // If the mapping output is a legacy block, convert the input identifier using the default
+            // modern -> legacy mapping so direction/meta states match
+            if (isLegacyMapping(newParsed, idMap)) {
+                java.util.Optional<ChunkerBlockIdentifier> intermediate = legacyResolver.to(oldIdentifierObj);
+                if (intermediate.isPresent()) {
+                    java.util.Optional<Identifier> modern = modernResolver.from(intermediate.get());
+                    if (modern.isPresent()) {
+                        oldIdentifierObj = modern.get();
+                    }
+                }
+            }
+
+            String oldIdentifier = oldIdentifierObj.getIdentifier();
             String newIdentifier = resolveIdentifier(idMap, newParsed);
 
             JsonObject obj = new JsonObject();
             obj.addProperty("old_identifier", oldIdentifier);
             obj.addProperty("new_identifier", newIdentifier);
             obj.addProperty("state_list", "*");
-            if (oldParsed.states != null) {
-                obj.add("old_state_values", oldParsed.states);
+            if (!oldIdentifierObj.getStates().isEmpty()) {
+                obj.add("old_state_values", toJson(oldIdentifierObj.getStates()));
             }
             if (newParsed.states != null) {
                 obj.add("new_state_values", newParsed.states);
@@ -117,6 +151,46 @@ public final class LevelConvertMappingsParser {
         }
 
         return new ParsedIdentifier(identifier, statesObj);
+    }
+
+    private static Identifier toIdentifier(ParsedIdentifier parsed) {
+        if (parsed.states == null) {
+            return new Identifier(parsed.identifier);
+        }
+        Map<String, Object> map = new java.util.HashMap<>(parsed.states.size());
+        for (Map.Entry<String, com.google.gson.JsonElement> entry : parsed.states.entrySet()) {
+            com.google.gson.JsonPrimitive prim = entry.getValue().getAsJsonPrimitive();
+            if (prim.isBoolean()) {
+                map.put(entry.getKey(), prim.getAsBoolean());
+            } else if (prim.isNumber()) {
+                map.put(entry.getKey(), prim.getAsInt());
+            } else {
+                map.put(entry.getKey(), prim.getAsString());
+            }
+        }
+        return Identifier.fromBoxed(parsed.identifier, map);
+    }
+
+    private static JsonObject toJson(Map<String, StateValue<?>> states) {
+        JsonObject obj = new JsonObject();
+        for (Map.Entry<String, StateValue<?>> entry : states.entrySet()) {
+            StateValue<?> val = entry.getValue();
+            if (val instanceof StateValueBoolean b) {
+                obj.addProperty(entry.getKey(), b.getValue());
+            } else if (val instanceof StateValueInt i) {
+                obj.addProperty(entry.getKey(), i.getValue());
+            } else if (val instanceof StateValueString s) {
+                obj.addProperty(entry.getKey(), s.getValue());
+            }
+        }
+        return obj;
+    }
+
+    private static boolean isLegacyMapping(ParsedIdentifier newParsed, Map<String, Integer> idMap) {
+        if (DATA_ID.matcher(newParsed.identifier).matches()) {
+            return true;
+        }
+        return idMap.containsKey(newParsed.identifier);
     }
 
     private static String resolveIdentifier(Map<String, Integer> idMap, ParsedIdentifier parsed) throws IOException {

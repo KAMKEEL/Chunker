@@ -79,13 +79,23 @@ public final class LevelConvertMappingsParser {
             Identifier oldIdentifierObj = toIdentifier(oldParsed);
 
             // If the mapping output is a legacy block, convert the input identifier using the default
-            // modern -> legacy mapping so direction/meta states match
+            // modern -> legacy mapping so direction/meta states match. If no explicit new states are
+            // provided copy the legacy data value into the output mapping.
             if (isLegacyMapping(newParsed, idMap)) {
                 java.util.Optional<ChunkerBlockIdentifier> intermediate = legacyResolver.to(oldIdentifierObj);
                 if (intermediate.isPresent()) {
+                    // Translate back to modern to normalise orientation
                     java.util.Optional<Identifier> modern = modernResolver.from(intermediate.get());
                     if (modern.isPresent()) {
                         oldIdentifierObj = modern.get();
+                    }
+
+                    // Populate legacy data states when not manually specified
+                    if (newParsed.states == null) {
+                        java.util.Optional<Identifier> legacy = legacyResolver.from(intermediate.get());
+                        if (legacy.isPresent() && !legacy.get().getStates().isEmpty()) {
+                            newParsed.states = toJson(legacy.get().getStates());
+                        }
                     }
                 }
             }

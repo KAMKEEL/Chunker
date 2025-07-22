@@ -400,6 +400,14 @@ public class CLI implements Runnable {
             // Check for the original NBT option
             worldConverter.setAllowNBTCopying(keepOriginalNBT);
 
+            // Enable legacy simple mappings prior to resolver construction so
+            // the writer can apply them correctly. This is normally set again
+            // after validation below but needs to be enabled before creating
+            // the reader and writer.
+            if (legacySimpleMappings || (simpleMappingsProvided && format.toLowerCase().startsWith("java"))) {
+                worldConverter.setLegacySimpleMappings(true);
+            }
+
             // Create the reader / writer (note: converter settings cannot be set after this point)
             Optional<? extends LevelReader> reader = EncodingType.findReader(inputDirectory, worldConverter);
             Optional<? extends LevelWriter> writer = Messenger.findWriter(format, worldConverter, outputDirectory);

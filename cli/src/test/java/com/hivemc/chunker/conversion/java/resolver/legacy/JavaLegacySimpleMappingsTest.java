@@ -8,6 +8,8 @@ import com.hivemc.chunker.conversion.intermediate.column.chunk.identifier.type.b
 import com.hivemc.chunker.conversion.intermediate.column.chunk.identifier.type.block.states.vanilla.VanillaBlockStates;
 import com.hivemc.chunker.conversion.intermediate.column.chunk.identifier.type.block.states.vanilla.types.Bool;
 import com.hivemc.chunker.conversion.intermediate.column.chunk.identifier.type.block.states.vanilla.types.FacingDirectionHorizontal;
+import com.hivemc.chunker.conversion.intermediate.column.chunk.identifier.type.block.states.vanilla.types.FacingDirection;
+import com.hivemc.chunker.mapping.identifier.states.StateValueInt;
 import com.hivemc.chunker.mapping.MappingsFile;
 import com.hivemc.chunker.mapping.identifier.Identifier;
 import com.hivemc.chunker.mapping.parser.SimpleMappingsParser;
@@ -120,6 +122,32 @@ public class JavaLegacySimpleMappingsTest {
         Optional<Identifier> result = resolver.from(input);
         assertTrue(result.isPresent());
         assertEquals("custom:sfg", result.get().getIdentifier());
+    }
+
+    @Test
+    public void testEndRodPreservesOrientationOnOlderTarget() throws Exception {
+        File simple = File.createTempFile("simple", ".txt");
+        simple.deleteOnExit();
+        Files.writeString(simple.toPath(), "minecraft:end_rod -> custom:er\n");
+
+        MappingsFile mappings = SimpleMappingsParser.parse(simple.toPath());
+
+        MockConverter converter = new MockConverter(null);
+        converter.setBlockMappings(new MappingsFileResolvers(mappings));
+        converter.setLegacySimpleMappings(true);
+
+        JavaLegacyBlockIdentifierResolver resolver = new JavaLegacyBlockIdentifierResolver(
+                converter, new Version(1, 7, 10), false, false);
+
+        ChunkerBlockIdentifier input = new ChunkerBlockIdentifier(
+                ChunkerVanillaBlockType.END_ROD,
+                Map.of(VanillaBlockStates.FACING_ALL, FacingDirection.EAST)
+        );
+
+        Optional<Identifier> result = resolver.from(input);
+        assertTrue(result.isPresent());
+        assertEquals("custom:er", result.get().getIdentifier());
+        assertEquals(5, ((StateValueInt) result.get().getStates().get("data")).getValue());
     }
 }
 

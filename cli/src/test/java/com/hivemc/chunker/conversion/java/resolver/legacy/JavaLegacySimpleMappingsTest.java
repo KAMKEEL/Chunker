@@ -5,6 +5,9 @@ import com.hivemc.chunker.conversion.encoding.base.Version;
 import com.hivemc.chunker.conversion.encoding.java.base.resolver.identifier.legacy.JavaLegacyBlockIdentifierResolver;
 import com.hivemc.chunker.conversion.intermediate.column.chunk.identifier.ChunkerBlockIdentifier;
 import com.hivemc.chunker.conversion.intermediate.column.chunk.identifier.type.block.ChunkerVanillaBlockType;
+import com.hivemc.chunker.conversion.intermediate.column.chunk.identifier.type.block.states.vanilla.VanillaBlockStates;
+import com.hivemc.chunker.conversion.intermediate.column.chunk.identifier.type.block.states.vanilla.types.Bool;
+import com.hivemc.chunker.conversion.intermediate.column.chunk.identifier.type.block.states.vanilla.types.FacingDirectionHorizontal;
 import com.hivemc.chunker.mapping.MappingsFile;
 import com.hivemc.chunker.mapping.identifier.Identifier;
 import com.hivemc.chunker.mapping.parser.SimpleMappingsParser;
@@ -13,6 +16,7 @@ import org.junit.jupiter.api.Test;
 
 import java.io.File;
 import java.nio.file.Files;
+import java.util.Map;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -38,6 +42,36 @@ public class JavaLegacySimpleMappingsTest {
         Optional<Identifier> result = resolver.from(new ChunkerBlockIdentifier(ChunkerVanillaBlockType.RED_SANDSTONE_STAIRS));
         assertTrue(result.isPresent());
         assertEquals("custom:rs_stairs", result.get().getIdentifier());
+    }
+
+    @Test
+    public void testLegacyMappingPreservesStates() throws Exception {
+        File simple = File.createTempFile("simple", ".txt");
+        simple.deleteOnExit();
+        Files.writeString(simple.toPath(), "minecraft:spruce_fence_gate -> custom:sfg\n");
+
+        MappingsFile mappings = SimpleMappingsParser.parse(simple.toPath());
+
+        MockConverter converter = new MockConverter(null);
+        converter.setBlockMappings(new MappingsFileResolvers(mappings));
+        converter.setLegacySimpleMappings(true);
+
+        JavaLegacyBlockIdentifierResolver resolver = new JavaLegacyBlockIdentifierResolver(
+                converter, new Version(1, 12, 2), false, false);
+
+        ChunkerBlockIdentifier input = new ChunkerBlockIdentifier(
+                ChunkerVanillaBlockType.SPRUCE_FENCE_GATE,
+                Map.of(
+                        VanillaBlockStates.FACING_HORIZONTAL, FacingDirectionHorizontal.EAST,
+                        VanillaBlockStates.OPEN, Bool.TRUE,
+                        VanillaBlockStates.POWERED, Bool.FALSE
+                )
+        );
+
+        Optional<Identifier> result = resolver.from(input);
+        assertTrue(result.isPresent());
+        assertEquals("custom:sfg", result.get().getIdentifier());
+        assertNotNull(result.get().getStates().get("data"));
     }
 
     @Test

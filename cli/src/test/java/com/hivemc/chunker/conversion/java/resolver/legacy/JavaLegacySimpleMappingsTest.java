@@ -248,5 +248,43 @@ public class JavaLegacySimpleMappingsTest {
         assertEquals("1300", result.get().getIdentifier());
         assertEquals("EAST", result.get().getStates().get("facing").toString());
     }
+
+    @Test
+    public void testVanillaBlockWithLevelConvert() throws Exception {
+        // Build minimal level.dat mapping etfuturum:end_rod -> 198
+        CompoundTag root = new CompoundTag();
+        CompoundTag fml = new CompoundTag();
+        root.put("FML", fml);
+        CompoundTag itemData = new CompoundTag();
+        fml.put("ItemData", itemData);
+        itemData.put("etfuturum:end_rod", new IntTag(198));
+
+        File levelDat = File.createTempFile("level", ".dat");
+        levelDat.deleteOnExit();
+        Tag.writeGZipJavaNBT(levelDat, root);
+
+        File mapping = File.createTempFile("mapping", ".txt");
+        mapping.deleteOnExit();
+        Files.writeString(mapping.toPath(), "minecraft:end_rod -> etfuturum:end_rod\n");
+
+        MappingsFile mappings = LevelConvertMappingsParser.parse(mapping.toPath(), levelDat);
+
+        MockConverter converter = new MockConverter(null);
+        converter.setBlockMappings(new MappingsFileResolvers(mappings));
+        converter.setLegacySimpleMappings(true);
+
+        JavaLegacyBlockIdentifierResolver resolver = new JavaLegacyBlockIdentifierResolver(
+                converter, new Version(1, 7, 10), false, false);
+
+        ChunkerBlockIdentifier input = new ChunkerBlockIdentifier(
+                ChunkerVanillaBlockType.END_ROD,
+                Map.of(VanillaBlockStates.FACING_ALL, FacingDirection.SOUTH)
+        );
+
+        Optional<Identifier> result = resolver.from(input);
+        assertTrue(result.isPresent());
+        assertEquals("198", result.get().getIdentifier());
+        assertEquals(3, ((StateValueInt) result.get().getStates().get("data")).getValue());
+    }
 }
 

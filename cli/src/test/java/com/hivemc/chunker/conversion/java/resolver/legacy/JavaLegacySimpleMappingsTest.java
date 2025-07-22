@@ -179,5 +179,32 @@ public class JavaLegacySimpleMappingsTest {
         assertEquals("custom:er", result.get().getIdentifier());
         assertEquals(5, ((StateValueInt) result.get().getStates().get("data")).getValue());
     }
+
+    @Test
+    public void testMappingForcesBaseData() throws Exception {
+        File simple = File.createTempFile("simple", ".txt");
+        simple.deleteOnExit();
+        Files.writeString(simple.toPath(), "minecraft:end_rod -> custom:er[data=0]\n");
+
+        MappingsFile mappings = SimpleMappingsParser.parse(simple.toPath());
+
+        MockConverter converter = new MockConverter(null);
+        converter.setBlockMappings(new MappingsFileResolvers(mappings));
+        converter.setLegacySimpleMappings(true);
+
+        JavaLegacyBlockIdentifierResolver resolver = new JavaLegacyBlockIdentifierResolver(
+                converter, new Version(1, 7, 10), false, false);
+
+        ChunkerBlockIdentifier input = new ChunkerBlockIdentifier(
+                ChunkerVanillaBlockType.END_ROD,
+                Map.of(VanillaBlockStates.FACING_ALL, FacingDirection.WEST)
+        );
+
+        Optional<Identifier> result = resolver.from(input);
+        assertTrue(result.isPresent());
+        assertEquals("custom:er", result.get().getIdentifier());
+        // The data from the input (facing west -> 4) should override the mapping
+        assertEquals(4, ((StateValueInt) result.get().getStates().get("data")).getValue());
+    }
 }
 

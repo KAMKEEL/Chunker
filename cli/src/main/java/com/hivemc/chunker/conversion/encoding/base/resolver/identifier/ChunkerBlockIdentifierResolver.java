@@ -350,10 +350,9 @@ public abstract class ChunkerBlockIdentifierResolver implements Resolver<Identif
                 if (mapped.isPresent()) {
                     Map<String, StateValue<?>> states = new Object2ObjectOpenHashMap<>(mapped.get().getStates());
 
-                    // Preserve any states from the flattened output that were not explicitly set by the mapping
-                    for (Map.Entry<String, StateValue<?>> entry : base.get().getStates().entrySet()) {
-                        states.putIfAbsent(entry.getKey(), entry.getValue());
-                    }
+                    // Force any states from the flattened output onto the mapping
+                    // so legacy metadata such as orientation is always preserved.
+                    states.putAll(base.get().getStates());
 
                     output = Optional.of(new Identifier(mapped.get().getIdentifier(), states));
                 }

@@ -332,6 +332,49 @@ public class JavaLegacySimpleMappingsTest {
     }
 
     @Test
+    public void testFenceGateOrientationWithLevelConvert() throws Exception {
+        // Build minimal level.dat mapping uptodate:fence_gate_spruce -> 1200
+        CompoundTag root = new CompoundTag();
+        CompoundTag fml = new CompoundTag();
+        root.put("FML", fml);
+        CompoundTag itemData = new CompoundTag();
+        fml.put("ItemData", itemData);
+        itemData.put("uptodate:fence_gate_spruce", new IntTag(1200));
+
+        File levelDat = File.createTempFile("level", ".dat");
+        levelDat.deleteOnExit();
+        Tag.writeGZipJavaNBT(levelDat, root);
+
+        File mapping = File.createTempFile("mapping", ".txt");
+        mapping.deleteOnExit();
+        Files.writeString(mapping.toPath(), "minecraft:spruce_fence_gate -> uptodate:fence_gate_spruce\n");
+
+        LevelConvertMappings.load(levelDat);
+        MappingsFile mappings = SimpleMappingsParser.parse(mapping.toPath());
+
+        MockConverter converter = new MockConverter(null);
+        converter.setBlockMappings(new MappingsFileResolvers(mappings));
+        converter.setLegacySimpleMappings(true);
+
+        JavaLegacyBlockIdentifierResolver resolver = new JavaLegacyBlockIdentifierResolver(
+                converter, new Version(1, 7, 10), false, false);
+
+        ChunkerBlockIdentifier input = new ChunkerBlockIdentifier(
+                ChunkerVanillaBlockType.SPRUCE_FENCE_GATE,
+                Map.of(
+                        VanillaBlockStates.FACING_HORIZONTAL, FacingDirectionHorizontal.EAST,
+                        VanillaBlockStates.OPEN, Bool.TRUE,
+                        VanillaBlockStates.POWERED, Bool.FALSE
+                )
+        );
+
+        Optional<Identifier> result = resolver.from(input);
+        assertTrue(result.isPresent());
+        assertEquals("1200", result.get().getIdentifier());
+        assertEquals(7, ((StateValueInt) result.get().getStates().get("data")).getValue());
+    }
+
+    @Test
     public void testWriteLegacyIdentifierWithLevelConvert() throws Exception {
         // Build minimal level.dat mapping uptodate:glazed_terracotta_lime -> 1100
         CompoundTag root = new CompoundTag();

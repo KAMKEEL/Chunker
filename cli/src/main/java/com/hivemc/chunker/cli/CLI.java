@@ -268,7 +268,6 @@ public class CLI implements Runnable {
             if (simpleBlockMappings != null) {
                 try {
                     if (levelConvert != null) {
-                        System.out.print("Beginning Level Convert");
                         LevelConvertMappings.load(levelConvert);
                     }
                     MappingsFile mappingsFile = SimpleMappingsParser.parse(simpleBlockMappings.toPath());

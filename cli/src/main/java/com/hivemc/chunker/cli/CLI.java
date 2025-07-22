@@ -25,6 +25,7 @@ import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import picocli.CommandLine;
 
 import java.io.File;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.text.MessageFormat;
 import java.time.Duration;
@@ -99,6 +100,12 @@ public class CLI implements Runnable {
             description = "Writes an example simple mapping file to the provided path and exits."
     )
     private File generateSimpleMappingsTemplate;
+
+    @CommandLine.Option(
+            names = {"--convertMapping"},
+            description = "Parse the supplied simple mappings and output generated.json next to them."
+    )
+    private boolean convertMapping;
 
     @CommandLine.Option(
             names = {"--worldSettings", "-s"},
@@ -193,6 +200,28 @@ public class CLI implements Runnable {
                     System.out.println("Template written to " + generateSimpleMappingsTemplate.getAbsolutePath());
                 } catch (IOException e) {
                     System.err.println("Failed to write template: " + e.getMessage());
+                }
+                return;
+            }
+
+            if (convertMapping) {
+                if (simpleBlockMappings == null) {
+                    System.err.println("--convertMapping requires --simpleBlockMappings to be set.");
+                    return;
+                }
+                try {
+                    MappingsFile mappingsFile;
+                    if (levelConvert != null) {
+                        mappingsFile = LevelConvertMappingsParser.parse(simpleBlockMappings.toPath(), levelConvert);
+                    } else {
+                        mappingsFile = SimpleMappingsParser.parse(simpleBlockMappings.toPath());
+                    }
+                    Path outPath = simpleBlockMappings.toPath().getParent().resolve("generated.json");
+                    Files.writeString(outPath, mappingsFile.toJsonString());
+                    System.out.println("Generated mapping file: " + outPath.toAbsolutePath());
+                } catch (Exception e) {
+                    System.err.println("Failed to generate mapping: " + e.getMessage());
+                    throw new RuntimeException(e);
                 }
                 return;
             }

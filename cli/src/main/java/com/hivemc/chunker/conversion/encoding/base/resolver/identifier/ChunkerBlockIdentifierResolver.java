@@ -15,6 +15,7 @@ import com.hivemc.chunker.conversion.intermediate.column.chunk.identifier.type.b
 import com.hivemc.chunker.conversion.intermediate.column.chunk.identifier.type.block.states.BlockStateValue;
 import com.hivemc.chunker.mapping.identifier.Identifier;
 import com.hivemc.chunker.mapping.identifier.states.StateValue;
+import com.hivemc.chunker.mapping.MappingsFile;
 import com.hivemc.chunker.mapping.resolver.MappingsFileResolvers;
 import com.hivemc.chunker.resolver.Resolver;
 import com.hivemc.chunker.util.CollectionComparator;
@@ -38,6 +39,9 @@ public abstract class ChunkerBlockIdentifierResolver implements Resolver<Identif
     protected final Map<String, InputStateGrouping<String, Object, ChunkerBlockType, BlockState<?>, BlockStateValue>> inputToChunker = new Object2ObjectOpenHashMap<>();
     protected final Map<ChunkerBlockType, InputStateGrouping<BlockState<?>, BlockStateValue, String, String, Object>> chunkerToInput = new Object2ObjectOpenHashMap<>();
     protected StateMappingGroup extraStateMappingGroup;
+    /** Resolver used for legacy simple mappings when the target version lacks a mapping. */
+    @Nullable
+    protected ChunkerBlockIdentifierResolver legacySimpleResolver;
 
     /**
      * Create a new chunker block identifier resolver.
@@ -289,6 +293,18 @@ public abstract class ChunkerBlockIdentifierResolver implements Resolver<Identif
     }
 
     /**
+     * Attempt to resolve the input using a legacy 1.12 resolver. This is used
+     * for legacy simple mappings when the target version does not contain a
+     * direct mapping for the block.
+     *
+     * @param input the input block identifier.
+     * @return the resolved identifier if available.
+     */
+    protected Optional<Identifier> legacyResolveFrom(ChunkerBlockIdentifier input) {
+        return legacySimpleResolver == null ? Optional.empty() : legacySimpleResolver.resolveFrom(input);
+    }
+
+    /**
      * Handle any user input identifier conversion mappings.
      *
      * @param input  the original input.
@@ -324,7 +340,27 @@ public abstract class ChunkerBlockIdentifierResolver implements Resolver<Identif
      * @return the output with any user mappings applied.
      */
     protected Optional<Identifier> handleConverterMapping(ChunkerBlockIdentifier input, Optional<Identifier> output) {
-        // If there is no preserved identifier, return the original
+        MappingsFileResolvers mappingsFileResolvers = converter.getBlockMappings();
+
+        // Apply legacy simple mappings to the output identifier when no preserved mapping is set
+        if (input.getPreservedIdentifier() == null && mappingsFileResolvers != null && converter.shouldUseLegacySimpleMappings()) {
+            Optional<Identifier> base = output.isPresent() ? output : legacyResolveFrom(input);
+            if (base.isPresent()) {
+                Optional<Identifier> mapped = mappingsFileResolvers.getMappings().convertBlock(base.get());
+                if (mapped.isPresent()) {
+                    Map<String, StateValue<?>> states = new Object2ObjectOpenHashMap<>(mapped.get().getStates());
+
+                    // Preserve any states from the flattened output that were not explicitly set by the mapping
+                    for (Map.Entry<String, StateValue<?>> entry : base.get().getStates().entrySet()) {
+                        states.putIfAbsent(entry.getKey(), entry.getValue());
+                    }
+
+                    output = Optional.of(new Identifier(mapped.get().getIdentifier(), states));
+                }
+            }
+        }
+
+        // If there is no preserved identifier, return the original (or legacy mapped output)
         // Otherwise if the preserved identifier is the same as this, don't apply it as it's for the writer
         if (input.getPreservedIdentifier() == null || reader == input.getPreservedIdentifier().fromReader())
             return output;

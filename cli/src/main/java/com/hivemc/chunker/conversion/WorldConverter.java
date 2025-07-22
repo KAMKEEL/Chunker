@@ -90,6 +90,7 @@ public class WorldConverter implements Converter {
     private boolean discardEmptyChunks = false;
     private boolean preventYBiomeBlending = false;
     private boolean notEnoughIDs = false;
+    private boolean legacySimpleMappings = false;
     private boolean customIdentifiers = true;
     private boolean exceptions = false;
     private boolean cancelled = false;
@@ -169,6 +170,15 @@ public class WorldConverter implements Converter {
      */
     public void setNotEnoughIDs(boolean notEnoughIDs) {
         this.notEnoughIDs = notEnoughIDs;
+    }
+
+    /**
+     * Set whether simple mappings should be applied using legacy identifiers.
+     *
+     * @param legacySimpleMappings true if legacy simple mappings are enabled.
+     */
+    public void setLegacySimpleMappings(boolean legacySimpleMappings) {
+        this.legacySimpleMappings = legacySimpleMappings;
     }
 
     /**
@@ -338,6 +348,11 @@ public class WorldConverter implements Converter {
     @Override
     public boolean shouldUseNotEnoughIDs() {
         return notEnoughIDs;
+    }
+
+    @Override
+    public boolean shouldUseLegacySimpleMappings() {
+        return legacySimpleMappings;
     }
 
     @Override

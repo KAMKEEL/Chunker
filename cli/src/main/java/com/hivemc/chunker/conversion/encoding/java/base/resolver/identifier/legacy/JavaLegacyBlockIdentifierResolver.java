@@ -38,6 +38,12 @@ public class JavaLegacyBlockIdentifierResolver extends ChunkerBlockIdentifierRes
      */
     public JavaLegacyBlockIdentifierResolver(Converter converter, Version version, boolean reader, boolean customIdentifiersAllowed) {
         super(converter, version, reader, customIdentifiersAllowed);
+
+        // When targeting versions older than 1.8, create a resolver for 1.12.2
+        // so legacy simple mappings can flatten newer blocks.
+        if (version.isLessThan(1, 8, 0)) {
+            legacySimpleResolver = new JavaLegacyBlockIdentifierResolver(converter, new Version(1, 12, 2), reader, customIdentifiersAllowed);
+        }
     }
 
     @Override

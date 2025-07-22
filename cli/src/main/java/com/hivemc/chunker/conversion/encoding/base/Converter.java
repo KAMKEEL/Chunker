@@ -178,6 +178,16 @@ public interface Converter {
     }
 
     /**
+     * Whether simple mappings should be applied after flattening using legacy
+     * identifiers (ID or ID:meta) for modern to legacy conversions.
+     *
+     * @return true if legacy simple mappings are enabled.
+     */
+    default boolean shouldUseLegacySimpleMappings() {
+        return false;
+    }
+
+    /**
      * Get the dimension mapping given an input.
      *
      * @param dimension the input dimension.

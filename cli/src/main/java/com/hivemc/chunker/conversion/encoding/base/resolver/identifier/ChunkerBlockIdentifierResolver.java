@@ -15,6 +15,7 @@ import com.hivemc.chunker.conversion.intermediate.column.chunk.identifier.type.b
 import com.hivemc.chunker.conversion.intermediate.column.chunk.identifier.type.block.states.BlockStateValue;
 import com.hivemc.chunker.mapping.identifier.Identifier;
 import com.hivemc.chunker.mapping.identifier.states.StateValue;
+import com.hivemc.chunker.mapping.MappingsFile;
 import com.hivemc.chunker.mapping.resolver.MappingsFileResolvers;
 import com.hivemc.chunker.resolver.Resolver;
 import com.hivemc.chunker.util.CollectionComparator;
@@ -324,7 +325,23 @@ public abstract class ChunkerBlockIdentifierResolver implements Resolver<Identif
      * @return the output with any user mappings applied.
      */
     protected Optional<Identifier> handleConverterMapping(ChunkerBlockIdentifier input, Optional<Identifier> output) {
-        // If there is no preserved identifier, return the original
+        MappingsFileResolvers mappingsFileResolvers = converter.getBlockMappings();
+
+        // Apply legacy simple mappings to the output identifier when no preserved mapping is set
+        if (input.getPreservedIdentifier() == null && mappingsFileResolvers != null && converter.shouldUseLegacySimpleMappings() && output.isPresent()) {
+            Optional<Identifier> mapped = mappingsFileResolvers.getMappings().convertBlock(output.get());
+            if (mapped.isPresent()) {
+                Map<String, StateValue<?>> states = new Object2ObjectOpenHashMap<>(mapped.get().getStates());
+                for (Map.Entry<String, StateValue<?>> entry : output.get().getStates().entrySet()) {
+                    if (MappingsFile.isSpecialState(entry.getKey()) && !states.containsKey(entry.getKey())) {
+                        states.put(entry.getKey(), entry.getValue());
+                    }
+                }
+                output = Optional.of(new Identifier(mapped.get().getIdentifier(), states));
+            }
+        }
+
+        // If there is no preserved identifier, return the original (or legacy mapped output)
         // Otherwise if the preserved identifier is the same as this, don't apply it as it's for the writer
         if (input.getPreservedIdentifier() == null || reader == input.getPreservedIdentifier().fromReader())
             return output;

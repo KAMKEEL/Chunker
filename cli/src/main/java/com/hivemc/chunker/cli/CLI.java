@@ -140,6 +140,12 @@ public class CLI implements Runnable {
     )
     private boolean enableNEIDs;
 
+    @CommandLine.Option(
+            names = {"--legacySimpleMappings"},
+            description = "Apply simple mappings after flattening using legacy identifiers (IDs or ID:META)."
+    )
+    private boolean legacySimpleMappings;
+
     /**
      * Merge two mappings files by appending the identifier list from the second
      * to the first. This is primarily used so simple mappings can extend a JSON
@@ -410,6 +416,15 @@ public class CLI implements Runnable {
 
                 // Enable NotEnoughIDs support so the writer will include Blocks16 like mIDas Platinum.
                 worldConverter.setNotEnoughIDs(true);
+            }
+
+            if (legacySimpleMappings) {
+                if (writer.get().getEncodingType() != EncodingType.JAVA || !writer.get().getVersion().isLessThan(1, 13, 0)) {
+                    System.err.println("--legacySimpleMappings is only supported when converting to legacy Java versions (1.12 or lower). Please remove the flag to continue.");
+                    System.exit(0);
+                }
+
+                worldConverter.setLegacySimpleMappings(true);
             }
 
             // Add the handler for the compaction signal

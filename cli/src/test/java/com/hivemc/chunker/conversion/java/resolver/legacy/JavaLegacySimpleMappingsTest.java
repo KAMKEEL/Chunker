@@ -12,7 +12,7 @@ import com.hivemc.chunker.conversion.intermediate.column.chunk.identifier.type.b
 import com.hivemc.chunker.mapping.identifier.states.StateValueInt;
 import com.hivemc.chunker.mapping.MappingsFile;
 import com.hivemc.chunker.mapping.identifier.Identifier;
-import com.hivemc.chunker.mapping.parser.LevelConvertMappingsParser;
+import com.hivemc.chunker.mapping.LevelConvertMappings;
 import com.hivemc.chunker.mapping.parser.SimpleMappingsParser;
 import com.hivemc.chunker.mapping.resolver.MappingsFileResolvers;
 import com.hivemc.chunker.nbt.tags.Tag;
@@ -229,7 +229,8 @@ public class JavaLegacySimpleMappingsTest {
         mapping.deleteOnExit();
         Files.writeString(mapping.toPath(), "custommod:block -> custommod:block2\n");
 
-        MappingsFile mappings = LevelConvertMappingsParser.parse(mapping.toPath(), levelDat);
+        LevelConvertMappings.load(levelDat);
+        MappingsFile mappings = SimpleMappingsParser.parse(mapping.toPath());
 
         MockConverter converter = new MockConverter(null);
         converter.setBlockMappings(new MappingsFileResolvers(mappings));
@@ -267,7 +268,8 @@ public class JavaLegacySimpleMappingsTest {
         mapping.deleteOnExit();
         Files.writeString(mapping.toPath(), "minecraft:end_rod -> etfuturum:end_rod\n");
 
-        MappingsFile mappings = LevelConvertMappingsParser.parse(mapping.toPath(), levelDat);
+        LevelConvertMappings.load(levelDat);
+        MappingsFile mappings = SimpleMappingsParser.parse(mapping.toPath());
 
         MockConverter converter = new MockConverter(null);
         converter.setBlockMappings(new MappingsFileResolvers(mappings));

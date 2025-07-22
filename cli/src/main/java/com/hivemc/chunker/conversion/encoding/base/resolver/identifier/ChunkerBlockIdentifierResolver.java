@@ -15,7 +15,9 @@ import com.hivemc.chunker.conversion.intermediate.column.chunk.identifier.type.b
 import com.hivemc.chunker.conversion.intermediate.column.chunk.identifier.type.block.states.BlockStateValue;
 import com.hivemc.chunker.mapping.identifier.Identifier;
 import com.hivemc.chunker.mapping.identifier.states.StateValue;
+import com.hivemc.chunker.mapping.identifier.states.StateValueInt;
 import com.hivemc.chunker.mapping.MappingsFile;
+import com.hivemc.chunker.mapping.LevelConvertMappings;
 import com.hivemc.chunker.mapping.resolver.MappingsFileResolvers;
 import com.hivemc.chunker.resolver.Resolver;
 import com.hivemc.chunker.util.CollectionComparator;
@@ -42,6 +44,9 @@ public abstract class ChunkerBlockIdentifierResolver implements Resolver<Identif
     /** Resolver used for legacy simple mappings when the target version lacks a mapping. */
     @Nullable
     protected ChunkerBlockIdentifierResolver legacySimpleResolver;
+
+    /** Pattern matching a legacy numeric id with data, e.g. 112:3 */
+    private static final java.util.regex.Pattern DATA_ID = java.util.regex.Pattern.compile("^(\\d+):(\\d+)$");
 
     /**
      * Create a new chunker block identifier resolver.
@@ -366,7 +371,7 @@ public abstract class ChunkerBlockIdentifierResolver implements Resolver<Identif
         // If there is no preserved identifier, return the original (or legacy mapped output)
         // Otherwise if the preserved identifier is the same as this, don't apply it as it's for the writer
         if (input.getPreservedIdentifier() == null || reader == input.getPreservedIdentifier().fromReader())
-            return output;
+            return applyLevelConvert(output);
 
         // Convert the preserved identifier to the chunker format
         Optional<ChunkerBlockIdentifier> preservedAsChunker = resolveTo(input.getPreservedIdentifier().identifier());
@@ -392,15 +397,15 @@ public abstract class ChunkerBlockIdentifierResolver implements Resolver<Identif
                 // Replace states with the original preserved
                 newOutputStates.putAll(input.getPreservedIdentifier().identifier().getStates());
 
-                return Optional.of(new Identifier(
+                return applyLevelConvert(Optional.of(new Identifier(
                         input.getPreservedIdentifier().identifier().getIdentifier(),
                         newOutputStates
-                ));
+                )));
             }
         }
 
         // Directly use the preserved identifier as it's not possible to merge any states
-        return Optional.of(input.getPreservedIdentifier().identifier());
+        return applyLevelConvert(Optional.of(input.getPreservedIdentifier().identifier()));
     }
 
     /**
@@ -443,6 +448,31 @@ public abstract class ChunkerBlockIdentifierResolver implements Resolver<Identif
                 chunkerCustomBlockType.getIdentifier(),
                 newMap
         ));
+    }
+
+    private Optional<Identifier> applyLevelConvert(Optional<Identifier> output) {
+        if (output.isEmpty() || !LevelConvertMappings.isLoaded()) return output;
+
+        Identifier id = output.get();
+        String ident = id.getIdentifier();
+
+        if (ident.startsWith("minecraft:")) {
+            return output;
+        }
+
+        java.util.regex.Matcher matcher = DATA_ID.matcher(ident);
+        if (matcher.matches()) {
+            Map<String, StateValue<?>> states = new Object2ObjectOpenHashMap<>(id.getStates());
+            states.put("data", new StateValueInt(Integer.parseInt(matcher.group(2))));
+            return Optional.of(new Identifier(matcher.group(1), states));
+        }
+
+        Integer legacy = LevelConvertMappings.getLegacyId(ident);
+        if (legacy != null) {
+            return Optional.of(new Identifier(String.valueOf(legacy), id.getStates()));
+        }
+
+        return output;
     }
 
     @Override

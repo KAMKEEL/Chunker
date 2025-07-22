@@ -261,6 +261,13 @@ public class WorldConverter implements Converter {
      */
     public void setLegacyLevelDat(@Nullable File levelDat) {
         this.legacyLevelDat = levelDat;
+        if (levelDat != null) {
+            try {
+                com.hivemc.chunker.mapping.LevelConvertMappings.load(levelDat);
+            } catch (IOException e) {
+                logNonFatalException(e);
+            }
+        }
     }
 
     /**

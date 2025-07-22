@@ -32,6 +32,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -95,6 +96,8 @@ public class WorldConverter implements Converter {
     private boolean cancelled = false;
     @Nullable
     private File legacyLevelDat;
+    @Nullable
+    private Map<String, Integer> legacyIdMap;
 
     /**
      * Create a new WorldConverter with a sessionID.
@@ -251,6 +254,15 @@ public class WorldConverter implements Converter {
      */
     public void setLegacyLevelDat(@Nullable File levelDat) {
         this.legacyLevelDat = levelDat;
+        if (levelDat != null) {
+            try {
+                this.legacyIdMap = com.hivemc.chunker.mapping.LevelConvertMappings.readLegacyIDs(levelDat);
+            } catch (IOException e) {
+                throw new RuntimeException("Failed to read legacy IDs", e);
+            }
+        } else {
+            this.legacyIdMap = null;
+        }
     }
 
     /**
@@ -436,6 +448,17 @@ public class WorldConverter implements Converter {
     @Nullable
     public File getLegacyLevelDat() {
         return legacyLevelDat;
+    }
+
+    /**
+     * Get the parsed namespace to id mappings from the provided legacy level.dat.
+     *
+     * @return the map or null if no level.dat was supplied.
+     */
+    @Nullable
+    @Override
+    public Map<String, Integer> getLegacyIdMap() {
+        return legacyIdMap;
     }
 
     @Override

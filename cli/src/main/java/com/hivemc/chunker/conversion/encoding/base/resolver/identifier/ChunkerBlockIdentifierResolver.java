@@ -16,6 +16,7 @@ import com.hivemc.chunker.conversion.intermediate.column.chunk.identifier.type.b
 import com.hivemc.chunker.mapping.identifier.Identifier;
 import com.hivemc.chunker.mapping.identifier.states.StateValue;
 import com.hivemc.chunker.mapping.resolver.MappingsFileResolvers;
+import com.hivemc.chunker.mapping.LevelConvertMappings;
 import com.hivemc.chunker.resolver.Resolver;
 import com.hivemc.chunker.util.CollectionComparator;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
@@ -301,18 +302,25 @@ public abstract class ChunkerBlockIdentifierResolver implements Resolver<Identif
         if (mappingsFileResolvers == null) return output; // No mappings
 
         // Convert the block (using the inverse mappings if it's the writer)
-        Optional<Identifier> mappedIdentifier = (reader ? mappingsFileResolvers.getMappings() : mappingsFileResolvers.getInverseMappings()).convertBlock(input);
-        if (mappedIdentifier.isEmpty()) return output; // No custom mapping for this block
+        Optional<Identifier> mappedIdentifierOpt = (reader ? mappingsFileResolvers.getMappings() : mappingsFileResolvers.getInverseMappings()).convertBlock(input);
+        if (mappedIdentifierOpt.isEmpty()) return output; // No custom mapping for this block
+
+        // Resolve legacy ids if the converter has them
+        Map<String, Integer> legacyMap = converter.getLegacyIdMap();
+        if (legacyMap != null) {
+            mappedIdentifierOpt = mappedIdentifierOpt.map(id -> LevelConvertMappings.toLegacy(id, legacyMap));
+        }
+        final Identifier mappedIdentifier = mappedIdentifierOpt.get();
 
         // Attach the preserved identifier (the custom mapping for the output)
         return output.map(chunkerBlockIdentifier -> new ChunkerBlockIdentifier(
                 chunkerBlockIdentifier.getType(),
                 chunkerBlockIdentifier.getPresentStates(),
-                new PreservedIdentifier(reader, mappedIdentifier.get())
+                new PreservedIdentifier(reader, mappedIdentifier)
         )).or(() -> Optional.of(new ChunkerBlockIdentifier(
                 ChunkerVanillaBlockType.STONE, // Use stone as a placeholder
                 Collections.emptyMap(),
-                new PreservedIdentifier(reader, mappedIdentifier.get())
+                new PreservedIdentifier(reader, mappedIdentifier)
         )));
     }
 

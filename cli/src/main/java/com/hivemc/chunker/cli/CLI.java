@@ -15,7 +15,6 @@ import com.hivemc.chunker.conversion.intermediate.world.Dimension;
 import com.hivemc.chunker.mapping.MappingsFile;
 import com.hivemc.chunker.mapping.resolver.MappingsFileResolvers;
 import com.hivemc.chunker.mapping.parser.SimpleMappingsParser;
-import com.hivemc.chunker.mapping.parser.LevelConvertMappingsParser;
 import com.hivemc.chunker.mapping.parser.SimpleMappingsTemplateGenerator;
 import com.hivemc.chunker.pruning.PruningConfig;
 import com.hivemc.chunker.scheduling.task.TrackedTask;
@@ -210,12 +209,7 @@ public class CLI implements Runnable {
                     return;
                 }
                 try {
-                    MappingsFile mappingsFile;
-                    if (levelConvert != null) {
-                        mappingsFile = LevelConvertMappingsParser.parse(simpleBlockMappings.toPath(), levelConvert);
-                    } else {
-                        mappingsFile = SimpleMappingsParser.parse(simpleBlockMappings.toPath());
-                    }
+                    MappingsFile mappingsFile = SimpleMappingsParser.parse(simpleBlockMappings.toPath());
                     Path outPath = simpleBlockMappings.toPath().getParent().resolve("generated.json");
                     Files.writeString(outPath, mappingsFile.toJsonString());
                     System.out.println("Generated mapping file: " + outPath.toAbsolutePath());
@@ -259,13 +253,7 @@ public class CLI implements Runnable {
 
             if (simpleBlockMappings != null) {
                 try {
-                    MappingsFile mappingsFile;
-                    if (levelConvert != null) {
-                        System.out.print("Beginning Level Convert");
-                        mappingsFile = LevelConvertMappingsParser.parse(simpleBlockMappings.toPath(), levelConvert);
-                    } else {
-                        mappingsFile = SimpleMappingsParser.parse(simpleBlockMappings.toPath());
-                    }
+                    MappingsFile mappingsFile = SimpleMappingsParser.parse(simpleBlockMappings.toPath());
                     if (loadedMappings == null) {
                         loadedMappings = mappingsFile;
                     } else {

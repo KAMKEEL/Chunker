@@ -3,7 +3,8 @@ package com.hivemc.chunker.mapping;
 import com.hivemc.chunker.mapping.identifier.Identifier;
 import com.hivemc.chunker.mapping.identifier.states.StateValueInt;
 import com.hivemc.chunker.mapping.identifier.states.StateValueString;
-import com.hivemc.chunker.mapping.parser.LevelConvertMappingsParser;
+import com.hivemc.chunker.mapping.LevelConvertMappings;
+import com.hivemc.chunker.mapping.parser.SimpleMappingsParser;
 import com.hivemc.chunker.nbt.tags.Tag;
 import com.hivemc.chunker.nbt.tags.collection.CompoundTag;
 import com.hivemc.chunker.nbt.tags.collection.ListTag;
@@ -17,7 +18,7 @@ import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-/** Tests for {@link LevelConvertMappingsParser}. */
+/** Tests for {@link LevelConvertMappings}. */
 public class LevelConvertMappingsParserTest {
     @Test
     public void testParseWithLevelDat() throws Exception {
@@ -46,15 +47,17 @@ public class LevelConvertMappingsParserTest {
         Files.writeString(mapping.toPath(),
                 "minecraft:stripped_acacia_log[facing=NORTH] -> etfuturum:stripped_acacia_log[data=2]\n");
 
-        MappingsFile mappingsFile = LevelConvertMappingsParser.parse(mapping.toPath(), levelDat);
+        MappingsFile mappingsFile = SimpleMappingsParser.parse(mapping.toPath());
+        Map<String, Integer> idMap = LevelConvertMappings.readLegacyIDs(levelDat);
         Identifier input = new Identifier("minecraft:stripped_acacia_log", Map.of(
                 "facing", new StateValueString("NORTH")
         ));
+        Identifier converted = LevelConvertMappings.toLegacy(mappingsFile.convertBlock(input).orElseThrow(), idMap);
         Identifier expected = new Identifier("1300", Map.of(
                 "facing", new StateValueString("NORTH"),
                 "data", new StateValueInt(2)
         ));
-        assertEquals(expected, mappingsFile.convertBlock(input).orElse(null));
+        assertEquals(expected, converted);
     }
 
     @Test
@@ -78,14 +81,16 @@ public class LevelConvertMappingsParserTest {
         Files.writeString(mapping.toPath(),
                 "minecraft:stripped_acacia_log[facing=NORTH] -> etfuturum:stripped_acacia_log[data=2]\n");
 
-        MappingsFile mappingsFile = LevelConvertMappingsParser.parse(mapping.toPath(), levelDat);
+        MappingsFile mappingsFile = SimpleMappingsParser.parse(mapping.toPath());
+        Map<String, Integer> idMap = LevelConvertMappings.readLegacyIDs(levelDat);
         Identifier input = new Identifier("minecraft:stripped_acacia_log", Map.of(
                 "facing", new StateValueString("NORTH")
         ));
+        Identifier converted = LevelConvertMappings.toLegacy(mappingsFile.convertBlock(input).orElseThrow(), idMap);
         Identifier expected = new Identifier("1300", Map.of(
                 "facing", new StateValueString("NORTH"),
                 "data", new StateValueInt(2)
         ));
-        assertEquals(expected, mappingsFile.convertBlock(input).orElse(null));
+        assertEquals(expected, converted);
     }
 }

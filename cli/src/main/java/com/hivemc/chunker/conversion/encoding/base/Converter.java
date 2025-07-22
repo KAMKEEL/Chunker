@@ -8,6 +8,7 @@ import com.hivemc.chunker.conversion.intermediate.world.Dimension;
 import com.hivemc.chunker.mapping.resolver.MappingsFileResolvers;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Map;
 import java.util.Optional;
 
 /**
@@ -132,6 +133,16 @@ public interface Converter {
      */
     @Nullable
     MappingsFileResolvers getBlockMappings();
+
+    /**
+     * Get the namespace to legacy id map parsed from a level.dat if present.
+     *
+     * @return the map or null if none was provided.
+     */
+    @Nullable
+    default Map<String, Integer> getLegacyIdMap() {
+        return null;
+    }
 
     /**
      * Log a non-fatal exception.

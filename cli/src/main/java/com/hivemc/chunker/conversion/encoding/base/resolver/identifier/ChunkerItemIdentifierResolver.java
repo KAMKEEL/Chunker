@@ -17,6 +17,7 @@ import com.hivemc.chunker.mapping.identifier.Identifier;
 import com.hivemc.chunker.mapping.identifier.states.StateValue;
 import com.hivemc.chunker.mapping.identifier.states.StateValueInt;
 import com.hivemc.chunker.mapping.resolver.MappingsFileResolvers;
+import com.hivemc.chunker.mapping.LevelConvertMappings;
 import com.hivemc.chunker.resolver.Resolver;
 import com.hivemc.chunker.resolver.property.Property;
 import com.hivemc.chunker.util.CollectionComparator;
@@ -265,17 +266,23 @@ public abstract class ChunkerItemIdentifierResolver implements Resolver<Identifi
         if (mappingsFileResolvers == null) return output; // No mappings
 
         // Convert the item (using the inverse mappings if it's the writer)
-        Optional<Identifier> mappedIdentifier = (reader ? mappingsFileResolvers.getMappings() : mappingsFileResolvers.getInverseMappings()).convertItem(input);
-        if (mappedIdentifier.isEmpty()) return output; // No custom mapping for this block
+        Optional<Identifier> mappedIdentifierOpt = (reader ? mappingsFileResolvers.getMappings() : mappingsFileResolvers.getInverseMappings()).convertItem(input);
+        if (mappedIdentifierOpt.isEmpty()) return output; // No custom mapping for this block
+
+        Map<String, Integer> legacyMap = converter.getLegacyIdMap();
+        if (legacyMap != null) {
+            mappedIdentifierOpt = mappedIdentifierOpt.map(id -> LevelConvertMappings.toLegacy(id, legacyMap));
+        }
+        final Identifier mappedIdentifier = mappedIdentifierOpt.get();
 
         // Attach the preserved identifier (the custom mapping for the output)
         return output.map(chunkerItemStack -> new ChunkerItemStack(
                 chunkerItemStack.getIdentifier(),
-                new PreservedIdentifier(reader, mappedIdentifier.get()),
+                new PreservedIdentifier(reader, mappedIdentifier),
                 chunkerItemStack.getProperties()
         )).or(() -> Optional.of(new ChunkerItemStack(
                 ChunkerVanillaItemType.STICK, // Use a stick as a placeholder
-                new PreservedIdentifier(reader, mappedIdentifier.get())
+                new PreservedIdentifier(reader, mappedIdentifier)
         )));
     }
 

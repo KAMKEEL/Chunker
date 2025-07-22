@@ -257,8 +257,21 @@ public class JavaResolversBuilder {
             @Override
             public LegacyIdentifier writeLegacyBlockIdentifier(ChunkerBlockIdentifier chunkerBlockIdentifier) {
                 return blockIdentifierResolver.from(chunkerBlockIdentifier)
-                        .flatMap(identifier -> blockIDResolver.from(identifier.getIdentifier())
-                                .map(id -> new LegacyIdentifier(id, (byte) identifier.getDataValue().orElse(0))))
+                        .map(identifier -> {
+                            String ident = identifier.getIdentifier();
+                            int id;
+                            if (ident.matches("\\d+")) {
+                                id = Integer.parseInt(ident);
+                            } else {
+                                Optional<Integer> resolved = blockIDResolver.from(ident);
+                                if (resolved.isEmpty()) {
+                                    converter.logMissingMapping(Converter.MissingMappingType.BLOCK, String.valueOf(chunkerBlockIdentifier));
+                                    return new LegacyIdentifier(0, (byte) 0);
+                                }
+                                id = resolved.get();
+                            }
+                            return new LegacyIdentifier(id, (byte) identifier.getDataValue().orElse(0));
+                        })
                         .orElseGet(() -> {
                             // Report the error
                             converter.logMissingMapping(Converter.MissingMappingType.BLOCK, String.valueOf(chunkerBlockIdentifier));

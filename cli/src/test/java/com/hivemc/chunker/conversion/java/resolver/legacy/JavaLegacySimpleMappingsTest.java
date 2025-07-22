@@ -15,6 +15,9 @@ import com.hivemc.chunker.mapping.identifier.Identifier;
 import com.hivemc.chunker.mapping.LevelConvertMappings;
 import com.hivemc.chunker.mapping.parser.SimpleMappingsParser;
 import com.hivemc.chunker.mapping.resolver.MappingsFileResolvers;
+import com.hivemc.chunker.util.LegacyIdentifier;
+import com.hivemc.chunker.conversion.encoding.java.base.JavaReaderWriter;
+import com.hivemc.chunker.conversion.encoding.java.base.resolver.JavaResolvers;
 import com.hivemc.chunker.nbt.tags.Tag;
 import com.hivemc.chunker.nbt.tags.collection.CompoundTag;
 import com.hivemc.chunker.nbt.tags.primitive.IntTag;
@@ -287,6 +290,86 @@ public class JavaLegacySimpleMappingsTest {
         assertTrue(result.isPresent());
         assertEquals("198", result.get().getIdentifier());
         assertEquals(3, ((StateValueInt) result.get().getStates().get("data")).getValue());
+    }
+
+    @Test
+    public void testGlazedTerracottaOrientationWithLevelConvert() throws Exception {
+        // Build minimal level.dat mapping uptodate:glazed_terracotta_lime -> 1100
+        CompoundTag root = new CompoundTag();
+        CompoundTag fml = new CompoundTag();
+        root.put("FML", fml);
+        CompoundTag itemData = new CompoundTag();
+        fml.put("ItemData", itemData);
+        itemData.put("uptodate:glazed_terracotta_lime", new IntTag(1100));
+
+        File levelDat = File.createTempFile("level", ".dat");
+        levelDat.deleteOnExit();
+        Tag.writeGZipJavaNBT(levelDat, root);
+
+        File mapping = File.createTempFile("mapping", ".txt");
+        mapping.deleteOnExit();
+        Files.writeString(mapping.toPath(), "minecraft:lime_glazed_terracotta -> uptodate:glazed_terracotta_lime\n");
+
+        LevelConvertMappings.load(levelDat);
+        MappingsFile mappings = SimpleMappingsParser.parse(mapping.toPath());
+
+        MockConverter converter = new MockConverter(null);
+        converter.setBlockMappings(new MappingsFileResolvers(mappings));
+        converter.setLegacySimpleMappings(true);
+
+        JavaLegacyBlockIdentifierResolver resolver = new JavaLegacyBlockIdentifierResolver(
+                converter, new Version(1, 7, 10), false, false);
+
+        ChunkerBlockIdentifier input = new ChunkerBlockIdentifier(
+                ChunkerVanillaBlockType.LIME_GLAZED_TERRACOTTA,
+                Map.of(VanillaBlockStates.FACING_HORIZONTAL, FacingDirectionHorizontal.WEST)
+        );
+
+        Optional<Identifier> result = resolver.from(input);
+        assertTrue(result.isPresent());
+        assertEquals("1100", result.get().getIdentifier());
+        assertEquals(1, ((StateValueInt) result.get().getStates().get("data")).getValue());
+    }
+
+    @Test
+    public void testWriteLegacyIdentifierWithLevelConvert() throws Exception {
+        // Build minimal level.dat mapping uptodate:glazed_terracotta_lime -> 1100
+        CompoundTag root = new CompoundTag();
+        CompoundTag fml = new CompoundTag();
+        root.put("FML", fml);
+        CompoundTag itemData = new CompoundTag();
+        fml.put("ItemData", itemData);
+        itemData.put("uptodate:glazed_terracotta_lime", new IntTag(1100));
+
+        File levelDat = File.createTempFile("level", ".dat");
+        levelDat.deleteOnExit();
+        Tag.writeGZipJavaNBT(levelDat, root);
+
+        File mapping = File.createTempFile("mapping", ".txt");
+        mapping.deleteOnExit();
+        Files.writeString(mapping.toPath(), "minecraft:lime_glazed_terracotta -> uptodate:glazed_terracotta_lime\n");
+
+        LevelConvertMappings.load(levelDat);
+        MappingsFile mappings = SimpleMappingsParser.parse(mapping.toPath());
+
+        MockConverter converter = new MockConverter(null);
+        converter.setBlockMappings(new MappingsFileResolvers(mappings));
+        converter.setLegacySimpleMappings(true);
+
+        JavaReaderWriter writer = new JavaReaderWriter() {
+            @Override public boolean isReader() { return false; }
+            @Override public Version getVersion() { return new Version(1, 7, 10); }
+        };
+        JavaResolvers resolvers = writer.buildResolvers(converter).build();
+
+        ChunkerBlockIdentifier input = new ChunkerBlockIdentifier(
+                ChunkerVanillaBlockType.LIME_GLAZED_TERRACOTTA,
+                Map.of(VanillaBlockStates.FACING_HORIZONTAL, FacingDirectionHorizontal.WEST)
+        );
+
+        LegacyIdentifier legacy = resolvers.writeLegacyBlockIdentifier(input);
+        assertEquals(1100, legacy.id());
+        assertEquals(1, legacy.data());
     }
 }
 

@@ -179,5 +179,31 @@ public class JavaLegacySimpleMappingsTest {
         assertEquals("custom:er", result.get().getIdentifier());
         assertEquals(5, ((StateValueInt) result.get().getStates().get("data")).getValue());
     }
+
+    @Test
+    public void testEndRodModdedMappingPreservesOrientation() throws Exception {
+        File simple = File.createTempFile("simple", ".txt");
+        simple.deleteOnExit();
+        Files.writeString(simple.toPath(), "minecraft:end_rod -> etfuturum:end_rod\n");
+
+        MappingsFile mappings = SimpleMappingsParser.parse(simple.toPath());
+
+        MockConverter converter = new MockConverter(null);
+        converter.setBlockMappings(new MappingsFileResolvers(mappings));
+        converter.setLegacySimpleMappings(true);
+
+        JavaLegacyBlockIdentifierResolver resolver = new JavaLegacyBlockIdentifierResolver(
+                converter, new Version(1, 7, 10), false, false);
+
+        ChunkerBlockIdentifier input = new ChunkerBlockIdentifier(
+                ChunkerVanillaBlockType.END_ROD,
+                Map.of(VanillaBlockStates.FACING_ALL, FacingDirection.EAST)
+        );
+
+        Optional<Identifier> result = resolver.from(input);
+        assertTrue(result.isPresent());
+        assertEquals("etfuturum:end_rod", result.get().getIdentifier());
+        assertEquals(5, ((StateValueInt) result.get().getStates().get("data")).getValue());
+    }
 }
 

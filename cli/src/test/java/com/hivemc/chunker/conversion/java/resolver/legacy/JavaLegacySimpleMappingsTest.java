@@ -92,5 +92,34 @@ public class JavaLegacySimpleMappingsTest {
         assertTrue(result.isPresent());
         assertEquals("minecraft:red_sandstone_stairs", result.get().getIdentifier());
     }
+
+    @Test
+    public void testLegacyMappingWithOlderTargetVersion() throws Exception {
+        File simple = File.createTempFile("simple", ".txt");
+        simple.deleteOnExit();
+        Files.writeString(simple.toPath(), "minecraft:spruce_fence_gate -> custom:sfg\n");
+
+        MappingsFile mappings = SimpleMappingsParser.parse(simple.toPath());
+
+        MockConverter converter = new MockConverter(null);
+        converter.setBlockMappings(new MappingsFileResolvers(mappings));
+        converter.setLegacySimpleMappings(true);
+
+        JavaLegacyBlockIdentifierResolver resolver = new JavaLegacyBlockIdentifierResolver(
+                converter, new Version(1, 7, 10), false, false);
+
+        ChunkerBlockIdentifier input = new ChunkerBlockIdentifier(
+                ChunkerVanillaBlockType.SPRUCE_FENCE_GATE,
+                Map.of(
+                        VanillaBlockStates.FACING_HORIZONTAL, FacingDirectionHorizontal.EAST,
+                        VanillaBlockStates.OPEN, Bool.TRUE,
+                        VanillaBlockStates.POWERED, Bool.FALSE
+                )
+        );
+
+        Optional<Identifier> result = resolver.from(input);
+        assertTrue(result.isPresent());
+        assertEquals("custom:sfg", result.get().getIdentifier());
+    }
 }
 

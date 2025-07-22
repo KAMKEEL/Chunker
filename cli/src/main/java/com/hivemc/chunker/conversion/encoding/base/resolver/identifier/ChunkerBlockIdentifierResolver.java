@@ -350,13 +350,18 @@ public abstract class ChunkerBlockIdentifierResolver implements Resolver<Identif
         // Apply legacy simple mappings to the output identifier when no preserved mapping is set
         if (input.getPreservedIdentifier() == null && mappingsFileResolvers != null && converter.shouldUseLegacySimpleMappings()) {
             Optional<Identifier> base = output.isPresent() ? output : legacyResolveFrom(input);
+            System.out.println("Original Base: " + base.orElse(null));
             if (base.isEmpty()) {
                 // Fall back to using the raw custom identifier when no legacy mapping exists
                 base = handleFallback(input);
+                System.out.println("Fallback Base: " + base.orElse(null));
             }
             if (base.isPresent()) {
+                System.out.println("Found Base: " + base.orElse(null));
                 Optional<Identifier> mapped = mappingsFileResolvers.getMappings().convertBlock(base.get());
+                System.out.println("Mapped: " + mapped.orElse(null));
                 if (mapped.isPresent()) {
+                    System.out.println("MAPPED IS PRESENT");
                     Map<String, StateValue<?>> states = new Object2ObjectOpenHashMap<>(mapped.get().getStates());
 
                     // Force any states from the flattened output onto the mapping

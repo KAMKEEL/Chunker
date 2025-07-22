@@ -269,7 +269,7 @@ public class CLI implements Runnable {
                 try {
                     if (levelConvert != null) {
                         System.out.print("Beginning Level Convert");
-                        com.hivemc.chunker.mapping.LevelConvertMappings.load(levelConvert);
+                        LevelConvertMappings.load(levelConvert);
                     }
                     MappingsFile mappingsFile = SimpleMappingsParser.parse(simpleBlockMappings.toPath());
                     simpleMappingsProvided = true;

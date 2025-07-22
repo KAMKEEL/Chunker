@@ -345,6 +345,10 @@ public abstract class ChunkerBlockIdentifierResolver implements Resolver<Identif
         // Apply legacy simple mappings to the output identifier when no preserved mapping is set
         if (input.getPreservedIdentifier() == null && mappingsFileResolvers != null && converter.shouldUseLegacySimpleMappings()) {
             Optional<Identifier> base = output.isPresent() ? output : legacyResolveFrom(input);
+            if (base.isEmpty()) {
+                // Fall back to using the raw custom identifier when no legacy mapping exists
+                base = handleFallback(input);
+            }
             if (base.isPresent()) {
                 Optional<Identifier> mapped = mappingsFileResolvers.getMappings().convertBlock(base.get());
                 if (mapped.isPresent()) {

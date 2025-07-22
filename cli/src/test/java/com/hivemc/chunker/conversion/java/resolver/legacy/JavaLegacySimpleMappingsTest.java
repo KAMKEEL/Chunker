@@ -12,8 +12,12 @@ import com.hivemc.chunker.conversion.intermediate.column.chunk.identifier.type.b
 import com.hivemc.chunker.mapping.identifier.states.StateValueInt;
 import com.hivemc.chunker.mapping.MappingsFile;
 import com.hivemc.chunker.mapping.identifier.Identifier;
+import com.hivemc.chunker.mapping.parser.LevelConvertMappingsParser;
 import com.hivemc.chunker.mapping.parser.SimpleMappingsParser;
 import com.hivemc.chunker.mapping.resolver.MappingsFileResolvers;
+import com.hivemc.chunker.nbt.tags.Tag;
+import com.hivemc.chunker.nbt.tags.collection.CompoundTag;
+import com.hivemc.chunker.nbt.tags.primitive.IntTag;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
@@ -205,6 +209,44 @@ public class JavaLegacySimpleMappingsTest {
         assertEquals("custom:er", result.get().getIdentifier());
         // The data from the input (facing west -> 4) should override the mapping
         assertEquals(4, ((StateValueInt) result.get().getStates().get("data")).getValue());
+    }
+
+    @Test
+    public void testCustomBlockWithLevelConvert() throws Exception {
+        // Build minimal level.dat mapping custommod:block2 -> 1300
+        CompoundTag root = new CompoundTag();
+        CompoundTag fml = new CompoundTag();
+        root.put("FML", fml);
+        CompoundTag itemData = new CompoundTag();
+        fml.put("ItemData", itemData);
+        itemData.put("custommod:block2", new IntTag(1300));
+
+        File levelDat = File.createTempFile("level", ".dat");
+        levelDat.deleteOnExit();
+        Tag.writeGZipJavaNBT(levelDat, root);
+
+        File mapping = File.createTempFile("mapping", ".txt");
+        mapping.deleteOnExit();
+        Files.writeString(mapping.toPath(), "custommod:block -> custommod:block2\n");
+
+        MappingsFile mappings = LevelConvertMappingsParser.parse(mapping.toPath(), levelDat);
+
+        MockConverter converter = new MockConverter(null);
+        converter.setBlockMappings(new MappingsFileResolvers(mappings));
+        converter.setLegacySimpleMappings(true);
+
+        JavaLegacyBlockIdentifierResolver resolver = new JavaLegacyBlockIdentifierResolver(
+                converter, new Version(1, 7, 10), false, true);
+
+        ChunkerBlockIdentifier input = ChunkerBlockIdentifier.custom(
+                "custommod:block",
+                Map.of("facing", "EAST")
+        );
+
+        Optional<Identifier> result = resolver.from(input);
+        assertTrue(result.isPresent());
+        assertEquals("1300", result.get().getIdentifier());
+        assertEquals("EAST", result.get().getStates().get("facing").toString());
     }
 }
 

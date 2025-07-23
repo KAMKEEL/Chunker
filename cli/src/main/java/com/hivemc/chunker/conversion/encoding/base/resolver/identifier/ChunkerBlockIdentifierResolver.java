@@ -382,7 +382,7 @@ public abstract class ChunkerBlockIdentifierResolver implements Resolver<Identif
         // Otherwise if the preserved identifier is the same as this, don't apply it as it's for the writer
         Optional<Identifier> result;
         if (input.getPreservedIdentifier() == null || reader == input.getPreservedIdentifier().fromReader()) {
-            result = applyLevelConvert(output);
+            result = applyLevelConvert(output, input);
         } else {
             // Convert the preserved identifier to the chunker format
             Optional<ChunkerBlockIdentifier> preservedAsChunker = resolveTo(input.getPreservedIdentifier().identifier());
@@ -411,13 +411,13 @@ public abstract class ChunkerBlockIdentifierResolver implements Resolver<Identif
                     result = applyLevelConvert(Optional.of(new Identifier(
                             input.getPreservedIdentifier().identifier().getIdentifier(),
                             newOutputStates
-                    )));
+                    )), input);
                 } else {
-                    result = applyLevelConvert(Optional.of(input.getPreservedIdentifier().identifier()));
+                    result = applyLevelConvert(Optional.of(input.getPreservedIdentifier().identifier()), input);
                 }
             } else {
                 // Directly use the preserved identifier as it's not possible to merge any states
-                result = applyLevelConvert(Optional.of(input.getPreservedIdentifier().identifier()));
+                result = applyLevelConvert(Optional.of(input.getPreservedIdentifier().identifier()), input);
             }
         }
 
@@ -470,7 +470,7 @@ public abstract class ChunkerBlockIdentifierResolver implements Resolver<Identif
         ));
     }
 
-    private Optional<Identifier> applyLevelConvert(Optional<Identifier> output) {
+    private Optional<Identifier> applyLevelConvert(Optional<Identifier> output, ChunkerBlockIdentifier input) {
         if (output.isEmpty() || !LevelConvertMappings.isLoaded()) return output;
 
         Identifier id = output.get();
@@ -490,8 +490,18 @@ public abstract class ChunkerBlockIdentifierResolver implements Resolver<Identif
 
         Integer legacy = LevelConvertMappings.getLegacyId(ident);
         if (legacy != null) {
+            Map<String, StateValue<?>> states = new Object2ObjectOpenHashMap<>(id.getStates());
+            if (!states.containsKey("data") && legacySimpleResolver != null) {
+                Optional<Identifier> legacyData = legacySimpleResolver.resolveFrom(input);
+                if (legacyData.isPresent()) {
+                    OptionalInt dv = legacyData.get().getDataValue();
+                    if (dv.isPresent()) {
+                        states.put("data", new StateValueInt(dv.getAsInt()));
+                    }
+                }
+            }
             converter.logDebug("levelConvert mapped " + ident + " -> " + legacy);
-            return Optional.of(new Identifier(String.valueOf(legacy), id.getStates()));
+            return Optional.of(new Identifier(String.valueOf(legacy), states));
         }
 
         return output;

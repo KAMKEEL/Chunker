@@ -5,6 +5,7 @@ import com.hivemc.chunker.conversion.encoding.base.Converter;
 import com.hivemc.chunker.conversion.encoding.base.Version;
 import com.hivemc.chunker.conversion.encoding.base.resolver.identifier.BlockMapping;
 import com.hivemc.chunker.conversion.encoding.base.resolver.identifier.ChunkerBlockIdentifierResolver;
+import com.hivemc.chunker.conversion.intermediate.column.chunk.identifier.ChunkerBlockIdentifier;
 import com.hivemc.chunker.conversion.encoding.base.resolver.identifier.state.StateMappingGroup;
 import com.hivemc.chunker.conversion.intermediate.column.chunk.identifier.type.block.ChunkerBlockType;
 import com.hivemc.chunker.conversion.intermediate.column.chunk.identifier.type.block.ChunkerVanillaBlockType;
@@ -12,6 +13,10 @@ import com.hivemc.chunker.conversion.intermediate.column.chunk.identifier.type.b
 import com.hivemc.chunker.conversion.intermediate.column.chunk.identifier.type.block.states.vanilla.VanillaBlockStates;
 import com.hivemc.chunker.conversion.intermediate.column.chunk.identifier.type.block.states.vanilla.types.*;
 import it.unimi.dsi.fastutil.Pair;
+import com.hivemc.chunker.mapping.identifier.Identifier;
+
+import java.util.Optional;
+import java.util.OptionalInt;
 
 import java.util.List;
 import java.util.Map;
@@ -44,6 +49,19 @@ public class JavaLegacyBlockIdentifierResolver extends ChunkerBlockIdentifierRes
         if (version.isLessThan(1, 8, 0)) {
             legacySimpleResolver = new JavaLegacyBlockIdentifierResolver(converter, new Version(1, 12, 2), reader, customIdentifiersAllowed);
         }
+    }
+
+    /**
+     * Resolve the numeric metadata value for the supplied block using the
+     * legacy state mappings. This can be used to fetch the data value that
+     * would be written when targeting Java 1.12.
+     *
+     * @param block the block identifier to resolve.
+     * @return the legacy data value if available.
+     */
+    public OptionalInt resolveLegacyData(ChunkerBlockIdentifier block) {
+        Optional<Identifier> out = resolveFrom(block);
+        return out.isPresent() ? out.get().getDataValue() : OptionalInt.empty();
     }
 
     @Override

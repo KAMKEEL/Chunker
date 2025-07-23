@@ -18,6 +18,7 @@ import com.hivemc.chunker.mapping.identifier.states.StateValue;
 import com.hivemc.chunker.mapping.identifier.states.StateValueInt;
 import com.hivemc.chunker.mapping.MappingsFile;
 import com.hivemc.chunker.mapping.LevelConvertMappings;
+import com.hivemc.chunker.conversion.encoding.java.base.resolver.identifier.legacy.JavaLegacyBlockIdentifierResolver;
 import com.hivemc.chunker.mapping.resolver.MappingsFileResolvers;
 import com.hivemc.chunker.resolver.Resolver;
 import com.hivemc.chunker.util.CollectionComparator;
@@ -491,18 +492,15 @@ public abstract class ChunkerBlockIdentifierResolver implements Resolver<Identif
         Integer legacy = LevelConvertMappings.getLegacyId(ident);
         if (legacy != null) {
             Map<String, StateValue<?>> states = new Object2ObjectOpenHashMap<>(id.getStates());
-            if (legacySimpleResolver != null) {
-                Optional<Identifier> legacyData = legacySimpleResolver.resolveFrom(input);
-                if (legacyData.isPresent()) {
-                    OptionalInt dv = legacyData.get().getDataValue();
-                    if (dv.isPresent()) {
-                        int val = dv.getAsInt();
-                        StateValue<?> existing = states.get("data");
-                        if (existing == null ||
-                                !(existing instanceof StateValueInt e) ||
-                                e.getValue() == 0 || val != 0) {
-                            states.put("data", new StateValueInt(val));
-                        }
+            if (legacySimpleResolver instanceof JavaLegacyBlockIdentifierResolver r) {
+                OptionalInt dv = r.resolveLegacyData(input);
+                if (dv.isPresent()) {
+                    int val = dv.getAsInt();
+                    StateValue<?> existing = states.get("data");
+                    if (existing == null ||
+                            !(existing instanceof StateValueInt e) ||
+                            e.getValue() == 0 || val != 0) {
+                        states.put("data", new StateValueInt(val));
                     }
                 }
             }

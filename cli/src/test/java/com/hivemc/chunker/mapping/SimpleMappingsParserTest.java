@@ -14,6 +14,7 @@ import java.util.Collections;
 import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Tests for the {@link SimpleMappingsParser} utility.
@@ -148,5 +149,17 @@ public class SimpleMappingsParserTest {
         ));
 
         assertEquals(expected, mappingsFile.convertBlock(input).orElse(null));
+    }
+
+    @Test
+    public void testParseWithStateList() throws Exception {
+        File temp = File.createTempFile("simple", ".txt");
+        temp.deleteOnExit();
+        Files.writeString(temp.toPath(),
+                "minecraft:acacia_fence_gate -> etfuturum:acacia_fence_gate -> FENCE_GATE\n");
+
+        MappingsFile mappingsFile = SimpleMappingsParser.parse(temp.toPath());
+        String json = mappingsFile.toJsonString();
+        assertTrue(json.contains("\"state_list\": \"FENCE_GATE\""));
     }
 }

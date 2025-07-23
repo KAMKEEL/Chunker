@@ -40,25 +40,31 @@ public final class SimpleMappingsParser {
     public static MappingsFile parse(Path path) throws IOException {
         List<String> lines = Files.readAllLines(path);
         JsonArray array = new JsonArray();
+        JsonObject stateLists = new JsonObject();
         int index = 0;
         for (String line : lines) {
             String trimmed = line.trim();
             if (trimmed.isEmpty() || trimmed.startsWith("#")) {
                 continue;
             }
-            String[] parts = trimmed.split("->");
-            if (parts.length != 2) {
+            String[] parts = trimmed.split("->", 3);
+            if (parts.length < 2 || parts.length > 3) {
                 throw new IOException("Invalid mapping line: " + line);
             }
             ParsedIdentifier oldParsed = parseIdentifier(parts[0].trim());
             ParsedIdentifier newParsed = parseIdentifier(parts[1].trim());
+            String stateList = parts.length == 3 ? parts[2].trim() : "*";
             if (oldParsed.identifier.isEmpty() || newParsed.identifier.isEmpty()) {
                 throw new IOException("Invalid mapping line: " + line);
             }
             JsonObject obj = new JsonObject();
             obj.addProperty("old_identifier", oldParsed.identifier);
             obj.addProperty("new_identifier", newParsed.identifier);
-            obj.addProperty("state_list", "*");
+            stateList = stateList.isEmpty() ? "*" : stateList;
+            obj.addProperty("state_list", stateList);
+            if (!stateList.equals("*") && !stateLists.has(stateList)) {
+                stateLists.add(stateList, new JsonArray());
+            }
             if (oldParsed.states != null) {
                 obj.add("old_state_values", oldParsed.states);
             }
@@ -70,6 +76,9 @@ public final class SimpleMappingsParser {
         }
         JsonObject root = new JsonObject();
         root.add("identifiers", array);
+        if (stateLists.size() > 0) {
+            root.add("state_lists", stateLists);
+        }
         return MappingsFile.load(root.toString());
     }
 

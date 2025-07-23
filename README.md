@@ -83,7 +83,7 @@ The following parameters are required:
 Additionally, the following parameters are supported:
 
 - `-m` / `--blockMappings` - a path to a json file or a json object containing block mappings.
-- `-sm` / `--simpleBlockMappings` - a path to a text file containing simple mappings in the form `old[state=value] -> new[state=value]`. State values are case sensitive; enumerated values such as directions should be written in upper case (e.g. `facing=WEST`). When provided alongside `--blockMappings` the entries are appended to the JSON mappings.
+- `-sm` / `--simpleBlockMappings` - a path to a text file containing simple mappings in the form `old[state=value] -> new[state=value] -> state_list`. The final section is optional and specifies a Java legacy state type such as `FENCE_GATE`. State values are case sensitive; enumerated values such as directions should be written in upper case (e.g. `facing=WEST`). When provided alongside `--blockMappings` the entries are appended to the JSON mappings.
 - `--levelConvert` - when used with `--simpleBlockMappings` resolves the output identifiers using a provided legacy `level.dat` file. When the level contains numeric IDs these are written directly, preserving metadata. Only supported when the destination format is Java 1.12 or lower.
 - `--generateSimpleMappingsTemplate` - write an example simple mapping file to the given path and exit.
 - `--convertMapping` - parse a simple mapping file (optionally with `--levelConvert`) and write `generated.json` next to the input file, then exit.

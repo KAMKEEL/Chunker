@@ -5,6 +5,7 @@ import com.hivemc.chunker.conversion.intermediate.column.chunk.identifier.type.b
 import com.hivemc.chunker.conversion.intermediate.column.chunk.identifier.type.block.states.BlockStateValue;
 import com.hivemc.chunker.conversion.intermediate.column.chunk.identifier.type.block.states.vanilla.VanillaBlockStates;
 import com.hivemc.chunker.conversion.encoding.java.base.resolver.identifier.legacy.JavaLegacyStateGroups;
+import com.hivemc.chunker.conversion.encoding.java.base.resolver.identifier.JavaStateGroups;
 import com.hivemc.chunker.mapping.identifier.states.StateValue;
 import com.hivemc.chunker.mapping.identifier.states.StateValueBoolean;
 import com.hivemc.chunker.mapping.identifier.states.StateValueInt;
@@ -21,14 +22,22 @@ import java.util.Map;
  * {@link JavaLegacyStateGroups} and {@link VanillaBlockStates} definitions.
  */
 public final class LegacyStateMetadataHelper {
-    private static final Map<String, StateMappingGroup> GROUP_LOOKUP = new HashMap<>();
+    private static final Map<String, StateMappingGroup> LEGACY_LOOKUP = new HashMap<>();
+    private static final Map<String, StateMappingGroup> JAVA_LOOKUP = new HashMap<>();
 
     static {
         try {
             // Map legacy group names
             for (Field field : JavaLegacyStateGroups.class.getFields()) {
                 if (Modifier.isStatic(field.getModifiers()) && field.getType() == StateMappingGroup.class) {
-                    GROUP_LOOKUP.put(field.getName(), (StateMappingGroup) field.get(null));
+                    LEGACY_LOOKUP.put(field.getName(), (StateMappingGroup) field.get(null));
+                }
+            }
+
+            // Map modern group names
+            for (Field field : JavaStateGroups.class.getFields()) {
+                if (Modifier.isStatic(field.getModifiers()) && StateMappingGroup.class.isAssignableFrom(field.getType())) {
+                    JAVA_LOOKUP.put(field.getName(), (StateMappingGroup) field.get(null));
                 }
             }
 
@@ -50,16 +59,32 @@ public final class LegacyStateMetadataHelper {
      * resolved.
      */
     public static Integer resolve(String groupName, Map<String, StateValue<?>> states) {
-        StateMappingGroup group = GROUP_LOOKUP.get(groupName);
-        if (group == null) return null;
+        StateMappingGroup legacy = LEGACY_LOOKUP.get(groupName);
+        if (legacy == null) return null;
+
+        // Normalise and unbox values
+        Map<String, Object> boxed = new Object2ObjectOpenHashMap<>(states.size());
+        for (Map.Entry<String, StateValue<?>> e : states.entrySet()) {
+            boxed.put(e.getKey().toLowerCase(), e.getValue().getBoxed());
+        }
+
+        Map<BlockState<?>, BlockStateValue> modern = new Object2ObjectOpenHashMap<>();
+        StateMappingGroup javaGroup = JAVA_LOOKUP.get(groupName);
+        if (javaGroup != null) {
+            javaGroup.applyInput((name, def) -> boxed.get(name.toLowerCase()), modern);
+        }
 
         Map<String, Object> outputs = new Object2ObjectOpenHashMap<>();
-        group.applyOutput((state, useDefault) -> {
-            StateValue<?> raw = states.get(state.getName().toLowerCase());
-            BlockStateValue val = parse(state, raw);
-            if (val == null && useDefault) return state.getDefault();
-            return val;
-        }, outputs);
+        if (javaGroup != null) {
+            legacy.applyOutput((bs, def) -> modern.get(bs), outputs);
+        } else {
+            legacy.applyOutput((state, useDefault) -> {
+                StateValue<?> raw = states.get(state.getName().toLowerCase());
+                BlockStateValue val = parse(state, raw);
+                if (val == null && useDefault) return state.getDefault();
+                return val;
+            }, outputs);
+        }
 
         Object data = outputs.get("data");
         return data instanceof Integer ? (Integer) data : null;

@@ -491,12 +491,18 @@ public abstract class ChunkerBlockIdentifierResolver implements Resolver<Identif
         Integer legacy = LevelConvertMappings.getLegacyId(ident);
         if (legacy != null) {
             Map<String, StateValue<?>> states = new Object2ObjectOpenHashMap<>(id.getStates());
-            if (!states.containsKey("data") && legacySimpleResolver != null) {
+            if (legacySimpleResolver != null) {
                 Optional<Identifier> legacyData = legacySimpleResolver.resolveFrom(input);
                 if (legacyData.isPresent()) {
                     OptionalInt dv = legacyData.get().getDataValue();
                     if (dv.isPresent()) {
-                        states.put("data", new StateValueInt(dv.getAsInt()));
+                        int val = dv.getAsInt();
+                        StateValue<?> existing = states.get("data");
+                        if (existing == null ||
+                                !(existing instanceof StateValueInt e) ||
+                                e.getValue() == 0 || val != 0) {
+                            states.put("data", new StateValueInt(val));
+                        }
                     }
                 }
             }

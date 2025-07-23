@@ -10,6 +10,7 @@ import com.hivemc.chunker.mapping.mappings.IdentifierMapping;
 import com.hivemc.chunker.mapping.mappings.IdentifierMappings;
 import com.hivemc.chunker.mapping.mappings.StateMappings;
 import com.hivemc.chunker.mapping.mappings.TypeMappings;
+import com.hivemc.chunker.mapping.LegacyStateMetadataHelper;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 
 import java.io.File;
@@ -304,7 +305,20 @@ public class MappingsFile {
 
         // If it contains a stateList, apply the stateList
         if (identifierMapping.getStateMapping() != null) {
-            identifierMapping.getStateMapping().apply(normalizedInputStates, outputStates);
+            if (!identifierMapping.getStateMapping().getMappings().isEmpty()) {
+                identifierMapping.getStateMapping().apply(normalizedInputStates, outputStates);
+            } else {
+                String name = identifierMapping.getStateMapping().getName();
+                Integer data = null;
+                if ("FENCE_GATE".equals(name)) {
+                    data = LegacyStateMetadataHelper.resolveFenceGate(normalizedInputStates);
+                } else if ("TRAPDOOR".equals(name)) {
+                    data = LegacyStateMetadataHelper.resolveTrapdoor(normalizedInputStates);
+                }
+                if (data != null) {
+                    outputStates.put("data", new StateValueInt(data));
+                }
+            }
         } else {
             // Null means we pass through all the input states (*)
             outputStates.putAll(input.getStates());

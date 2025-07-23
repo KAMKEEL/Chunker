@@ -162,4 +162,42 @@ public class SimpleMappingsParserTest {
         String json = mappingsFile.toJsonString();
         assertTrue(json.contains("\"state_list\": \"FENCE_GATE\""));
     }
+
+    @Test
+    public void testFenceGateLegacyData() throws Exception {
+        File temp = File.createTempFile("simple", ".txt");
+        temp.deleteOnExit();
+        Files.writeString(temp.toPath(),
+                "minecraft:acacia_fence_gate -> 3000 -> FENCE_GATE\n");
+
+        MappingsFile mappingsFile = SimpleMappingsParser.parse(temp.toPath());
+        Identifier input = new Identifier("minecraft:acacia_fence_gate", Map.of(
+                "facing", new StateValueString("WEST"),
+                "open", StateValueBoolean.TRUE,
+                "powered", StateValueBoolean.FALSE
+        ));
+        Identifier out = mappingsFile.convertBlock(input).orElse(null);
+        assertEquals(new Identifier("3000", Map.of(
+                "data", new StateValueInt(9)
+        )), out);
+    }
+
+    @Test
+    public void testTrapdoorLegacyData() throws Exception {
+        File temp = File.createTempFile("simple", ".txt");
+        temp.deleteOnExit();
+        Files.writeString(temp.toPath(),
+                "minecraft:acacia_trapdoor -> 3006 -> TRAPDOOR\n");
+
+        MappingsFile mappingsFile = SimpleMappingsParser.parse(temp.toPath());
+        Identifier input = new Identifier("minecraft:acacia_trapdoor", Map.of(
+                "facing", new StateValueString("EAST"),
+                "half", new StateValueString("TOP"),
+                "open", StateValueBoolean.TRUE
+        ));
+        Identifier out = mappingsFile.convertBlock(input).orElse(null);
+        assertEquals(new Identifier("3006", Map.of(
+                "data", new StateValueInt(15)
+        )), out);
+    }
 }

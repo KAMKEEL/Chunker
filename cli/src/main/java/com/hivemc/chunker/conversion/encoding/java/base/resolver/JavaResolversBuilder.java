@@ -270,14 +270,18 @@ public class JavaResolversBuilder {
                                 }
                                 id = resolved.get();
                             }
-                            return new LegacyIdentifier(id, (byte) identifier.getDataValue().orElse(0));
+                            LegacyIdentifier legacy = new LegacyIdentifier(id, (byte) identifier.getDataValue().orElse(0));
+                            converter.logDebug("writeLegacyBlockIdentifier " + chunkerBlockIdentifier + " -> " + legacy.id() + ":" + legacy.data());
+                            return legacy;
                         })
                         .orElseGet(() -> {
                             // Report the error
                             converter.logMissingMapping(Converter.MissingMappingType.BLOCK, String.valueOf(chunkerBlockIdentifier));
 
                             // Return air
-                            return new LegacyIdentifier(0, (byte) 0);
+                            LegacyIdentifier legacy = new LegacyIdentifier(0, (byte) 0);
+                            converter.logDebug("writeLegacyBlockIdentifier " + chunkerBlockIdentifier + " -> " + legacy.id() + ":" + legacy.data());
+                            return legacy;
                         });
             }
 

@@ -153,6 +153,12 @@ public class CLI implements Runnable {
     )
     private boolean legacySimpleMappings;
 
+    @CommandLine.Option(
+            names = {"--debug"},
+            description = "Enable verbose debug logging."
+    )
+    private boolean debug;
+
     // Track whether simple mappings were provided so we can automatically
     // enable legacy mapping behaviour for legacy outputs.
     private boolean simpleMappingsProvided;
@@ -222,8 +228,15 @@ public class CLI implements Runnable {
                 try {
                     if (levelConvert != null) {
                         com.hivemc.chunker.mapping.LevelConvertMappings.load(levelConvert);
+                        if (debug) {
+                            System.out.println("[DEBUG] Loaded " + com.hivemc.chunker.mapping.LevelConvertMappings.size() + " level.dat mappings");
+                        }
                     }
                     MappingsFile mappingsFile = SimpleMappingsParser.parse(simpleBlockMappings.toPath());
+                    if (debug) {
+                        int count = mappingsFile.toJson().getAsJsonObject().getAsJsonArray("identifiers").size();
+                        System.out.println("[DEBUG] Parsed " + count + " simple mappings");
+                    }
                     Path outPath = simpleBlockMappings.toPath().getParent().resolve("generated.json");
                     Files.writeString(outPath, mappingsFile.toJsonString());
                     System.out.println("Generated mapping file: " + outPath.toAbsolutePath());
@@ -236,6 +249,7 @@ public class CLI implements Runnable {
 
             // Create the converter
             WorldConverter worldConverter = new WorldConverter(UUID.randomUUID());
+            worldConverter.setDebug(debug);
             if (levelConvert != null) {
                 worldConverter.setLegacyLevelDat(levelConvert);
             }
@@ -269,8 +283,15 @@ public class CLI implements Runnable {
                 try {
                     if (levelConvert != null) {
                         LevelConvertMappings.load(levelConvert);
+                        if (debug) {
+                            System.out.println("[DEBUG] Loaded " + LevelConvertMappings.size() + " level.dat mappings");
+                        }
                     }
                     MappingsFile mappingsFile = SimpleMappingsParser.parse(simpleBlockMappings.toPath());
+                    if (debug) {
+                        int count = mappingsFile.toJson().getAsJsonObject().getAsJsonArray("identifiers").size();
+                        System.out.println("[DEBUG] Parsed " + count + " simple mappings");
+                    }
                     simpleMappingsProvided = true;
                     if (loadedMappings == null) {
                         loadedMappings = mappingsFile;

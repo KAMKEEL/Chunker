@@ -84,7 +84,7 @@ Additionally, the following parameters are supported:
 
 - `-m` / `--blockMappings` - a path to a json file or a json object containing block mappings.
 - `-sm` / `--simpleBlockMappings` - a path to a text file containing simple mappings in the form `old[state=value] -> new[state=value]`. State values are case sensitive; enumerated values such as directions should be written in upper case (e.g. `facing=WEST`). When provided alongside `--blockMappings` the entries are appended to the JSON mappings.
-- `--levelConvert` - when used with `--simpleBlockMappings` resolves the output identifiers using a provided legacy `level.dat` file. Only supported when the destination format is Java 1.12 or lower.
+- `--levelConvert` - when used with `--simpleBlockMappings` resolves the output identifiers using a provided legacy `level.dat` file. When the level contains numeric IDs these are written directly, preserving metadata. Only supported when the destination format is Java 1.12 or lower.
 - `--generateSimpleMappingsTemplate` - write an example simple mapping file to the given path and exit.
 - `--convertMapping` - parse a simple mapping file (optionally with `--levelConvert`) and write `generated.json` next to the input file, then exit.
 - For a more comprehensive example containing both JSON and simple mapping formats run `java -cp chunker.jar com.hivemc.chunker.mapping.parser.ComplexMappingsTemplateGenerator <dir>` and the templates will be written to the specified directory.

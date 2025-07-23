@@ -93,6 +93,7 @@ public class WorldConverter implements Converter {
     private boolean notEnoughIDs = false;
     private boolean legacySimpleMappings = false;
     private boolean customIdentifiers = true;
+    private boolean debug = false;
     private boolean exceptions = false;
     private boolean cancelled = false;
     @Nullable
@@ -183,6 +184,24 @@ public class WorldConverter implements Converter {
     }
 
     /**
+     * Enable or disable debug logging.
+     *
+     * @param debug true to enable debugging.
+     */
+    public void setDebug(boolean debug) {
+        this.debug = debug;
+    }
+
+    /**
+     * Check whether debug logging is enabled.
+     *
+     * @return true if debug logging is enabled.
+     */
+    public boolean isDebug() {
+        return debug;
+    }
+
+    /**
      * Set whether items should be converted otherwise air will be used.
      *
      * @param processItems true if they should be converted.
@@ -265,6 +284,7 @@ public class WorldConverter implements Converter {
         if (levelDat != null) {
             try {
                 com.hivemc.chunker.mapping.LevelConvertMappings.load(levelDat);
+                logDebug("Loaded " + com.hivemc.chunker.mapping.LevelConvertMappings.size() + " level.dat mappings");
             } catch (IOException e) {
                 logNonFatalException(e);
             }
@@ -527,6 +547,13 @@ public class WorldConverter implements Converter {
         if (missingIdentifiers.put(type, identifier)) {
             // Log if it's new
             Converter.super.logMissingMapping(type, identifier);
+        }
+    }
+
+    @Override
+    public void logDebug(String message) {
+        if (debug) {
+            System.out.println("[DEBUG] " + message);
         }
     }
 

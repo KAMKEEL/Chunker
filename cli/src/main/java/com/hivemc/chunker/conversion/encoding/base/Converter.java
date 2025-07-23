@@ -153,6 +153,14 @@ public interface Converter {
     }
 
     /**
+     * Log a debug message if debugging is enabled.
+     *
+     * @param message the message to log.
+     */
+    default void logDebug(String message) {
+    }
+
+    /**
      * Whether empty chunks should be discarded instead of written.
      *
      * @return true if chunks should be removed instead of written.

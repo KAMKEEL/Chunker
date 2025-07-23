@@ -347,6 +347,8 @@ public abstract class ChunkerBlockIdentifierResolver implements Resolver<Identif
     protected Optional<Identifier> handleConverterMapping(ChunkerBlockIdentifier input, Optional<Identifier> output) {
         MappingsFileResolvers mappingsFileResolvers = converter.getBlockMappings();
 
+        converter.logDebug("Mapping " + input + " -> " + output.orElse(null));
+
         // Apply legacy simple mappings to the output identifier when no preserved mapping is set
         if (input.getPreservedIdentifier() == null && mappingsFileResolvers != null && converter.shouldUseLegacySimpleMappings()) {
             Optional<Identifier> base = output.isPresent() ? output : legacyResolveFrom(input);
@@ -378,8 +380,11 @@ public abstract class ChunkerBlockIdentifierResolver implements Resolver<Identif
 
         // If there is no preserved identifier, return the original (or legacy mapped output)
         // Otherwise if the preserved identifier is the same as this, don't apply it as it's for the writer
-        if (input.getPreservedIdentifier() == null || reader == input.getPreservedIdentifier().fromReader())
-            return applyLevelConvert(output);
+        if (input.getPreservedIdentifier() == null || reader == input.getPreservedIdentifier().fromReader()) {
+            Optional<Identifier> result = applyLevelConvert(output);
+            converter.logDebug("Mapping result=" + result.orElse(null));
+            return result;
+        }
 
         // Convert the preserved identifier to the chunker format
         Optional<ChunkerBlockIdentifier> preservedAsChunker = resolveTo(input.getPreservedIdentifier().identifier());
@@ -405,15 +410,19 @@ public abstract class ChunkerBlockIdentifierResolver implements Resolver<Identif
                 // Replace states with the original preserved
                 newOutputStates.putAll(input.getPreservedIdentifier().identifier().getStates());
 
-                return applyLevelConvert(Optional.of(new Identifier(
+                Optional<Identifier> res = applyLevelConvert(Optional.of(new Identifier(
                         input.getPreservedIdentifier().identifier().getIdentifier(),
                         newOutputStates
                 )));
+                converter.logDebug("Mapping result=" + res.orElse(null));
+                return res;
             }
         }
 
         // Directly use the preserved identifier as it's not possible to merge any states
-        return applyLevelConvert(Optional.of(input.getPreservedIdentifier().identifier()));
+        Optional<Identifier> res = applyLevelConvert(Optional.of(input.getPreservedIdentifier().identifier()));
+        converter.logDebug("Mapping result=" + res.orElse(null));
+        return res;
     }
 
     /**
@@ -472,11 +481,13 @@ public abstract class ChunkerBlockIdentifierResolver implements Resolver<Identif
         if (matcher.matches()) {
             Map<String, StateValue<?>> states = new Object2ObjectOpenHashMap<>(id.getStates());
             states.put("data", new StateValueInt(Integer.parseInt(matcher.group(2))));
+            converter.logDebug("levelConvert applied data from " + ident + " -> " + matcher.group(1) + " with data " + matcher.group(2));
             return Optional.of(new Identifier(matcher.group(1), states));
         }
 
         Integer legacy = LevelConvertMappings.getLegacyId(ident);
         if (legacy != null) {
+            converter.logDebug("levelConvert mapped " + ident + " -> " + legacy);
             return Optional.of(new Identifier(String.valueOf(legacy), id.getStates()));
         }
 

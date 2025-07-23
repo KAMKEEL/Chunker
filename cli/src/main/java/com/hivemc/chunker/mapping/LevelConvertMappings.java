@@ -34,6 +34,15 @@ public final class LevelConvertMappings {
     }
 
     /**
+     * Get the number of legacy ID mappings loaded.
+     *
+     * @return the count of mappings.
+     */
+    public static int size() {
+        return LEGACY_IDS.size();
+    }
+
+    /**
      * Get the numeric ID for a namespaced identifier.
      *
      * @param identifier the identifier to resolve.

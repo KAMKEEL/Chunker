@@ -178,7 +178,7 @@ public class SimpleMappingsParserTest {
         ));
         Identifier out = mappingsFile.convertBlock(input).orElse(null);
         assertEquals(new Identifier("3000", Map.of(
-                "data", new StateValueInt(9)
+                "data", new StateValueInt(5)
         )), out);
     }
 

@@ -308,13 +308,10 @@ public class MappingsFile {
             if (!identifierMapping.getStateMapping().getMappings().isEmpty()) {
                 identifierMapping.getStateMapping().apply(normalizedInputStates, outputStates);
             } else {
-                String name = identifierMapping.getStateMapping().getName();
-                Integer data = null;
-                if ("FENCE_GATE".equals(name)) {
-                    data = LegacyStateMetadataHelper.resolveFenceGate(normalizedInputStates);
-                } else if ("TRAPDOOR".equals(name)) {
-                    data = LegacyStateMetadataHelper.resolveTrapdoor(normalizedInputStates);
-                }
+                Integer data = LegacyStateMetadataHelper.resolve(
+                        identifierMapping.getStateMapping().getName(),
+                        normalizedInputStates
+                );
                 if (data != null) {
                     outputStates.put("data", new StateValueInt(data));
                 }

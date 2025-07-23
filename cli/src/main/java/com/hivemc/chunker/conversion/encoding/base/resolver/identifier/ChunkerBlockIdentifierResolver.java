@@ -347,7 +347,7 @@ public abstract class ChunkerBlockIdentifierResolver implements Resolver<Identif
     protected Optional<Identifier> handleConverterMapping(ChunkerBlockIdentifier input, Optional<Identifier> output) {
         MappingsFileResolvers mappingsFileResolvers = converter.getBlockMappings();
 
-        converter.logDebug("Mapping " + input + " -> " + output.orElse(null));
+        Optional<Identifier> originalOutput = output;
 
         // Apply legacy simple mappings to the output identifier when no preserved mapping is set
         if (input.getPreservedIdentifier() == null && mappingsFileResolvers != null && converter.shouldUseLegacySimpleMappings()) {
@@ -380,49 +380,52 @@ public abstract class ChunkerBlockIdentifierResolver implements Resolver<Identif
 
         // If there is no preserved identifier, return the original (or legacy mapped output)
         // Otherwise if the preserved identifier is the same as this, don't apply it as it's for the writer
+        Optional<Identifier> result;
         if (input.getPreservedIdentifier() == null || reader == input.getPreservedIdentifier().fromReader()) {
-            Optional<Identifier> result = applyLevelConvert(output);
-            converter.logDebug("Mapping result=" + result.orElse(null));
-            return result;
-        }
+            result = applyLevelConvert(output);
+        } else {
+            // Convert the preserved identifier to the chunker format
+            Optional<ChunkerBlockIdentifier> preservedAsChunker = resolveTo(input.getPreservedIdentifier().identifier());
+            if (preservedAsChunker.isPresent()) {
+                Map<BlockState<?>, BlockStateValue> states = new Object2ObjectOpenHashMap<>(preservedAsChunker.get().getPresentStates());
 
-        // Convert the preserved identifier to the chunker format
-        Optional<ChunkerBlockIdentifier> preservedAsChunker = resolveTo(input.getPreservedIdentifier().identifier());
-        if (preservedAsChunker.isPresent()) {
-            Map<BlockState<?>, BlockStateValue> states = new Object2ObjectOpenHashMap<>(preservedAsChunker.get().getPresentStates());
+                // Apply the input states
+                states.putAll(input.getPresentStates());
 
-            // Apply the input states
-            states.putAll(input.getPresentStates());
+                // Make a new copy with the preserved identifier + the states as a hashmap
+                ChunkerBlockIdentifier merged = new ChunkerBlockIdentifier(
+                        preservedAsChunker.get().getType(),
+                        states
+                );
 
-            // Make a new copy with the preserved identifier + the states as a hashmap
-            ChunkerBlockIdentifier merged = new ChunkerBlockIdentifier(
-                    preservedAsChunker.get().getType(),
-                    states
-            );
+                // Now convert it back to an identifier
+                Optional<Identifier> preservedConverted = resolveFrom(merged);
 
-            // Now convert it back to an identifier
-            Optional<Identifier> preservedConverted = resolveFrom(merged);
+                // If it's possible to convert, we can merge any states produced
+                if (preservedConverted.isPresent()) {
+                    Map<String, StateValue<?>> newOutputStates = new Object2ObjectOpenHashMap<>(preservedConverted.get().getStates());
 
-            // If it's possible to convert, we can merge any states produced
-            if (preservedConverted.isPresent()) {
-                Map<String, StateValue<?>> newOutputStates = new Object2ObjectOpenHashMap<>(preservedConverted.get().getStates());
+                    // Replace states with the original preserved
+                    newOutputStates.putAll(input.getPreservedIdentifier().identifier().getStates());
 
-                // Replace states with the original preserved
-                newOutputStates.putAll(input.getPreservedIdentifier().identifier().getStates());
-
-                Optional<Identifier> res = applyLevelConvert(Optional.of(new Identifier(
-                        input.getPreservedIdentifier().identifier().getIdentifier(),
-                        newOutputStates
-                )));
-                converter.logDebug("Mapping result=" + res.orElse(null));
-                return res;
+                    result = applyLevelConvert(Optional.of(new Identifier(
+                            input.getPreservedIdentifier().identifier().getIdentifier(),
+                            newOutputStates
+                    )));
+                } else {
+                    result = applyLevelConvert(Optional.of(input.getPreservedIdentifier().identifier()));
+                }
+            } else {
+                // Directly use the preserved identifier as it's not possible to merge any states
+                result = applyLevelConvert(Optional.of(input.getPreservedIdentifier().identifier()));
             }
         }
 
-        // Directly use the preserved identifier as it's not possible to merge any states
-        Optional<Identifier> res = applyLevelConvert(Optional.of(input.getPreservedIdentifier().identifier()));
-        converter.logDebug("Mapping result=" + res.orElse(null));
-        return res;
+        if (!Objects.equals(originalOutput, result)) {
+            converter.logDebug("Mapping " + input + " -> " + result.orElse(null));
+        }
+
+        return result;
     }
 
     /**

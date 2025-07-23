@@ -271,7 +271,6 @@ public class JavaResolversBuilder {
                                 id = resolved.get();
                             }
                             LegacyIdentifier legacy = new LegacyIdentifier(id, (byte) identifier.getDataValue().orElse(0));
-                            converter.logDebug("writeLegacyBlockIdentifier " + chunkerBlockIdentifier + " -> " + legacy.id() + ":" + legacy.data());
                             return legacy;
                         })
                         .orElseGet(() -> {
@@ -279,9 +278,7 @@ public class JavaResolversBuilder {
                             converter.logMissingMapping(Converter.MissingMappingType.BLOCK, String.valueOf(chunkerBlockIdentifier));
 
                             // Return air
-                            LegacyIdentifier legacy = new LegacyIdentifier(0, (byte) 0);
-                            converter.logDebug("writeLegacyBlockIdentifier " + chunkerBlockIdentifier + " -> " + legacy.id() + ":" + legacy.data());
-                            return legacy;
+                            return new LegacyIdentifier(0, (byte) 0);
                         });
             }
 

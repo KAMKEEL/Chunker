@@ -278,4 +278,40 @@ public class SimpleMappingsParserTest {
                 "data", new StateValueInt(9)
         )), out);
     }
+
+    @Test
+    public void testWarpedDoorLegacyData() throws Exception {
+        File temp = File.createTempFile("simple", ".txt");
+        temp.deleteOnExit();
+        Files.writeString(temp.toPath(),
+                "minecraft:warped_door -> netherlicious:doorwarped -> DOOR\n");
+
+        MappingsFile mappingsFile = SimpleMappingsParser.parse(temp.toPath());
+
+        Object[][] cases = {
+                {"EAST", "LOWER", false, "LEFT", 0},
+                {"SOUTH", "LOWER", false, "LEFT", 1},
+                {"WEST", "LOWER", false, "LEFT", 2},
+                {"NORTH", "LOWER", false, "LEFT", 3},
+                {"EAST", "LOWER", true, "LEFT", 4},
+                {"SOUTH", "LOWER", true, "LEFT", 5},
+                {"WEST", "LOWER", true, "LEFT", 6},
+                {"NORTH", "LOWER", true, "LEFT", 7},
+                {"EAST", "LOWER", false, "RIGHT", 0},
+                {"SOUTH", "LOWER", false, "RIGHT", 1},
+        };
+
+        for (Object[] c : cases) {
+            Identifier input = new Identifier("minecraft:warped_door", Map.of(
+                    "facing", new StateValueString((String) c[0]),
+                    "half", new StateValueString((String) c[1]),
+                    "open", ((Boolean) c[2]) ? StateValueBoolean.TRUE : StateValueBoolean.FALSE,
+                    "hinge", new StateValueString((String) c[3])
+            ));
+            Identifier expected = new Identifier("netherlicious:doorwarped", Map.of(
+                    "data", new StateValueInt((Integer) c[4])
+            ));
+            assertEquals(expected, mappingsFile.convertBlock(input).orElse(null));
+        }
+    }
 }

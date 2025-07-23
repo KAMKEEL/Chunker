@@ -97,6 +97,7 @@ Additionally, the following parameters are supported:
   the input world to the output folder prior to conversion.
 - `--enableNEIDs` - enable NotEnoughIDs formatting (the `Blocks16` tag) when converting to legacy Java worlds.
 - `--legacySimpleMappings` - apply simple block mappings after flattening using legacy identifiers. When converting to a legacy version with a simple mapping file this is enabled automatically.
+- `--debug` - enable verbose logging to the console and write a `conversion.log` file in the output directory.
 
 You can export settings for your world by using the web interface on `https://chunker.app` through the Advanced
 Settings -> Converter Settings tab, the CLI also supports preloading settings from the input directory.

@@ -206,6 +206,7 @@ public class CLI implements Runnable {
 
     @Override
     public void run() {
+        WorldConverter worldConverter = null;
         try {
             // Create the converter
             Stopwatch stopwatch = Stopwatch.createStarted();
@@ -248,8 +249,10 @@ public class CLI implements Runnable {
             }
 
             // Create the converter
-            WorldConverter worldConverter = new WorldConverter(UUID.randomUUID());
+            worldConverter = new WorldConverter(UUID.randomUUID());
             worldConverter.setDebug(debug);
+            File logFile = new File(outputDirectory, "conversion.log");
+            worldConverter.setLogFile(logFile);
             if (levelConvert != null) {
                 worldConverter.setLegacyLevelDat(levelConvert);
             }
@@ -526,6 +529,7 @@ public class CLI implements Runnable {
             if (failed.get() != null) {
                 System.err.println("Failed with exception");
                 failed.get().printStackTrace();
+                worldConverter.closeLogFile();
                 System.exit(1);
             } else {
                 Duration duration = stopwatch.elapsed();
@@ -534,6 +538,7 @@ public class CLI implements Runnable {
                         duration.toSecondsPart(),
                         duration.toMillisPart()
                 ));
+                worldConverter.closeLogFile();
                 System.exit(0);
             }
         } catch (OutOfMemoryError e) {
@@ -544,6 +549,9 @@ public class CLI implements Runnable {
             }
 
             // Use error code 12 for OOM
+            if (worldConverter != null) {
+                worldConverter.closeLogFile();
+            }
             System.exit(12);
         }
     }

@@ -33,6 +33,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -94,6 +95,8 @@ public class WorldConverter implements Converter {
     private boolean legacySimpleMappings = false;
     private boolean customIdentifiers = true;
     private boolean debug = false;
+    @Nullable
+    private java.io.PrintWriter logWriter;
     private boolean exceptions = false;
     private boolean cancelled = false;
     @Nullable
@@ -199,6 +202,37 @@ public class WorldConverter implements Converter {
      */
     public boolean isDebug() {
         return debug;
+    }
+
+    /**
+     * Set the file used for writing debug logs. The file is appended if it
+     * already exists.
+     *
+     * @param file the log file or null to disable logging to file.
+     */
+    public void setLogFile(@Nullable File file) {
+        if (logWriter != null) {
+            logWriter.close();
+            logWriter = null;
+        }
+        if (file != null) {
+            try {
+                java.nio.file.Files.createDirectories(file.toPath().getParent());
+                logWriter = new PrintWriter(new java.io.FileWriter(file, true));
+            } catch (IOException e) {
+                logNonFatalException(e);
+            }
+        }
+    }
+
+    /**
+     * Close the log file if one is open.
+     */
+    public void closeLogFile() {
+        if (logWriter != null) {
+            logWriter.close();
+            logWriter = null;
+        }
     }
 
     /**
@@ -553,7 +587,14 @@ public class WorldConverter implements Converter {
     @Override
     public void logDebug(String message) {
         if (debug) {
-            System.out.println("[DEBUG] " + message);
+            String line = "[DEBUG] " + message;
+            System.out.println(line);
+            if (logWriter != null) {
+                synchronized (this) {
+                    logWriter.println(line);
+                    logWriter.flush();
+                }
+            }
         }
     }
 

@@ -10,6 +10,7 @@ import com.hivemc.chunker.mapping.mappings.IdentifierMapping;
 import com.hivemc.chunker.mapping.mappings.IdentifierMappings;
 import com.hivemc.chunker.mapping.mappings.StateMappings;
 import com.hivemc.chunker.mapping.mappings.TypeMappings;
+import com.hivemc.chunker.mapping.LegacyStateMetadataHelper;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 
 import java.io.File;
@@ -304,10 +305,20 @@ public class MappingsFile {
 
         // If it contains a stateList, apply the stateList
         if (identifierMapping.getStateMapping() != null) {
-            identifierMapping.getStateMapping().apply(normalizedInputStates, outputStates);
+            if (!identifierMapping.getStateMapping().getMappings().isEmpty()) {
+                identifierMapping.getStateMapping().apply(normalizedInputStates, outputStates);
+            } else {
+                Integer data = LegacyStateMetadataHelper.resolve(
+                        identifierMapping.getStateMapping().getName(),
+                        normalizedInputStates
+                );
+                if (data != null) {
+                    outputStates.put("data", new StateValueInt(data));
+                }
+            }
         } else {
             // Null means we pass through all the input states (*)
-            outputStates.putAll(input.getStates());
+            outputStates.putAll(normalizedInputStates);
         }
 
         // Apply any new state values (replace)
@@ -315,8 +326,9 @@ public class MappingsFile {
 
         // Apply any not set special states
         for (Map.Entry<String, StateValue<?>> entry : input.getStates().entrySet()) {
-            if (isSpecialState(entry.getKey()) && !outputStates.containsKey(entry.getKey())) {
-                outputStates.put(entry.getKey(), entry.getValue());
+            String key = entry.getKey();
+            if (isSpecialState(key) && !outputStates.containsKey(key.toLowerCase())) {
+                outputStates.put(key.toLowerCase(), entry.getValue());
             }
         }
 

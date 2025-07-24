@@ -71,12 +71,26 @@ public final class LegacyStateMetadataHelper {
         Map<BlockState<?>, BlockStateValue> modern = new Object2ObjectOpenHashMap<>();
         StateMappingGroup javaGroup = JAVA_LOOKUP.get(groupName);
         if (javaGroup != null) {
-            javaGroup.applyInput((name, def) -> boxed.get(name.toLowerCase()), modern);
+            javaGroup.applyInput((name, def) -> {
+                Object val = boxed.get(name.toLowerCase());
+                if (val instanceof String str) {
+                    val = str.toLowerCase();
+                } else if (val instanceof Boolean b) {
+                    val = b.toString();
+                }
+                return val;
+            }, modern);
         }
 
         Map<String, Object> outputs = new Object2ObjectOpenHashMap<>();
         if (javaGroup != null) {
-            legacy.applyOutput((bs, def) -> modern.get(bs), outputs);
+            legacy.applyOutput((bs, def) -> {
+                BlockStateValue val = modern.get(bs);
+                if (val == null) {
+                    val = bs.getDefault();
+                }
+                return val;
+            }, outputs);
         } else {
             legacy.applyOutput((state, useDefault) -> {
                 StateValue<?> raw = states.get(state.getName().toLowerCase());

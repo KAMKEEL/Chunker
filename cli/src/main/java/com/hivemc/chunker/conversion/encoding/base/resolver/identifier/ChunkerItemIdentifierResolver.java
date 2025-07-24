@@ -414,9 +414,17 @@ public abstract class ChunkerItemIdentifierResolver implements Resolver<Identifi
     }
 
     private Optional<Identifier> applyLevelConvert(Optional<Identifier> output) {
-        if (output.isEmpty() || !LevelConvertMappings.isLoaded()) return output;
+        if (output.isEmpty()) return output;
 
         Identifier id = output.get();
+
+        if (id.getStates().containsKey("meta:no_level_convert")) {
+            Map<String, StateValue<?>> states = new Object2ObjectOpenHashMap<>(id.getStates());
+            states.remove("meta:no_level_convert");
+            return Optional.of(new Identifier(id.getIdentifier(), states));
+        }
+
+        if (!LevelConvertMappings.isLoaded()) return output;
         String ident = id.getIdentifier();
 
         if (ident.startsWith("minecraft:")) {

@@ -453,5 +453,42 @@ public class JavaLegacySimpleMappingsTest {
         assertEquals(1100, legacy.id());
         assertEquals(1, legacy.data());
     }
+
+    @Test
+    public void testEqualsPrefixDisablesLevelConvert() throws Exception {
+        CompoundTag root = new CompoundTag();
+        CompoundTag fml = new CompoundTag();
+        root.put("FML", fml);
+        CompoundTag itemData = new CompoundTag();
+        fml.put("ItemData", itemData);
+        itemData.put("custommod:block2", new IntTag(1300));
+
+        File levelDat = File.createTempFile("level", ".dat");
+        levelDat.deleteOnExit();
+        Tag.writeGZipJavaNBT(levelDat, root);
+
+        File mapping = File.createTempFile("mapping", ".txt");
+        mapping.deleteOnExit();
+        Files.writeString(mapping.toPath(), "=custommod:block -> custommod:block2\n");
+
+        LevelConvertMappings.load(levelDat);
+        MappingsFile mappings = SimpleMappingsParser.parse(mapping.toPath());
+
+        MockConverter converter = new MockConverter(null);
+        converter.setBlockMappings(new MappingsFileResolvers(mappings));
+        converter.setLegacySimpleMappings(true);
+
+        JavaLegacyBlockIdentifierResolver resolver = new JavaLegacyBlockIdentifierResolver(
+                converter, new Version(1, 7, 10), false, true);
+
+        ChunkerBlockIdentifier input = ChunkerBlockIdentifier.custom(
+                "custommod:block",
+                Map.of("facing", "EAST")
+        );
+
+        Optional<Identifier> result = resolver.from(input);
+        assertTrue(result.isPresent());
+        assertEquals("custommod:block2", result.get().getIdentifier());
+    }
 }
 

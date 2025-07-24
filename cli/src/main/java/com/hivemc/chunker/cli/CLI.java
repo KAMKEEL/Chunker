@@ -179,9 +179,14 @@ public class CLI implements Runnable {
         JsonObject extraJson = extra.toJson().getAsJsonObject();
         JsonArray extraIds = extraJson.getAsJsonArray("identifiers");
         if (extraIds != null) {
+            JsonArray combined = new JsonArray();
             for (int i = 0; i < extraIds.size(); i++) {
-                baseIds.add(extraIds.get(i));
+                combined.add(extraIds.get(i));
             }
+            for (int i = 0; i < baseIds.size(); i++) {
+                combined.add(baseIds.get(i));
+            }
+            baseJson.add("identifiers", combined);
         }
 
         return MappingsFile.load(baseJson);

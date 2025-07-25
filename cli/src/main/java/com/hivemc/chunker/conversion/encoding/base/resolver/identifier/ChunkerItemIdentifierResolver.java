@@ -345,6 +345,11 @@ public abstract class ChunkerItemIdentifierResolver implements Resolver<Identifi
      * @return the output if present.
      */
     protected Optional<ChunkerItemStack> resolveTo(Identifier input) {
+        if (input.getStates().containsKey("meta:no_level_convert")) {
+            Map<String, StateValue<?>> states = new Object2ObjectOpenHashMap<>(input.getStates());
+            states.remove("meta:no_level_convert");
+            input = new Identifier(input.getIdentifier(), states);
+        }
         InputStateGrouping<String, Object, ChunkerItemStackIdentifierType, ComparableItemProperty<?>, Object> grouping = inputToChunker.get(input.getIdentifier());
 
         // Custom items are just treated as blocks, so there is no support done here (for now)
@@ -414,9 +419,17 @@ public abstract class ChunkerItemIdentifierResolver implements Resolver<Identifi
     }
 
     private Optional<Identifier> applyLevelConvert(Optional<Identifier> output) {
-        if (output.isEmpty() || !LevelConvertMappings.isLoaded()) return output;
+        if (output.isEmpty()) return output;
 
         Identifier id = output.get();
+
+        if (id.getStates().containsKey("meta:no_level_convert")) {
+            Map<String, StateValue<?>> states = new Object2ObjectOpenHashMap<>(id.getStates());
+            states.remove("meta:no_level_convert");
+            return Optional.of(new Identifier(id.getIdentifier(), states));
+        }
+
+        if (!LevelConvertMappings.isLoaded()) return output;
         String ident = id.getIdentifier();
 
         if (ident.startsWith("minecraft:")) {

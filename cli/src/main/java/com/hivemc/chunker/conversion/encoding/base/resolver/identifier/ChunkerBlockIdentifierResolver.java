@@ -352,29 +352,49 @@ public abstract class ChunkerBlockIdentifierResolver implements Resolver<Identif
 
         // Apply legacy simple mappings to the output identifier when no preserved mapping is set
         if (input.getPreservedIdentifier() == null && mappingsFileResolvers != null && converter.shouldUseLegacySimpleMappings()) {
-            Optional<Identifier> base = output.isPresent() ? output : legacyResolveFrom(input);
-            if (base.isEmpty()) {
-                // Fall back to using the raw custom identifier when no legacy mapping exists
-                base = handleFallback(input);
-            }
-            if (base.isPresent()) {
-                Identifier lookup = base.get();
-                // When we resolved a direct output, try to lookup using the legacy identifier
-                if (output.isPresent()) {
-                    Optional<Identifier> legacy = legacyResolveFrom(input);
-                    if (legacy.isPresent()) {
-                        lookup = new Identifier(legacy.get().getIdentifier(), lookup.getStates());
+            boolean mappedDirect = false;
+            if (output.isPresent()) {
+                Identifier direct = output.get();
+                Optional<Identifier> directMapped = mappingsFileResolvers.getMappings().convertBlock(direct);
+                if (directMapped.isPresent() && directMapped.get().getStates().containsKey("meta:no_level_convert")) {
+                    if (LevelConvertMappings.getLegacyId(direct.getIdentifier()) == null) {
+                        Map<String, StateValue<?>> states = new Object2ObjectOpenHashMap<>(directMapped.get().getStates());
+                        states.putAll(direct.getStates());
+                        output = Optional.of(new Identifier(directMapped.get().getIdentifier(), states));
+                        mappedDirect = true;
                     }
                 }
+            }
 
-                Optional<Identifier> mapped = mappingsFileResolvers.getMappings().convertBlock(lookup);
-                if (mapped.isPresent()) {
-                    Map<String, StateValue<?>> states = new Object2ObjectOpenHashMap<>(mapped.get().getStates());
-                    // Force any states from the flattened output onto the mapping
-                    // so legacy metadata such as orientation is always preserved.
-                    states.putAll(base.get().getStates());
+            if (!mappedDirect) {
+                Optional<Identifier> base = output.isPresent() ? output : legacyResolveFrom(input);
+                if (base.isEmpty()) {
+                    // Fall back to using the raw custom identifier when no legacy mapping exists
+                    base = handleFallback(input);
+                }
+                if (base.isPresent()) {
+                    Identifier lookup = base.get();
+                    // When we resolved a direct output, try to lookup using the legacy identifier
+                    if (output.isPresent()) {
+                        Optional<Identifier> legacy = legacyResolveFrom(input);
+                        if (legacy.isPresent()) {
+                            lookup = new Identifier(legacy.get().getIdentifier(), lookup.getStates());
+                        }
+                    }
 
-                    output = Optional.of(new Identifier(mapped.get().getIdentifier(), states));
+                    Optional<Identifier> mapped = mappingsFileResolvers.getMappings().convertBlock(lookup);
+                    if (mapped.isPresent()) {
+                        Identifier mappedIdentifier = mapped.get();
+                        if (!mappedIdentifier.getStates().containsKey("meta:no_level_convert") ||
+                                LevelConvertMappings.getLegacyId(lookup.getIdentifier()) == null) {
+                            Map<String, StateValue<?>> states = new Object2ObjectOpenHashMap<>(mappedIdentifier.getStates());
+                            // Force any states from the flattened output onto the mapping
+                            // so legacy metadata such as orientation is always preserved.
+                            states.putAll(base.get().getStates());
+
+                            output = Optional.of(new Identifier(mappedIdentifier.getIdentifier(), states));
+                        }
+                    }
                 }
             }
         }
@@ -472,9 +492,18 @@ public abstract class ChunkerBlockIdentifierResolver implements Resolver<Identif
     }
 
     private Optional<Identifier> applyLevelConvert(Optional<Identifier> output, ChunkerBlockIdentifier input) {
-        if (output.isEmpty() || !LevelConvertMappings.isLoaded()) return output;
+        if (output.isEmpty()) return output;
 
         Identifier id = output.get();
+
+        if (id.getStates().containsKey("meta:no_level_convert")) {
+            Map<String, StateValue<?>> states = new Object2ObjectOpenHashMap<>(id.getStates());
+            states.remove("meta:no_level_convert");
+            return Optional.of(new Identifier(id.getIdentifier(), states));
+        }
+
+        if (!LevelConvertMappings.isLoaded()) return output;
+
         String ident = id.getIdentifier();
 
         if (ident.startsWith("minecraft:")) {
@@ -524,6 +553,11 @@ public abstract class ChunkerBlockIdentifierResolver implements Resolver<Identif
      * @return the output if present.
      */
     protected Optional<ChunkerBlockIdentifier> resolveTo(Identifier input) {
+        if (input.getStates().containsKey("meta:no_level_convert")) {
+            Map<String, StateValue<?>> states = new Object2ObjectOpenHashMap<>(input.getStates());
+            states.remove("meta:no_level_convert");
+            input = new Identifier(input.getIdentifier(), states);
+        }
         Optional<ChunkerBlockIdentifier> result = resolve(
                 inputToChunker,
                 input.getIdentifier(),

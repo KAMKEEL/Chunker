@@ -68,8 +68,12 @@ public final class SimpleMappingsParser {
             if (oldParsed.states != null) {
                 obj.add("old_state_values", oldParsed.states);
             }
-            if (newParsed.states != null) {
-                obj.add("new_state_values", newParsed.states);
+            if (newParsed.states != null || oldParsed.ignoreLegacy || newParsed.ignoreLegacy) {
+                JsonObject newStates = newParsed.states == null ? new JsonObject() : newParsed.states;
+                if (oldParsed.ignoreLegacy || newParsed.ignoreLegacy) {
+                    newStates.addProperty("meta:no_level_convert", true);
+                }
+                obj.add("new_state_values", newStates);
             }
             array.add(obj);
             index++;
@@ -84,6 +88,11 @@ public final class SimpleMappingsParser {
 
     private static ParsedIdentifier parseIdentifier(String input) throws IOException {
         String trimmed = input.trim();
+        boolean ignoreLegacy = false;
+        if (trimmed.startsWith("=")) {
+            ignoreLegacy = true;
+            trimmed = trimmed.substring(1).trim();
+        }
         String identifierPart = trimmed;
         String statePart = null;
 
@@ -121,7 +130,7 @@ public final class SimpleMappingsParser {
             statesObj.add("data", new JsonPrimitive(Integer.parseInt(matcher.group(2))));
         }
 
-        return new ParsedIdentifier(identifier, statesObj);
+        return new ParsedIdentifier(identifier, statesObj, ignoreLegacy);
     }
 
     private static JsonPrimitive parseValue(String value) {
@@ -135,6 +144,6 @@ public final class SimpleMappingsParser {
         return new JsonPrimitive(value.toUpperCase());
     }
 
-    private record ParsedIdentifier(String identifier, JsonObject states) {
+    private record ParsedIdentifier(String identifier, JsonObject states, boolean ignoreLegacy) {
     }
 }

@@ -399,8 +399,14 @@ public abstract class ChunkerBlockIdentifierResolver implements Resolver<Identif
         if (input.getPreservedIdentifier() == null || reader == input.getPreservedIdentifier().fromReader()) {
             result = applyLevelConvert(output, input);
         } else {
-            // Convert the preserved identifier to the chunker format
-            Optional<ChunkerBlockIdentifier> preservedAsChunker = resolveTo(input.getPreservedIdentifier().identifier());
+            // Convert the preserved identifier to the chunker format, stripping any meta states
+            Identifier preservedIdentifier = input.getPreservedIdentifier().identifier();
+            if (preservedIdentifier.getStates().containsKey("meta:no_level_convert")) {
+                Map<String, StateValue<?>> states = new Object2ObjectOpenHashMap<>(preservedIdentifier.getStates());
+                states.remove("meta:no_level_convert");
+                preservedIdentifier = new Identifier(preservedIdentifier.getIdentifier(), states);
+            }
+            Optional<ChunkerBlockIdentifier> preservedAsChunker = resolveTo(preservedIdentifier);
             if (preservedAsChunker.isPresent()) {
                 Map<BlockState<?>, BlockStateValue> states = new Object2ObjectOpenHashMap<>(preservedAsChunker.get().getPresentStates());
 
@@ -421,18 +427,18 @@ public abstract class ChunkerBlockIdentifierResolver implements Resolver<Identif
                     Map<String, StateValue<?>> newOutputStates = new Object2ObjectOpenHashMap<>(preservedConverted.get().getStates());
 
                     // Replace states with the original preserved
-                    newOutputStates.putAll(input.getPreservedIdentifier().identifier().getStates());
+                    newOutputStates.putAll(preservedIdentifier.getStates());
 
                     result = applyLevelConvert(Optional.of(new Identifier(
-                            input.getPreservedIdentifier().identifier().getIdentifier(),
+                            preservedIdentifier.getIdentifier(),
                             newOutputStates
                     )), input);
                 } else {
-                    result = applyLevelConvert(Optional.of(input.getPreservedIdentifier().identifier()), input);
+                    result = applyLevelConvert(Optional.of(preservedIdentifier), input);
                 }
             } else {
                 // Directly use the preserved identifier as it's not possible to merge any states
-                result = applyLevelConvert(Optional.of(input.getPreservedIdentifier().identifier()), input);
+                result = applyLevelConvert(Optional.of(preservedIdentifier), input);
             }
         }
 

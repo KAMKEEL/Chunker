@@ -323,7 +323,14 @@ public abstract class ChunkerBlockIdentifierResolver implements Resolver<Identif
         if (mappingsFileResolvers == null) return output; // No mappings
 
         // Convert the block (using the inverse mappings if it's the writer)
-        Optional<Identifier> mappedIdentifier = (reader ? mappingsFileResolvers.getMappings() : mappingsFileResolvers.getInverseMappings()).convertBlock(input);
+        Identifier sanitizedInput = input;
+        if (input.getStates().containsKey("meta:no_level_convert")) {
+            Map<String, StateValue<?>> states = new Object2ObjectOpenHashMap<>(input.getStates());
+            states.remove("meta:no_level_convert");
+            sanitizedInput = new Identifier(input.getIdentifier(), states);
+        }
+
+        Optional<Identifier> mappedIdentifier = (reader ? mappingsFileResolvers.getMappings() : mappingsFileResolvers.getInverseMappings()).convertBlock(sanitizedInput);
         if (mappedIdentifier.isEmpty()) return output; // No custom mapping for this block
 
         // Attach the preserved identifier (the custom mapping for the output)
@@ -406,7 +413,13 @@ public abstract class ChunkerBlockIdentifierResolver implements Resolver<Identif
             result = applyLevelConvert(output, input);
         } else {
             // Convert the preserved identifier to the chunker format
-            Optional<ChunkerBlockIdentifier> preservedAsChunker = resolveTo(input.getPreservedIdentifier().identifier());
+            Identifier preservedId = input.getPreservedIdentifier().identifier();
+            if (preservedId.getStates().containsKey("meta:no_level_convert")) {
+                Map<String, StateValue<?>> states = new Object2ObjectOpenHashMap<>(preservedId.getStates());
+                states.remove("meta:no_level_convert");
+                preservedId = new Identifier(preservedId.getIdentifier(), states);
+            }
+            Optional<ChunkerBlockIdentifier> preservedAsChunker = resolveTo(preservedId);
             if (preservedAsChunker.isPresent()) {
                 Map<BlockState<?>, BlockStateValue> states = new Object2ObjectOpenHashMap<>(preservedAsChunker.get().getPresentStates());
 

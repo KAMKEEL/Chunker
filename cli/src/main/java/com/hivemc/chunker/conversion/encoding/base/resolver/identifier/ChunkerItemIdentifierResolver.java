@@ -269,7 +269,14 @@ public abstract class ChunkerItemIdentifierResolver implements Resolver<Identifi
         if (mappingsFileResolvers == null) return output; // No mappings
 
         // Convert the item (using the inverse mappings if it's the writer)
-        Optional<Identifier> mappedIdentifier = (reader ? mappingsFileResolvers.getMappings() : mappingsFileResolvers.getInverseMappings()).convertItem(input);
+        Identifier sanitizedInput = input;
+        if (input.getStates().containsKey("meta:no_level_convert")) {
+            Map<String, StateValue<?>> states = new Object2ObjectOpenHashMap<>(input.getStates());
+            states.remove("meta:no_level_convert");
+            sanitizedInput = new Identifier(input.getIdentifier(), states);
+        }
+
+        Optional<Identifier> mappedIdentifier = (reader ? mappingsFileResolvers.getMappings() : mappingsFileResolvers.getInverseMappings()).convertItem(sanitizedInput);
         if (mappedIdentifier.isEmpty()) return output; // No custom mapping for this block
 
         // Attach the preserved identifier (the custom mapping for the output)
@@ -297,7 +304,13 @@ public abstract class ChunkerItemIdentifierResolver implements Resolver<Identifi
             return applyLevelConvert(output);
 
         // Convert the preserved identifier to the chunker format
-        Optional<ChunkerItemStack> preservedAsChunker = resolveTo(input.getPreservedIdentifier().identifier());
+        Identifier preservedId = input.getPreservedIdentifier().identifier();
+        if (preservedId.getStates().containsKey("meta:no_level_convert")) {
+            Map<String, StateValue<?>> states = new Object2ObjectOpenHashMap<>(preservedId.getStates());
+            states.remove("meta:no_level_convert");
+            preservedId = new Identifier(preservedId.getIdentifier(), states);
+        }
+        Optional<ChunkerItemStack> preservedAsChunker = resolveTo(preservedId);
         if (preservedAsChunker.isPresent() && preservedAsChunker.get().getIdentifier() instanceof ChunkerBlockIdentifier blockIdentifier) {
             Map<BlockState<?>, BlockStateValue> states = new Object2ObjectOpenHashMap<>(blockIdentifier.getPresentStates());
 

@@ -357,10 +357,12 @@ public abstract class ChunkerBlockIdentifierResolver implements Resolver<Identif
                 Identifier direct = output.get();
                 Optional<Identifier> directMapped = mappingsFileResolvers.getMappings().convertBlock(direct);
                 if (directMapped.isPresent() && directMapped.get().getStates().containsKey("meta:no_level_convert")) {
-                    Map<String, StateValue<?>> states = new Object2ObjectOpenHashMap<>(directMapped.get().getStates());
-                    states.putAll(direct.getStates());
-                    output = Optional.of(new Identifier(directMapped.get().getIdentifier(), states));
-                    mappedDirect = true;
+                    if (LevelConvertMappings.getLegacyId(direct.getIdentifier()) == null) {
+                        Map<String, StateValue<?>> states = new Object2ObjectOpenHashMap<>(directMapped.get().getStates());
+                        states.putAll(direct.getStates());
+                        output = Optional.of(new Identifier(directMapped.get().getIdentifier(), states));
+                        mappedDirect = true;
+                    }
                 }
             }
 
@@ -382,12 +384,16 @@ public abstract class ChunkerBlockIdentifierResolver implements Resolver<Identif
 
                     Optional<Identifier> mapped = mappingsFileResolvers.getMappings().convertBlock(lookup);
                     if (mapped.isPresent()) {
-                        Map<String, StateValue<?>> states = new Object2ObjectOpenHashMap<>(mapped.get().getStates());
-                        // Force any states from the flattened output onto the mapping
-                        // so legacy metadata such as orientation is always preserved.
-                        states.putAll(base.get().getStates());
+                        Identifier mappedIdentifier = mapped.get();
+                        if (!mappedIdentifier.getStates().containsKey("meta:no_level_convert") ||
+                                LevelConvertMappings.getLegacyId(lookup.getIdentifier()) == null) {
+                            Map<String, StateValue<?>> states = new Object2ObjectOpenHashMap<>(mappedIdentifier.getStates());
+                            // Force any states from the flattened output onto the mapping
+                            // so legacy metadata such as orientation is always preserved.
+                            states.putAll(base.get().getStates());
 
-                        output = Optional.of(new Identifier(mapped.get().getIdentifier(), states));
+                            output = Optional.of(new Identifier(mappedIdentifier.getIdentifier(), states));
+                        }
                     }
                 }
             }

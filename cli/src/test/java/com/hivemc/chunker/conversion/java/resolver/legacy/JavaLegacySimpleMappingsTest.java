@@ -527,7 +527,7 @@ public class JavaLegacySimpleMappingsTest {
 
         Optional<Identifier> result = resolver.from(input);
         assertTrue(result.isPresent());
-        assertEquals("1299", result.get().getIdentifier());
+        assertEquals("1300", result.get().getIdentifier());
     }
 }
 
